@@ -82,3 +82,6 @@ venv/
 coverage/
 .nyc_output/
 reports/
+
+# Excluded from upload (specify folder name as needed)
+exclude_this_folder/

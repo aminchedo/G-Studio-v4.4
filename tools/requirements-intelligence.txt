@@ -1,0 +1,3 @@
+# Optional deps for g_studio_intelligence_v7.3.2.py (graceful fallback if missing)
+tqdm>=4.65.0
+colorama>=0.4.6

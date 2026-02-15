@@ -1,0 +1,49 @@
+# G-Studio Code Intelligence – pro workflow
+# Runs tools/g_studio_intelligence_v7.3.2.py and uploads reports as artifacts
+name: Code Intelligence
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'   # Weekly Monday 06:00 UTC
+  workflow_dispatch:       # Manual run from Actions tab
+
+jobs:
+  intelligence:
+    name: Run G-Studio Intelligence
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Full history for --git-history if used later
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install optional deps for intelligence script
+        run: |
+          if [ -f tools/requirements-intelligence.txt ]; then
+            pip install -r tools/requirements-intelligence.txt
+          fi
+
+      - name: Run G-Studio Code Intelligence
+        run: |
+          python tools/g_studio_intelligence_v7.3.2.py . \
+            --output-dir ./gstudio-reports \
+            --csv \
+            --verbose
+        continue-on-error: true   # Do not fail workflow if script has minor issues
+
+      - name: Upload intelligence reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: gstudio-intelligence-reports
+          path: gstudio-reports/
+          retention-days: 30
+          if-no-files-found: ignore

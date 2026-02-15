@@ -16,7 +16,8 @@
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "analyze": "vite-bundle-visualizer"
+    "analyze": "vite-bundle-visualizer",
+    "mcp": "turbo run build"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
@@ -78,7 +79,9 @@
     "typescript": "^5.9.3",
     "vite": "^6.4.1",
     "vite-bundle-visualizer": "^1.2.1",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "npm-run-all": "^4.1.5",
+    "turbo": "^2.3.3"
   },
   "main": "eslint.config.js",
   "directories": {

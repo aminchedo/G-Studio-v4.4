@@ -85,3 +85,10 @@ reports/
 
 # Excluded from upload (specify folder name as needed)
 exclude_this_folder/
+
+# Prevent large file uploads (explicit; do not remove)
+*.tar
+*.gz
+*.rar
+*.7z
+*.iso

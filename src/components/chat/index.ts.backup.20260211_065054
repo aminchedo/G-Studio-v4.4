@@ -1,0 +1,11 @@
+/**
+ * G Studio v2.3.0 - Chat Components Index
+ */
+
+export { VirtualizedMessageList } from './VirtualizedMessageList';
+export type { VirtualizedMessageListProps } from './VirtualizedMessageList';
+
+export { EnhancedInputArea } from './EnhancedInputArea';
+export type { EnhancedInputAreaProps, InputAreaHandle } from './EnhancedInputArea';
+
+export { ChatSidebar } from './ChatSidebar';

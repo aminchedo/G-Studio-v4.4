@@ -1,0 +1,186 @@
+{
+  "last_run": "20260211_110023",
+  "status": "PARTIAL_SUCCESS",
+  "report_folder": "C:\\project\\G-studio\\G-Studio-v4.4_1-Integratedzi\\reports\\latest",
+  "report_path": "C:\\project\\G-studio\\G-Studio-v4.4_1-Integratedzi\\reports\\latest\\go_report.json",
+  "unused_before": 54,
+  "unused_after": 56,
+  "reduction": -2,
+  "scanned_files_count": 671,
+  "candidates": [
+    {
+      "id": "browser-stub",
+      "path": "src/runtime/browser-stub.ts"
+    },
+    {
+      "id": "extension",
+      "path": "vscode-extension/src/extension.ts"
+    },
+    {
+      "id": "generative-ai",
+      "path": "src/google/generative-ai.tsx"
+    },
+    {
+      "id": "globals",
+      "path": "src/jest/globals.ts"
+    },
+    {
+      "id": "react",
+      "path": "src/monaco-editor/react.tsx"
+    },
+    {
+      "id": "devappprovider",
+      "path": "src/providers/DevAppProvider.tsx"
+    },
+    {
+      "id": "minimalappprovider",
+      "path": "src/providers/MinimalAppProvider.tsx"
+    },
+    {
+      "id": "plugin-react",
+      "path": "src/vitejs/plugin-react.ts"
+    },
+    {
+      "id": "errorhistorypanel",
+      "path": "src/components/panels/ErrorHistoryPanel.tsx"
+    },
+    {
+      "id": "accessibility",
+      "path": "src/components/ui/accessibility.tsx"
+    },
+    {
+      "id": "collaborationindicator",
+      "path": "src/features/collaboration/CollaborationIndicator.tsx"
+    },
+    {
+      "id": "usebuttonfeedback",
+      "path": "src/hooks/useButtonFeedback.tsx"
+    },
+    {
+      "id": "usespeechrecognition",
+      "path": "src/hooks/useSpeechRecognition.tsx"
+    },
+    {
+      "id": "geminiclient",
+      "path": "src/services/GeminiClient.tsx"
+    },
+    {
+      "id": "errormanager",
+      "path": "src/services/errorHandling/ErrorManager.ts"
+    },
+    {
+      "id": "defaultpolicies",
+      "path": "src/services/policies/defaultPolicies.ts"
+    },
+    {
+      "id": "apiclient",
+      "path": "src/utils/apiClient.tsx"
+    },
+    {
+      "id": "logger",
+      "path": "src/utils/logger.tsx"
+    },
+    {
+      "id": "databaseservice-test",
+      "path": "__tests__/services/databaseService.test.ts"
+    },
+    {
+      "id": "appstatecontext",
+      "path": "src/contexts/AppStateContext.tsx"
+    },
+    {
+      "id": "lmstudioprovider",
+      "path": "src/contexts/LMStudioProvider.tsx"
+    },
+    {
+      "id": "modalcontext",
+      "path": "src/contexts/ModalContext.tsx"
+    },
+    {
+      "id": "keyboardshortcuts",
+      "path": "src/features/keyboard/keyboardShortcuts.tsx"
+    },
+    {
+      "id": "codeintelligencestore",
+      "path": "src/stores/codeIntelligenceStore.tsx"
+    },
+    {
+      "id": "projectstore",
+      "path": "src/stores/projectStore.tsx"
+    },
+    {
+      "id": "monitoring",
+      "path": "src/utils/monitoring.tsx"
+    },
+    {
+      "id": "aisettingshub",
+      "path": "src/features/ai/AISettingsHub.tsx"
+    },
+    {
+      "id": "helpsystem",
+      "path": "src/features/help/HelpSystem.tsx"
+    },
+    {
+      "id": "onboardingsystem",
+      "path": "src/features/onboarding/OnboardingSystem.tsx"
+    },
+    {
+      "id": "runtimeuiverification",
+      "path": "src/services/runtimeUIVerification.tsx"
+    },
+    {
+      "id": "constants",
+      "path": "src/config/constants.ts"
+    },
+    {
+      "id": "databasecontext",
+      "path": "src/contexts/DatabaseContext.tsx"
+    },
+    {
+      "id": "designtokens",
+      "path": "src/theme/designTokens.ts"
+    }
+  ],
+  "applied_count": 0,
+  "pending_count": 33,
+  "verification_results": {
+    "typescript": {
+      "enabled": true,
+      "exit_code": 2,
+      "ts_errors": 207,
+      "passed": false,
+      "sample_errors": [
+        "src/components/layout/MainLayout.tsx(180,14): error TS2741: Property 'onFileSelect' is missing in type '{ files: Record<string, FileData>; setFiles: Dispatch<SetStateAction<Record<string, FileData>>>; openFiles: string[]; ... 8 more ...; apiKey: string; }' but required in type 'SidebarProps'.",
+        "src/components/layout/ModalManager.tsx(304,15): error TS2322: Type '{ files: Record<string, FileData>; activeFile: string; isDarkMode: boolean; }' is not assignable to type 'IntrinsicAttributes & CodeIntelligenceDashboardProps'.",
+        "src/components/layout/Sidebar.tsx(924,23): error TS2322: Type '(path: string, name: string) => void' is not assignable to type '(path: string) => void'.",
+        "src/features/ai/AgentCollaboration.tsx(204,27): error TS2339: Property 'description' does not exist on type 'Agent'.",
+        "src/features/ai/AISettingsHub/ModelsTab.tsx(149,43): error TS2345: Argument of type '\"selectionMode\"' is not assignable to parameter of type 'keyof AIConfig'.",
+        "src/features/ai/AISettingsHub/ModelsTab.tsx(151,24): error TS2551: Property 'selectionMode' does not exist on type 'AIConfig'. Did you mean 'executionMode'?",
+        "src/features/ai/AISettingsHub/ModelsTab.tsx(158,26): error TS2551: Property 'selectionMode' does not exist on type 'AIConfig'. Did you mean 'executionMode'?",
+        "src/features/ai/AISettingsHub/ModelsTab.tsx(164,25): error TS2551: Property 'selectionMode' does not exist on type 'AIConfig'. Did you mean 'executionMode'?",
+        "src/features/ai/AISettingsHub/ModelsTab.tsx(170,63): error TS2551: Property 'selectionMode' does not exist on type 'AIConfig'. Did you mean 'executionMode'?",
+        "src/features/ai/AISettingsHub/ModelsTab.tsx(178,43): error TS2345: Argument of type '\"selectionMode\"' is not assignable to parameter of type 'keyof AIConfig'."
+      ]
+    },
+    "lint": {
+      "enabled": true,
+      "exit_code": 0,
+      "passed": true,
+      "output_tail": "  @typescript-eslint/no-explicit-any\n  11:47  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any\n\n\u00e2\u0153\u2013 3424 problems (0 errors, 3424 warnings)\n\n(node:10784) ESLintIgnoreWarning: The \".eslintignore\" file is no longer supported. Switch to using the \"ignores\" property in \"eslint.config.js\": https://eslint.org/docs/latest/use/configure/migration-guide#ignoring-files\n(Use `node --trace-warnings ...` to show where the warning was created)"
+    },
+    "smoke": {
+      "enabled": true,
+      "exit_code": 0,
+      "passed": true,
+      "output_tail": "s but also statically imported by C:/project/G-studio/G-Studio-v4.4_1-Integratedzi/src/components/app/App.tsx, dynamic import will not move module into another chunk.\n\n\n(!) Some chunks are larger than 1500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit."
+    }
+  },
+  "steps_completed": 10,
+  "_updated": "2026-02-11 11:27:09",
+  "_workflow_input": "C:\\project\\G-studio\\G-Studio-v4.4_1-Integratedzi\\tools\\main-fixer-9.v3.py",
+  "_reports_dir": "C:\\project\\G-studio\\G-Studio-v4.4_1-Integratedzi\\reports",
+  "_latest_reports_dir": "C:\\project\\G-studio\\G-Studio-v4.4_1-Integratedzi\\reports\\latest",
+  "typescript_project_errors_fixed": 0,
+  "external_file_errors": 198,
+  "note": "G-Studio project errors fixed. External file errors require manual investigation."
+}

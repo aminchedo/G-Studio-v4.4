@@ -1,0 +1,84 @@
+# Dependencies and build
+node_modules/
+dist/
+build/
+out/
+*.tsbuildinfo
+.next/
+.nuxt/
+.vite/
+
+# Environment and secrets (no API keys or credentials)
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+secrets/
+
+# Logs and temp
+*.log
+*.tmp
+*.temp
+*.tmp.*
+.cursor/hooks/audit.log
+.cursor/memory.jsonl
+.cursor/memory-data/
+logs/
+temp/
+tmp/
+.temp/
+.tmp/
+
+# Binaries and native libs (heavy / Notepad etc.)
+*.dll
+*.exe
+*.so
+*.dylib
+*.lib
+*.a
+*.o
+*.obj
+*.bin
+
+# IDE and OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Cache and local DBs
+.cache/
+*.db
+*.sqlite
+.gstudio_cache.db
+.gstudio_cache.json
+.node_repl_history
+.npm
+.eslintcache
+
+# Backup and deployment artifacts (optional; keep backup/ in ignore to avoid large restores)
+backup/
+backups/
+.patch_backups/
+deployment-package/
+*.zip
+*.tar.gz
+
+# Python (if any)
+__pycache__/
+*.py[cod]
+.Python
+venv/
+.venv/
+
+# Reports and large generated
+coverage/
+.nyc_output/
+reports/

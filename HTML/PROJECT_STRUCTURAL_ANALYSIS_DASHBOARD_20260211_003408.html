@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Intelligence Dashboard — 2026-02-11 00:34</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #0a0e27;
+    --bg-secondary: #141b3a;
+    --bg-card: rgba(20, 27, 58, 0.6);
+    --border: rgba(99, 102, 241, 0.2);
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --accent: #6366f1;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --glass: rgba(255, 255, 255, 0.05);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, #1a1f3a 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.dashboard {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: sticky;
+    top: 20px;
+    z-index: 100;
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header .meta {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);
+}
+
+.stat-card .label {
+    color: var(--text-secondary);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.stat-card .value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.stat-card .subtext {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.section {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+.badge.warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+.badge.danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+.badge.info { background: rgba(99, 102, 241, 0.2); color: var(--accent); }
+
+.search-box {
+    width: 100%;
+    padding: 14px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 15px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.filter-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.cluster {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+
+.cluster:hover {
+    border-color: var(--accent);
+}
+
+.cluster-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+.cluster-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.cluster-content {
+    display: none;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.cluster.expanded .cluster-content {
+    display: block;
+}
+
+.file-list {
+    list-style: none;
+    margin: 12px 0;
+}
+
+.file-item {
+    padding: 12px;
+    background: var(--glass);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.recommendation {
+    background: rgba(16, 185, 129, 0.1);
+    border-left: 3px solid var(--success);
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.recommendation-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--success);
+}
+
+.reasoning-list {
+    list-style: none;
+    margin-top: 12px;
+}
+
+.reasoning-list li {
+    padding: 6px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.reasoning-list li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+}
+
+.chart-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.chart {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    min-height: 300px;
+}
+
+.chart-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+tr:hover {
+    background: var(--glass);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #8b5cf6);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.section {
+    animation: fadeIn 0.6s ease;
+}
+
+.confidence-high { color: var(--success); }
+.confidence-medium { color: var(--warning); }
+.confidence-low { color: var(--danger); }
+</style>
+</head>
+<body>
+    <div class="dashboard">
+        
+<div class="header">
+    <h1>🔬 Code Intelligence Dashboard</h1>
+    <div class="meta">
+        <strong>Project:</strong> C:\project\G-studio\G-Studio-v4.4_1-Integratedzi | 
+        <strong>Generated:</strong> 2026-02-11 00:34:08 |
+        <strong>Analysis Engine:</strong> Enterprise Static Analyzer v2.0
+    </div>
+</div>
+
+        
+<div class="summary-grid">
+    <div class="stat-card">
+        <div class="label">Total Files</div>
+        <div class="value">646</div>
+        <div class="subtext">Across all categories</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Total Lines</div>
+        <div class="value">350,953</div>
+        <div class="subtext">11.0 MB</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Duplicate Clusters</div>
+        <div class="value">13</div>
+        <div class="subtext">216 KB potential savings</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Naming Conflicts</div>
+        <div class="value">38</div>
+        <div class="subtext">Same name, different paths</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Unused Files</div>
+        <div class="value">251</div>
+        <div class="subtext">No references found</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Unwired Features</div>
+        <div class="value">6</div>
+        <div class="subtext">Not integrated into app</div>
+    </div>
+</div>
+
+        
+<div class="chart-container">
+    <div class="chart">
+        <div class="chart-title">File Type Distribution</div>
+        <canvas id="categoryChart"></canvas>
+    </div>
+    <div class="chart">
+        <div class="chart-title">Risk Distribution</div>
+        <canvas id="riskChart"></canvas>
+    </div>
+</div>
+<script>
+window.chartData = {
+    categories: ["Configuration", "Core Logic", "Asset", "UI Component", "Test", "State Management", "Service", "Script", "Context Provider", "Utility", "React Hook"],
+    categoryCounts: [36, 142, 7, 197, 29, 13, 167, 19, 4, 10, 22]
+};
+</script>
+
+        
+<div class="section">
+    <div class="section-header">
+        <h2 class="section-title">🔍 File Explorer</h2>
+    </div>
+    <input type="text" id="searchBox" class="search-box" placeholder="Search files by name or path...">
+    <div class="filter-group">
+        <button class="filter-btn active" data-filter="all">All Files</button>
+        <button class="filter-btn" data-filter="unused">Unused</button>
+        <button class="filter-btn" data-filter="duplicate">Duplicates</button>
+        <button class="filter-btn" data-filter="high-risk">High Risk</button>
+        <button class="filter-btn" data-filter="large">Large Files</button>
+    </div>
+    <div id="fileList"></div>
+</div>
+
+        
+<div class="section">
+    <div class="section-header">
+        <h2 class="section-title">📋 Duplicate Clusters</h2>
+        <span class="badge info">13 clusters</span>
+    </div>
+
+    <div class="cluster" data-cluster-id="1">
+        <div class="cluster-header" onclick="toggleCluster(1)">
+            <div>
+                <span class="cluster-title">Cluster #1</span>
+                <span class="badge exact">exact</span>
+                <span class="badge confidence-medium">100% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\App.tsx</li>
+                <li class="file-item">src\components\app\App.tsx</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: MERGE (Confidence: 70%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: App.tsx</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 1 symbols</li>
+                    <li>App.tsx has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\App.tsx</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="2">
+        <div class="cluster-header" onclick="toggleCluster(2)">
+            <div>
+                <span class="cluster-title">Cluster #2</span>
+                <span class="badge exact">exact</span>
+                <span class="badge confidence-medium">100% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\components\conversation\ConversationSidebar.tsx</li>
+                <li class="file-item">src\components\sidebar\ConversationSidebar.tsx</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: MERGE (Confidence: 70%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: ConversationSidebar.tsx</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 1 symbols</li>
+                    <li>ConversationSidebar.tsx has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\components\conversation\ConversationSidebar.tsx</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="3">
+        <div class="cluster-header" onclick="toggleCluster(3)">
+            <div>
+                <span class="cluster-title">Cluster #3</span>
+                <span class="badge exact">exact</span>
+                <span class="badge confidence-medium">100% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\components\sidebar\FileTreeTypes.ts</li>
+                <li class="file-item">src\components\sidebar\file-tree\FileTreeTypes.ts</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: MERGE (Confidence: 70%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: FileTreeTypes.ts</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 3 symbols</li>
+                    <li>FileTreeTypes.ts has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\components\sidebar\FileTreeTypes.ts</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="4">
+        <div class="cluster-header" onclick="toggleCluster(4)">
+            <div>
+                <span class="cluster-title">Cluster #4</span>
+                <span class="badge exact">exact</span>
+                <span class="badge confidence-medium">100% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\components\ui\errors.ts</li>
+                <li class="file-item">src\utils\errors.ts</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: MERGE (Confidence: 70%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: errors.ts</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 15 symbols</li>
+                    <li>errors.ts has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\components\ui\errors.ts</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="5">
+        <div class="cluster-header" onclick="toggleCluster(5)">
+            <div>
+                <span class="cluster-title">Cluster #5</span>
+                <span class="badge exact">exact</span>
+                <span class="badge confidence-medium">100% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\components\ui\EventBus.ts</li>
+                <li class="file-item">src\runtime\EventBus.ts</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: MERGE (Confidence: 70%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: EventBus.ts</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 10 symbols</li>
+                    <li>EventBus.ts has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\components\ui\EventBus.ts</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="6">
+        <div class="cluster-header" onclick="toggleCluster(6)">
+            <div>
+                <span class="cluster-title">Cluster #6</span>
+                <span class="badge exact">exact</span>
+                <span class="badge confidence-medium">100% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\services\geminiService.ts</li>
+                <li class="file-item">src\services\ai\geminiService.ts</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: MERGE (Confidence: 70%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: geminiService.ts</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 1 symbols</li>
+                    <li>geminiService.ts has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\services\geminiService.ts</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="7">
+        <div class="cluster-header" onclick="toggleCluster(7)">
+            <div>
+                <span class="cluster-title">Cluster #7</span>
+                <span class="badge structural">structural</span>
+                <span class="badge confidence-medium">99% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\vite.ts</li>
+                <li class="file-item">src\vitest\config.ts</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: MERGE (Confidence: 69%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: vite.ts</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 2 symbols</li>
+                    <li>config.ts has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\vite.ts</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="8">
+        <div class="cluster-header" onclick="toggleCluster(8)">
+            <div>
+                <span class="cluster-title">Cluster #8</span>
+                <span class="badge structural">structural</span>
+                <span class="badge confidence-medium">98% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\types\codeIntelligence.ts</li>
+                <li class="file-item">types\codeIntelligence.ts</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: MERGE (Confidence: 69%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: codeIntelligence.ts</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 17 symbols</li>
+                    <li>codeIntelligence.ts has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\types\codeIntelligence.ts</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="9">
+        <div class="cluster-header" onclick="toggleCluster(9)">
+            <div>
+                <span class="cluster-title">Cluster #9</span>
+                <span class="badge structural">structural</span>
+                <span class="badge confidence-medium">99% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\types\common.ts</li>
+                <li class="file-item">types\common.ts</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: MERGE (Confidence: 69%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: common.ts</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 39 symbols</li>
+                    <li>common.ts has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\types\common.ts</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="10">
+        <div class="cluster-header" onclick="toggleCluster(10)">
+            <div>
+                <span class="cluster-title">Cluster #10</span>
+                <span class="badge structural">structural</span>
+                <span class="badge confidence-medium">96% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\types\prettier.d.ts</li>
+                <li class="file-item">types\prettier.d.ts</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: MERGE (Confidence: 68%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: prettier.d.ts</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 8 symbols</li>
+                    <li>prettier.d.ts has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\types\prettier.d.ts</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="11">
+        <div class="cluster-header" onclick="toggleCluster(11)">
+            <div>
+                <span class="cluster-title">Cluster #11</span>
+                <span class="badge semantic">semantic</span>
+                <span class="badge confidence-low">75% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">docs\REFACTORING_STAGE_1_PART_1_TOP_LEVEL.md</li>
+                <li class="file-item">src\constants.ts</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: REVIEW (Confidence: 45%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: REFACTORING_STAGE_1_PART_1_TOP_LEVEL.md</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 2 symbols</li>
+                    <li>constants.ts has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\docs\REFACTORING_STAGE_1_PART_1_TOP_LEVEL.md</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="12">
+        <div class="cluster-header" onclick="toggleCluster(12)">
+            <div>
+                <span class="cluster-title">Cluster #12</span>
+                <span class="badge semantic">semantic</span>
+                <span class="badge confidence-low">75% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\components\sidebar\EnhancedFileTree.tsx</li>
+                <li class="file-item">src\components\sidebar\file-tree\FileTreeVirtualized.tsx</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: REVIEW (Confidence: 55%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: FileTreeVirtualized.tsx</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 5 symbols</li>
+                    <li>EnhancedFileTree.tsx has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\components\sidebar\file-tree\FileTreeVirtualized.tsx</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cluster" data-cluster-id="13">
+        <div class="cluster-header" onclick="toggleCluster(13)">
+            <div>
+                <span class="cluster-title">Cluster #13</span>
+                <span class="badge semantic">semantic</span>
+                <span class="badge confidence-low">75% similar</span>
+            </div>
+            <span>▼</span>
+        </div>
+        <div class="cluster-content">
+            <ul class="file-list">
+                <li class="file-item">src\components\ui\errorHandler.ts</li>
+                <li class="file-item">src\utils\errorHandler.ts</li>
+            </ul>
+            <div class="recommendation">
+                <div class="recommendation-title">💡 Recommended Action: REVIEW (Confidence: 55%)</div>
+                <ul class="reasoning-list">
+                    <li>Recommended base: errorHandler.ts</li>
+                    <li>Base has 0 references</li>
+                    <li>Base exports 2 symbols</li>
+                    <li>errorHandler.ts has no references</li>
+
+                </ul>
+                <div style="margin-top: 16px;">
+                    <strong>Merge Strategy:</strong>
+                    <ul class="reasoning-list">
+                        <li>Base: project\G-studio\G-Studio-v4.4_1-Integratedzi\src\components\ui\errorHandler.ts</li>
+                        <li>Impact: Low UI risk</li>
+                        <li>Preserve: All logic from base file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        
+<div class="section">
+    <div class="section-header">
+        <h2 class="section-title">⚠️ Same-Name Conflicts</h2>
+        <span class="badge warning">38 conflicts</span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Locations</th>
+                <th>Recommended</th>
+                <th>Risk</th>
+                <th>Confidence</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td><strong>analysis_report.json</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    reports\2026-02-10_21-51-26\analysis_report.json
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>index.css</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    index.css
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>index.ts</strong></td>
+                <td>44 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\hooks\index.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>index.tsx</strong></td>
+                <td>3 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\features\ai\gemini-tester\index.tsx
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>package-lock.json</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    package-lock.json
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>package.json</strong></td>
+                <td>3 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    package.json
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-medium">62%</td>
+            </tr>
+
+            <tr>
+                <td><strong>tsconfig.json</strong></td>
+                <td>3 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    tsconfig.json
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-medium">63%</td>
+            </tr>
+
+            <tr>
+                <td><strong>README.md</strong></td>
+                <td>6 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    docs\README.md
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>policyEngine.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    governance\enforcement\policyEngine.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>dashboard.html</strong></td>
+                <td>3 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    reports\2026-02-10_21-51-26\dashboard.html
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>complete_analysis.json</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    reports\2026-02-10_22-56-02\complete_analysis.json
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">50%</td>
+            </tr>
+
+            <tr>
+                <td><strong>App.tsx</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\App.tsx
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">50%</td>
+            </tr>
+
+            <tr>
+                <td><strong>constants.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\config\constants.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>react.ts</strong></td>
+                <td>3 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\monaco-editor\react.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">56%</td>
+            </tr>
+
+            <tr>
+                <td><strong>ErrorBoundary.tsx</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\components\ui\ErrorBoundary.tsx
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-medium">72%</td>
+            </tr>
+
+            <tr>
+                <td><strong>ConversationSidebar.tsx</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\components\conversation\ConversationSidebar.tsx
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">50%</td>
+            </tr>
+
+            <tr>
+                <td><strong>FileTreeTypes.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\components\sidebar\FileTreeTypes.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">50%</td>
+            </tr>
+
+            <tr>
+                <td><strong>errorHandler.ts</strong></td>
+                <td>4 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\services\errorHandler.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-medium">61%</td>
+            </tr>
+
+            <tr>
+                <td><strong>errors.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\components\ui\errors.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">50%</td>
+            </tr>
+
+            <tr>
+                <td><strong>EventBus.ts</strong></td>
+                <td>3 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\components\ui\EventBus.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">50%</td>
+            </tr>
+
+            <tr>
+                <td><strong>HelpSystem.tsx</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\features\help\HelpSystem.tsx
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>config.ts</strong></td>
+                <td>3 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\llm\config.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>types.ts</strong></td>
+                <td>7 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\types\types.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>context.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\llm\context.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-medium">66%</td>
+            </tr>
+
+            <tr>
+                <td><strong>contextManager.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\services\storage\contextManager.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>databaseService.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\services\storage\databaseService.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>filesystemAdapter.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\services\code\filesystemAdapter.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>GeminiClient.ts</strong></td>
+                <td>3 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\services\ai\gemini\GeminiClient.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">56%</td>
+            </tr>
+
+            <tr>
+                <td><strong>geminiService.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\services\geminiService.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">50%</td>
+            </tr>
+
+            <tr>
+                <td><strong>secureStorage.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\services\security\secureStorage.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>telemetryService.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\services\monitoring\telemetryService.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>toolValidator.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\services\security\toolValidator.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>RetryPolicy.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\services\gemini\RetryPolicy.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>apiClient.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\utils\apiClient.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">95%</td>
+            </tr>
+
+            <tr>
+                <td><strong>codeIntelligence.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\types\codeIntelligence.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">50%</td>
+            </tr>
+
+            <tr>
+                <td><strong>common.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\types\common.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">50%</td>
+            </tr>
+
+            <tr>
+                <td><strong>ipc.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    vscode-extension\src\ipc.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-high">89%</td>
+            </tr>
+
+            <tr>
+                <td><strong>prettier.d.ts</strong></td>
+                <td>2 locations</td>
+                <td style="font-family: monospace; font-size: 12px;">
+                    src\types\prettier.d.ts
+                </td>
+                <td><span class="badge low">LOW</span></td>
+                <td class="confidence-low">50%</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+        
+<div class="section">
+    <div class="section-header">
+        <h2 class="section-title">🗑️ Unused Files</h2>
+        <span class="badge danger">251 files</span>
+    </div>
+    <p style="color: var(--text-secondary); margin-bottom: 20px;">
+        Files with exports but no references. Review carefully before removal.
+    </p>
+    <ul class="file-list">
+
+        <li class="file-item">
+            vitest.config.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                44 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\CHECKPOINT_3.2_HIGH_IMPACT_FIXES_COMPLETE.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                421 lines | 13 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\COMPREHENSIVE_PROJECT_ANALYSIS.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                971 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\FIXES_APPLIED_SUMMARY.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                340 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\G-STUDIO-UI-FIX-ANALYSIS-REPORT.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                1585 lines | 4 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\G-STUDIO_AI_AGENT_PROMPT.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                1439 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\G_STUDIO_EXECUTION_ROADMAP.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                1071 lines | 18 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\G_STUDIO_EXECUTION_ROADMAP_V2.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                2263 lines | 39 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\IMPLEMENTATION_CHECKLIST.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                823 lines | 20 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\PHASE1_STRUCTURAL_FIXES.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                71 lines | 9 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\PHASE_4_PERFORMANCE_OPTIMIZATION.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                246 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\PHASE_6_CUSTOM_PROVIDER_SYSTEM.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                503 lines | 11 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\PROJECT_ANALYSIS.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                863 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\REACT_BEST_PRACTICES_GUIDE.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                254 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\REACT_INFINITE_LOOP_FIXES_APPLIED.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                150 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\REFACTORING_STAGE_1_PART_1_TOP_LEVEL.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                330 lines | 2 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\REFACTORING_STAGE_1_PART_2_SERVICES.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                1087 lines | 2 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\REFACTORING_STAGE_1_PART_3_COMPONENTS_FEATURES_HOOKS.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                984 lines | 5 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\RIBBON_UI_IMPROVEMENTS.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                338 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\RUNTIME_ERROR_FIX.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                66 lines | 9 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\RUNTIME_FIXES_COMPLETE.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                139 lines | 9 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\TECHNICAL_FIX_DETAILS.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                316 lines | 10 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            docs\UI_FIX_PLAN.md
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                497 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            governance\enforcement\capabilityResolver.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                667 lines | 15 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            governance\enforcement\policyEngine.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                485 lines | 17 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            governance\enforcement\validator.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                315 lines | 9 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            scripts\file-optimizer.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                1464 lines | 3 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            scripts\project-file-comparison.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                1168 lines | 3 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            scripts\runtime-verification.js
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                153 lines | 4 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            scripts\runtime-verification.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                209 lines | 2 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            scripts\src-directory-analyzer.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                1179 lines | 3 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\monaco-editor.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                17 lines | 2 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\path.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                17 lines | 2 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\react.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                27 lines | 2 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\vite.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                17 lines | 2 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\EditorTabs.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                3 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\ErrorBoundary.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                114 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\InputArea.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                3 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\InspectorPanel.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                3 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\MessageList.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                3 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\Sidebar.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                3 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\app\AppNew.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                455 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\app\AppProvider.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                423 lines | 7 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\chat\ChatSidebar.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                25 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\chat\ChatView.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                110 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\chat\ConversationBranching.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                222 lines | 4 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\chat\EnhancedInputArea.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                574 lines | 4 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\chat\InputArea.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                676 lines | 2 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\chat\StreamingStatus.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                145 lines | 1 exports
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\components\chat\VirtualizedMessageList.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                460 lines | 3 exports
+            </span>
+        </li>
+
+        <li class="file-item" style="text-align: center; color: var(--text-secondary);">
+            ... and 201 more
+        </li>
+
+    </ul>
+</div>
+
+        
+<div class="section">
+    <div class="section-header">
+        <h2 class="section-title">🔌 Unwired Features</h2>
+        <span class="badge warning">6 features</span>
+    </div>
+    <p style="color: var(--text-secondary); margin-bottom: 20px;">
+        Substantial features with meaningful logic that are not integrated into the application.
+    </p>
+    <ul class="file-list">
+
+        <li class="file-item">
+            src\components\ui\index.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                69 lines | 27 exports | UI Component
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\features\index.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                95 lines | 26 exports | Core Logic
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\features\ai\gemini-tester\index.tsx
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                189 lines | 20 exports | UI Component
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\services\index.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                69 lines | 13 exports | Service
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\services\gemini\index.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                298 lines | 7 exports | Service
+            </span>
+        </li>
+
+        <li class="file-item">
+            src\services\mcp\index.ts
+            <span style="color: var(--text-secondary); margin-left: 12px;">
+                152 lines | 5 exports | Service
+            </span>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+    <script>
+// File data
+const files = [{"path": ".eslintrc.json", "name": ".eslintrc.json", "category": "Configuration", "size": 1237, "lines": 55, "references": 0, "risk": 0.0, "stability": 25.328813782223396}, {"path": "analysis_report.json", "name": "analysis_report.json", "category": "Configuration", "size": 3424, "lines": 121, "references": 0, "risk": 0.0, "stability": 32.08602437689625}, {"path": "CHANGELOG-AUTO.md", "name": "CHANGELOG-AUTO.md", "category": "Core Logic", "size": 4082, "lines": 65, "references": 0, "risk": 0.0, "stability": 26.486726477962954}, {"path": "index-enhanced.css", "name": "index-enhanced.css", "category": "Asset", "size": 11274, "lines": 448, "references": 0, "risk": 0.0, "stability": 39.828813782204904}, {"path": "index.css", "name": "index.css", "category": "Asset", "size": 19794, "lines": 828, "references": 0, "risk": 0.0, "stability": 39.828813782202424}, {"path": "index.html", "name": "index.html", "category": "Core Logic", "size": 1579, "lines": 28, "references": 0, "risk": 0.0, "stability": 22.62881378220022}, {"path": "index.ts", "name": "index.ts", "category": "Core Logic", "size": 65, "lines": 3, "references": 0, "risk": 30.0, "stability": 20.12881378219801}, {"path": "index.tsx", "name": "index.tsx", "category": "UI Component", "size": 517, "lines": 22, "references": 0, "risk": 30.0, "stability": 22.02881378219663}, {"path": "jest.config.js", "name": "jest.config.js", "category": "Configuration", "size": 2017, "lines": 58, "references": 0, "risk": 0.0, "stability": 27.628813782194424}, {"path": "jest.setup.js", "name": "jest.setup.js", "category": "Core Logic", "size": 3217, "lines": 137, "references": 0, "risk": 0.0, "stability": 33.52881378219332}, {"path": "metadata.json", "name": "metadata.json", "category": "Configuration", "size": 265, "lines": 7, "references": 0, "risk": 0.0, "stability": 20.528813782190834}, {"path": "package-lock.json", "name": "package-lock.json", "category": "Configuration", "size": 268475, "lines": 7496, "references": 0, "risk": 0.0, "stability": 39.98255071444534}, {"path": "package.json", "name": "package.json", "category": "Configuration", "size": 2197, "lines": 69, "references": 0, "risk": 0.0, "stability": 26.88255057052109}, {"path": "pnpm-lock.yaml", "name": "pnpm-lock.yaml", "category": "Configuration", "size": 142937, "lines": 4364, "references": 0, "risk": 0.0, "stability": 39.82881378218532}, {"path": "postcss.config.js", "name": "postcss.config.js", "category": "Configuration", "size": 91, "lines": 7, "references": 0, "risk": 0.0, "stability": 22.528813782183935}, {"path": "project-analysis-report.html", "name": "project-analysis-report.html", "category": "UI Component", "size": 1014818, "lines": 17570, "references": 0, "risk": 0.0, "stability": 39.98672634063744}, {"path": "project-analysis-report.json", "name": "project-analysis-report.json", "category": "Configuration", "size": 2911470, "lines": 89355, "references": 0, "risk": 20.0, "stability": 59.98672647793536}, {"path": "project-structure.html", "name": "project-structure.html", "category": "Core Logic", "size": 24083, "lines": 582, "references": 0, "risk": 0.0, "stability": 39.828813782178145}, {"path": "tailwind.config.js", "name": "tailwind.config.js", "category": "Configuration", "size": 8402, "lines": 215, "references": 0, "risk": 0.0, "stability": 41.828813782175935}, {"path": "tsconfig.json", "name": "tsconfig.json", "category": "Configuration", "size": 1532, "lines": 47, "references": 0, "risk": 0.0, "stability": 24.62780452291557}, {"path": "tsconfig.strict.json", "name": "tsconfig.strict.json", "category": "Configuration", "size": 370, "lines": 20, "references": 0, "risk": 0.0, "stability": 21.828813782172347}, {"path": "ts_fixer_report.json", "name": "ts_fixer_report.json", "category": "Configuration", "size": 1120, "lines": 48, "references": 0, "risk": 0.0, "stability": 24.78281608634801}, {"path": "vite.config.ts", "name": "vite.config.ts", "category": "Configuration", "size": 1537, "lines": 65, "references": 0, "risk": 0.0, "stability": 28.32881378217014}, {"path": "vitest.config.ts", "name": "vitest.config.ts", "category": "Test", "size": 1212, "lines": 44, "references": 0, "risk": 0.0, "stability": 26.228813782167933}, {"path": "analysis\\system_map.json", "name": "system_map.json", "category": "Configuration", "size": 1971, "lines": 54, "references": 0, "risk": 0.0, "stability": 25.228813782166554}, {"path": "analysis\\tool_inventory.json", "name": "tool_inventory.json", "category": "Configuration", "size": 4096, "lines": 147, "references": 0, "risk": 0.0, "stability": 34.52881378216434}, {"path": "assets\\README.md", "name": "README.md", "category": "Asset", "size": 1592, "lines": 59, "references": 0, "risk": 0.0, "stability": 25.728813782163243}, {"path": "docs\\AI_SETTINGS_HUB_REDESIGN_COMPLETE.md", "name": "AI_SETTINGS_HUB_REDESIGN_COMPLETE.md", "category": "Core Logic", "size": 8340, "lines": 282, "references": 0, "risk": 0.0, "stability": 39.82881378216076}, {"path": "docs\\ALL_FIXES_SUMMARY.md", "name": "ALL_FIXES_SUMMARY.md", "category": "Core Logic", "size": 9541, "lines": 380, "references": 0, "risk": 0.0, "stability": 39.828813782159656}, {"path": "docs\\ALL_ISSUES_FIXED_SUMMARY.md", "name": "ALL_ISSUES_FIXED_SUMMARY.md", "category": "Core Logic", "size": 9361, "lines": 391, "references": 0, "risk": 0.0, "stability": 39.82881378215745}, {"path": "docs\\ALL_PHASES_COMPLETE_SUMMARY.md", "name": "ALL_PHASES_COMPLETE_SUMMARY.md", "category": "Core Logic", "size": 0, "lines": 1, "references": 0, "risk": 0.0, "stability": 19.928813782156343}, {"path": "docs\\ALL_RUNTIME_FIXES_COMPLETE.md", "name": "ALL_RUNTIME_FIXES_COMPLETE.md", "category": "Core Logic", "size": 0, "lines": 1, "references": 0, "risk": 0.0, "stability": 19.928813782154965}, {"path": "docs\\ANALYSIS_AND_RECOMMENDATIONS.md", "name": "ANALYSIS_AND_RECOMMENDATIONS.md", "category": "UI Component", "size": 9491, "lines": 365, "references": 0, "risk": 0.0, "stability": 39.82881378215275}, {"path": "docs\\APP_RUNNING_SUCCESS.md", "name": "APP_RUNNING_SUCCESS.md", "category": "Core Logic", "size": 0, "lines": 1, "references": 0, "risk": 0.0, "stability": 19.928813782151654}, {"path": "docs\\CHANGELOG.md", "name": "CHANGELOG.md", "category": "Core Logic", "size": 6347, "lines": 184, "references": 0, "risk": 0.0, "stability": 38.22881378215055}, {"path": "docs\\CHECKPOINT_3.1_ERROR_INTELLIGENCE_COMPLETE.md", "name": "CHECKPOINT_3.1_ERROR_INTELLIGENCE_COMPLETE.md", "category": "Core Logic", "size": 17064, "lines": 455, "references": 0, "risk": 0.0, "stability": 39.87509155992584}, {"path": "docs\\CHECKPOINT_3.2_HIGH_IMPACT_CORE_FIXES_COMPLETE.md", "name": "CHECKPOINT_3.2_HIGH_IMPACT_CORE_FIXES_COMPLETE.md", "category": "Core Logic", "size": 4805, "lines": 166, "references": 0, "risk": 2.0, "stability": 36.49828947659141}, {"path": "docs\\CHECKPOINT_3.2_HIGH_IMPACT_FIXES_COMPLETE.md", "name": "CHECKPOINT_3.2_HIGH_IMPACT_FIXES_COMPLETE.md", "category": "Core Logic", "size": 15246, "lines": 421, "references": 0, "risk": 0.0, "stability": 59.89861933770031}, {"path": "docs\\COMPACT_SETTINGS_MODAL_COMPLETE.md", "name": "COMPACT_SETTINGS_MODAL_COMPLETE.md", "category": "Core Logic", "size": 4226, "lines": 129, "references": 0, "risk": 0.0, "stability": 32.72881378214365}, {"path": "docs\\COMPLETE_IMPLEMENTATION_SUMMARY.md", "name": "COMPLETE_IMPLEMENTATION_SUMMARY.md", "category": "Core Logic", "size": 0, "lines": 1, "references": 0, "risk": 0.0, "stability": 19.92881378214227}, {"path": "docs\\COMPLETE_INSTALLATION_GUIDE.md", "name": "COMPLETE_INSTALLATION_GUIDE.md", "category": "Test", "size": 8441, "lines": 285, "references": 0, "risk": 2.0, "stability": 39.82881378214006}, {"path": "docs\\COMPLETE_PROJECT_DELIVERY.md", "name": "COMPLETE_PROJECT_DELIVERY.md", "category": "Core Logic", "size": 15015, "lines": 555, "references": 0, "risk": 0.0, "stability": 39.89936470806488}, {"path": "docs\\COMPREHENSIVE_PROJECT_ANALYSIS.md", "name": "COMPREHENSIVE_PROJECT_ANALYSIS.md", "category": "UI Component", "size": 26466, "lines": 971, "references": 0, "risk": 2.0, "stability": 41.82881378213786}, {"path": "docs\\CRASH_FIXES_APPLIED.md", "name": "CRASH_FIXES_APPLIED.md", "category": "Core Logic", "size": 4183, "lines": 142, "references": 0, "risk": 0.0, "stability": 34.02881378213537}, {"path": "docs\\CRITICAL_FIXES_IMPLEMENTATION.md", "name": "CRITICAL_FIXES_IMPLEMENTATION.md", "category": "Core Logic", "size": 3375, "lines": 113, "references": 0, "risk": 0.0, "stability": 31.128813782134266}, {"path": "docs\\CUSTOM_PROVIDERS_GUIDE.md", "name": "CUSTOM_PROVIDERS_GUIDE.md", "category": "Core Logic", "size": 6536, "lines": 235, "references": 0, "risk": 0.0, "stability": 39.82881378213206}, {"path": "docs\\DELIVERY_MANIFEST.md", "name": "DELIVERY_MANIFEST.md", "category": "Core Logic", "size": 6907, "lines": 259, "references": 0, "risk": 0.0, "stability": 39.898779059908456}, {"path": "docs\\DELIVERY_NOTES.md", "name": "DELIVERY_NOTES.md", "category": "Core Logic", "size": 9825, "lines": 404, "references": 0, "risk": 0.0, "stability": 39.82881378212957}, {"path": "docs\\ERROR_HANDLING_BEST_PRACTICES.md", "name": "ERROR_HANDLING_BEST_PRACTICES.md", "category": "Test", "size": 10686, "lines": 450, "references": 0, "risk": 4.0, "stability": 39.82881378212737}, {"path": "docs\\execution_plan.md", "name": "execution_plan.md", "category": "Core Logic", "size": 7982, "lines": 254, "references": 0, "risk": 0.0, "stability": 39.82881378212626}, {"path": "docs\\file-optimization-report.md", "name": "file-optimization-report.md", "category": "Core Logic", "size": 48629, "lines": 1027, "references": 0, "risk": 0.0, "stability": 39.82881378212378}, {"path": "docs\\FIXES_APPLIED_SUMMARY.md", "name": "FIXES_APPLIED_SUMMARY.md", "category": "Core Logic", "size": 8868, "lines": 340, "references": 0, "risk": 0.0, "stability": 41.82881378212268}, {"path": "docs\\FIX_404_ERROR.md", "name": "FIX_404_ERROR.md", "category": "Core Logic", "size": 6084, "lines": 307, "references": 0, "risk": 0.0, "stability": 39.82881378212157}, {"path": "docs\\FIX_SUMMARY.md", "name": "FIX_SUMMARY.md", "category": "Core Logic", "size": 5440, "lines": 195, "references": 0, "risk": 0.0, "stability": 39.45382304137835}, {"path": "docs\\G-STUDIO-UI-FIX-ANALYSIS-REPORT.md", "name": "G-STUDIO-UI-FIX-ANALYSIS-REPORT.md", "category": "UI Component", "size": 42358, "lines": 1585, "references": 0, "risk": 0.0, "stability": 47.82881378211799}, {"path": "docs\\G-STUDIO_AI_AGENT_PROMPT.md", "name": "G-STUDIO_AI_AGENT_PROMPT.md", "category": "UI Component", "size": 43616, "lines": 1439, "references": 0, "risk": 0.0, "stability": 41.82881378211577}, {"path": "docs\\G_STUDIO_EXECUTION_ROADMAP.md", "name": "G_STUDIO_EXECUTION_ROADMAP.md", "category": "UI Component", "size": 26868, "lines": 1071, "references": 0, "risk": 4.0, "stability": 59.82881378211467}, {"path": "docs\\G_STUDIO_EXECUTION_ROADMAP_V2.md", "name": "G_STUDIO_EXECUTION_ROADMAP_V2.md", "category": "UI Component", "size": 56269, "lines": 2263, "references": 0, "risk": 8.0, "stability": 59.82881378211219}, {"path": "docs\\IMPLEMENTATION_CHECKLIST.md", "name": "IMPLEMENTATION_CHECKLIST.md", "category": "UI Component", "size": 19876, "lines": 823, "references": 0, "risk": 0.0, "stability": 59.82881378210998}, {"path": "docs\\IMPLEMENTATION_GUIDE_FA.md", "name": "IMPLEMENTATION_GUIDE_FA.md", "category": "Core Logic", "size": 10838, "lines": 389, "references": 0, "risk": 0.0, "stability": 39.82881378210888}, {"path": "docs\\IMPLEMENTATION_GUIDE_V2.md", "name": "IMPLEMENTATION_GUIDE_V2.md", "category": "Core Logic", "size": 2110, "lines": 41, "references": 0, "risk": 0.0, "stability": 23.928813782107778}, {"path": "docs\\IMPLEMENTATION_PLAN_UPDATES.md", "name": "IMPLEMENTATION_PLAN_UPDATES.md", "category": "Core Logic", "size": 11689, "lines": 465, "references": 0, "risk": 0.0, "stability": 39.82881378210529}, {"path": "docs\\INDEX.md", "name": "INDEX.md", "category": "Core Logic", "size": 8782, "lines": 237, "references": 0, "risk": 0.0, "stability": 39.82881378210419}, {"path": "docs\\INSTALLATION_COMPLETE.md", "name": "INSTALLATION_COMPLETE.md", "category": "Core Logic", "size": 4180, "lines": 168, "references": 0, "risk": 0.0, "stability": 36.628813782101986}, {"path": "docs\\INSTALLATION_SOLUTION.md", "name": "INSTALLATION_SOLUTION.md", "category": "Core Logic", "size": 3665, "lines": 142, "references": 0, "risk": 0.0, "stability": 34.0288137821006}, {"path": "docs\\INSTALL_INSTRUCTIONS.md", "name": "INSTALL_INSTRUCTIONS.md", "category": "Core Logic", "size": 6360, "lines": 307, "references": 0, "risk": 0.0, "stability": 39.828813782099495}, {"path": "docs\\INTEGRATION-COMPLETE.md", "name": "INTEGRATION-COMPLETE.md", "category": "Core Logic", "size": 10387, "lines": 430, "references": 0, "risk": 0.0, "stability": 39.828813782097285}, {"path": "docs\\INTEGRATION-SUCCESS.md", "name": "INTEGRATION-SUCCESS.md", "category": "Core Logic", "size": 11975, "lines": 476, "references": 0, "risk": 0.0, "stability": 39.828813782096184}, {"path": "docs\\INTEGRATION_SUMMARY.md", "name": "INTEGRATION_SUMMARY.md", "category": "Core Logic", "size": 8764, "lines": 344, "references": 0, "risk": 0.0, "stability": 39.828813782093704}, {"path": "docs\\MONACO_EDITOR_FIX.md", "name": "MONACO_EDITOR_FIX.md", "category": "Core Logic", "size": 5617, "lines": 241, "references": 0, "risk": 0.0, "stability": 39.828813782092595}, {"path": "docs\\NEXUSAI_INTEGRATION_COMPLETE.md", "name": "NEXUSAI_INTEGRATION_COMPLETE.md", "category": "UI Component", "size": 8642, "lines": 305, "references": 0, "risk": 0.0, "stability": 39.828813782091494}, {"path": "docs\\PACKAGE_IMPROVEMENTS.md", "name": "PACKAGE_IMPROVEMENTS.md", "category": "UI Component", "size": 7833, "lines": 342, "references": 0, "risk": 2.0, "stability": 39.828813782089014}, {"path": "docs\\PHASE1_STRUCTURAL_FIXES.md", "name": "PHASE1_STRUCTURAL_FIXES.md", "category": "Core Logic", "size": 4959, "lines": 71, "references": 0, "risk": 0.0, "stability": 44.92881378208791}, {"path": "docs\\PHASE_3_STATE_MANAGEMENT_COMPLETE.md", "name": "PHASE_3_STATE_MANAGEMENT_COMPLETE.md", "category": "State Management", "size": 9814, "lines": 371, "references": 0, "risk": 0.0, "stability": 39.828813782086804}, {"path": "docs\\PHASE_4_PERFORMANCE_OPTIMIZATION.md", "name": "PHASE_4_PERFORMANCE_OPTIMIZATION.md", "category": "Core Logic", "size": 6009, "lines": 246, "references": 0, "risk": 0.0, "stability": 41.828813782084595}, {"path": "docs\\PHASE_6_CUSTOM_PROVIDER_SYSTEM.md", "name": "PHASE_6_CUSTOM_PROVIDER_SYSTEM.md", "category": "Test", "size": 19642, "lines": 503, "references": 0, "risk": 6.0, "stability": 59.828813782083216}, {"path": "docs\\PHASE_6_IMPLEMENTATION_COMPLETE.md", "name": "PHASE_6_IMPLEMENTATION_COMPLETE.md", "category": "Core Logic", "size": 9571, "lines": 298, "references": 0, "risk": 0.0, "stability": 39.828813782081006}, {"path": "docs\\PROJECT_ANALYSIS.md", "name": "PROJECT_ANALYSIS.md", "category": "UI Component", "size": 22818, "lines": 863, "references": 0, "risk": 4.0, "stability": 41.828813782079905}, {"path": "docs\\PROJECT_ANALYSIS_COMPLETE.md", "name": "PROJECT_ANALYSIS_COMPLETE.md", "category": "UI Component", "size": 15784, "lines": 611, "references": 0, "risk": 0.0, "stability": 39.8288137820788}, {"path": "docs\\PROJECT_ORGANIZATION_COMPLETE.md", "name": "PROJECT_ORGANIZATION_COMPLETE.md", "category": "Core Logic", "size": 13272, "lines": 440, "references": 0, "risk": 0.0, "stability": 39.82881378207632}, {"path": "docs\\project_restructure_prompt.md", "name": "project_restructure_prompt.md", "category": "Core Logic", "size": 17050, "lines": 474, "references": 0, "risk": 0.0, "stability": 39.828813782075215}, {"path": "docs\\PROJECT_REVIEW_AND_OPTIMIZATION.md", "name": "PROJECT_REVIEW_AND_OPTIMIZATION.md", "category": "UI Component", "size": 10038, "lines": 336, "references": 0, "risk": 0.0, "stability": 39.82881378207411}, {"path": "docs\\PROMISE_REJECTION_AND_NETWORK_FIXES.md", "name": "PROMISE_REJECTION_AND_NETWORK_FIXES.md", "category": "Test", "size": 8789, "lines": 316, "references": 0, "risk": 0.0, "stability": 39.82881378207163}, {"path": "docs\\QUICK-START-NEW-COMPONENTS.md", "name": "QUICK-START-NEW-COMPONENTS.md", "category": "UI Component", "size": 0, "lines": 1, "references": 0, "risk": 0.0, "stability": 19.928813782070524}, {"path": "docs\\QUICK_START_AFTER_ALL_FIXES.md", "name": "QUICK_START_AFTER_ALL_FIXES.md", "category": "Core Logic", "size": 6065, "lines": 318, "references": 0, "risk": 0.0, "stability": 39.828813782068316}, {"path": "docs\\QUICK_START_AFTER_FIXES.md", "name": "QUICK_START_AFTER_FIXES.md", "category": "Core Logic", "size": 5055, "lines": 270, "references": 0, "risk": 0.0, "stability": 39.828813782067215}, {"path": "docs\\QUICK_START_GUIDE.md", "name": "QUICK_START_GUIDE.md", "category": "UI Component", "size": 7256, "lines": 316, "references": 0, "risk": 0.0, "stability": 39.828813782066106}, {"path": "docs\\RATE_LIMIT_GUIDE.md", "name": "RATE_LIMIT_GUIDE.md", "category": "Core Logic", "size": 2628, "lines": 83, "references": 0, "risk": 0.0, "stability": 28.128813782063624}, {"path": "docs\\REACT_BEST_PRACTICES_GUIDE.md", "name": "REACT_BEST_PRACTICES_GUIDE.md", "category": "UI Component", "size": 5758, "lines": 254, "references": 0, "risk": 0.0, "stability": 41.82881378206252}, {"path": "docs\\REACT_INFINITE_LOOP_FIXES_APPLIED.md", "name": "REACT_INFINITE_LOOP_FIXES_APPLIED.md", "category": "Core Logic", "size": 5020, "lines": 150, "references": 0, "risk": 0.0, "stability": 36.82881378206142}, {"path": "docs\\REACT_WINDOW_FIX_COMPLETE.md", "name": "REACT_WINDOW_FIX_COMPLETE.md", "category": "Core Logic", "size": 1611, "lines": 45, "references": 0, "risk": 0.0, "stability": 24.328813782058933}, {"path": "docs\\README.md", "name": "README.md", "category": "Core Logic", "size": 14065, "lines": 432, "references": 0, "risk": 0.0, "stability": 39.82881378205783}, {"path": "docs\\REFACTORING_STAGE_0_ORIENTATION.md", "name": "REFACTORING_STAGE_0_ORIENTATION.md", "category": "UI Component", "size": 39914, "lines": 1187, "references": 0, "risk": 0.0, "stability": 39.829400587611175}, {"path": "docs\\REFACTORING_STAGE_1_CHECKPOINT_1_COMPLETE.md", "name": "REFACTORING_STAGE_1_CHECKPOINT_1_COMPLETE.md", "category": "Core Logic", "size": 23906, "lines": 647, "references": 0, "risk": 0.0, "stability": 39.83065984686933}, {"path": "docs\\REFACTORING_STAGE_1_PART_1_TOP_LEVEL.md", "name": "REFACTORING_STAGE_1_PART_1_TOP_LEVEL.md", "category": "Core Logic", "size": 10862, "lines": 330, "references": 0, "risk": 0.0, "stability": 43.83009040242351}, {"path": "docs\\REFACTORING_STAGE_1_PART_2_SERVICES.md", "name": "REFACTORING_STAGE_1_PART_2_SERVICES.md", "category": "Service", "size": 32832, "lines": 1087, "references": 0, "risk": 0.0, "stability": 43.83032188390278}, {"path": "docs\\REFACTORING_STAGE_1_PART_3_COMPONENTS_FEATURES_HOOKS.md", "name": "REFACTORING_STAGE_1_PART_3_COMPONENTS_FEATURES_HOOKS.md", "category": "UI Component", "size": 29033, "lines": 984, "references": 0, "risk": 0.0, "stability": 49.83052211538316}, {"path": "docs\\REFACTORING_STAGE_3_IMPLEMENTATION_PLAN.md", "name": "REFACTORING_STAGE_3_IMPLEMENTATION_PLAN.md", "category": "Core Logic", "size": 8405, "lines": 257, "references": 0, "risk": 0.0, "stability": 39.87288554130798}, {"path": "docs\\REFACTOR_V2_README.md", "name": "REFACTOR_V2_README.md", "category": "Core Logic", "size": 1406, "lines": 24, "references": 0, "risk": 0.0, "stability": 22.228813782046238}, {"path": "docs\\RESTRUCTURE_TO_SRC.md", "name": "RESTRUCTURE_TO_SRC.md", "category": "Core Logic", "size": 3078, "lines": 51, "references": 0, "risk": 0.0, "stability": 24.928813782045136}, {"path": "docs\\RIBBON_UI_IMPROVEMENTS.md", "name": "RIBBON_UI_IMPROVEMENTS.md", "category": "UI Component", "size": 9084, "lines": 338, "references": 0, "risk": 0.0, "stability": 41.82881378204403}, {"path": "docs\\ROBOT_PROMPT.md", "name": "ROBOT_PROMPT.md", "category": "UI Component", "size": 3405, "lines": 70, "references": 0, "risk": 0.0, "stability": 26.828813782041546}, {"path": "docs\\RUNTIME_ERROR_FIX.md", "name": "RUNTIME_ERROR_FIX.md", "category": "Core Logic", "size": 2098, "lines": 66, "references": 0, "risk": 0.0, "stability": 44.42881378204045}, {"path": "docs\\RUNTIME_FIXES_COMPLETE.md", "name": "RUNTIME_FIXES_COMPLETE.md", "category": "Core Logic", "size": 4798, "lines": 139, "references": 0, "risk": 0.0, "stability": 51.72881378203823}, {"path": "docs\\src-directory-analysis-report.md", "name": "src-directory-analysis-report.md", "category": "UI Component", "size": 258459, "lines": 5874, "references": 0, "risk": 0.0, "stability": 39.82881378203713}, {"path": "docs\\STATE_MANAGEMENT_GUIDE.md", "name": "STATE_MANAGEMENT_GUIDE.md", "category": "State Management", "size": 12410, "lines": 560, "references": 0, "risk": 0.0, "stability": 39.82881378203575}, {"path": "docs\\TECHNICAL_FIX_DETAILS.md", "name": "TECHNICAL_FIX_DETAILS.md", "category": "Core Logic", "size": 8638, "lines": 316, "references": 0, "risk": 18.0, "stability": 59.95382304129281}, {"path": "docs\\ts_fixer_report.md", "name": "ts_fixer_report.md", "category": "Core Logic", "size": 464, "lines": 28, "references": 0, "risk": 0.0, "stability": 22.781774600574266}, {"path": "docs\\TYPESCRIPT_FIX_COMPLETE_GUIDE.md", "name": "TYPESCRIPT_FIX_COMPLETE_GUIDE.md", "category": "Script", "size": 6687, "lines": 263, "references": 0, "risk": 0.0, "stability": 39.95382304128921}, {"path": "docs\\TYPESCRIPT_TYPE_DEFINITIONS_FIX.md", "name": "TYPESCRIPT_TYPE_DEFINITIONS_FIX.md", "category": "Script", "size": 0, "lines": 1, "references": 0, "risk": 0.0, "stability": 19.928813782028854}, {"path": "docs\\TYPESCRIPT_TYPE_DEFINITIONS_FIXED.md", "name": "TYPESCRIPT_TYPE_DEFINITIONS_FIXED.md", "category": "Script", "size": 8097, "lines": 324, "references": 0, "risk": 0.0, "stability": 39.82881378202775}, {"path": "docs\\UI_FIX_PLAN.md", "name": "UI_FIX_PLAN.md", "category": "UI Component", "size": 12819, "lines": 497, "references": 0, "risk": 0.0, "stability": 41.82881378202554}, {"path": "docs\\UI_FIX_PROMPT.md", "name": "UI_FIX_PROMPT.md", "category": "Core Logic", "size": 9277, "lines": 301, "references": 0, "risk": 0.0, "stability": 39.82881378202444}, {"path": "docs\\UI_IMPROVEMENTS_COMPLETE.md", "name": "UI_IMPROVEMENTS_COMPLETE.md", "category": "UI Component", "size": 9370, "lines": 311, "references": 0, "risk": 0.0, "stability": 39.82881378202306}, {"path": "docs\\VOICE_CHAT_GUIDE.md", "name": "VOICE_CHAT_GUIDE.md", "category": "Core Logic", "size": 6954, "lines": 276, "references": 0, "risk": 0.0, "stability": 39.82881378202085}, {"path": "docs\\guides\\voice-commands.md", "name": "voice-commands.md", "category": "Core Logic", "size": 1912, "lines": 60, "references": 0, "risk": 0.0, "stability": 25.828813782019747}, {"path": "governance\\GOLDEN_RUNTIME_UI_SPECIFICATION.md", "name": "GOLDEN_RUNTIME_UI_SPECIFICATION.md", "category": "Test", "size": 9490, "lines": 323, "references": 0, "risk": 0.0, "stability": 39.82881378201864}, {"path": "governance\\README.md", "name": "README.md", "category": "Core Logic", "size": 1768, "lines": 48, "references": 0, "risk": 0.0, "stability": 24.62881378201616}, {"path": "governance\\RFC-0001-Core-Tool-Execution.md", "name": "RFC-0001-Core-Tool-Execution.md", "category": "Test", "size": 15968, "lines": 580, "references": 0, "risk": 0.0, "stability": 39.82881378201506}, {"path": "governance\\RFC-0002-Sandbox-Isolation.md", "name": "RFC-0002-Sandbox-Isolation.md", "category": "Test", "size": 18883, "lines": 736, "references": 0, "risk": 0.0, "stability": 39.82881378201395}, {"path": "governance\\RFC-0003-Capability-System.md", "name": "RFC-0003-Capability-System.md", "category": "Core Logic", "size": 23526, "lines": 938, "references": 0, "risk": 0.0, "stability": 39.828813782011466}, {"path": "governance\\enforcement\\capabilityResolver.ts", "name": "capabilityResolver.ts", "category": "Core Logic", "size": 18040, "lines": 667, "references": 0, "risk": 0.0, "stability": 59.82881378200926}, {"path": "governance\\enforcement\\policyEngine.ts", "name": "policyEngine.ts", "category": "Core Logic", "size": 13221, "lines": 485, "references": 0, "risk": 0.0, "stability": 59.828813782008154}, {"path": "governance\\enforcement\\validator.ts", "name": "validator.ts", "category": "Core Logic", "size": 8913, "lines": 315, "references": 0, "risk": 2.0, "stability": 57.82881378200705}, {"path": "governance\\schemas\\capability.schema.json", "name": "capability.schema.json", "category": "Configuration", "size": 11539, "lines": 439, "references": 0, "risk": 0.0, "stability": 39.82881378200457}, {"path": "governance\\schemas\\sandbox-policy.schema.json", "name": "sandbox-policy.schema.json", "category": "Configuration", "size": 11046, "lines": 428, "references": 0, "risk": 0.0, "stability": 39.828813782003465}, {"path": "governance\\schemas\\tool-execution.schema.json", "name": "tool-execution.schema.json", "category": "Configuration", "size": 8855, "lines": 335, "references": 0, "risk": 0.0, "stability": 39.828813781983875}, {"path": "implementation\\preload.ts", "name": "preload.ts", "category": "Core Logic", "size": 348, "lines": 15, "references": 0, "risk": 0.0, "stability": 21.32881378197808}, {"path": "implementation\\renderer.ts", "name": "renderer.ts", "category": "Core Logic", "size": 1651, "lines": 48, "references": 0, "risk": 0.0, "stability": 24.628813781975598}, {"path": "implementation\\SpeechRecognitionService.ts", "name": "SpeechRecognitionService.ts", "category": "Service", "size": 2927, "lines": 118, "references": 1, "risk": 15.0, "stability": 39.62881378197449}, {"path": "public\\clear-storage.html", "name": "clear-storage.html", "category": "Core Logic", "size": 8857, "lines": 346, "references": 0, "risk": 0.0, "stability": 39.828813781972286}, {"path": "public\\interact-with-ui.js", "name": "interact-with-ui.js", "category": "Core Logic", "size": 10943, "lines": 278, "references": 0, "risk": 0.0, "stability": 39.82881378197118}, {"path": "public\\run-ui-test.js", "name": "run-ui-test.js", "category": "Test", "size": 10878, "lines": 291, "references": 0, "risk": 0.0, "stability": 39.8288137819687}, {"path": "public\\ui-test-automation.js", "name": "ui-test-automation.js", "category": "Test", "size": 9925, "lines": 304, "references": 0, "risk": 0.0, "stability": 39.8288137819676}, {"path": "reports\\checkpoint-32-progress.json", "name": "checkpoint-32-progress.json", "category": "Configuration", "size": 20663, "lines": 790, "references": 0, "risk": 6.0, "stability": 39.89821540233686}, {"path": "reports\\error-analysis-phase31.json", "name": "error-analysis-phase31.json", "category": "Configuration", "size": 26411, "lines": 1059, "references": 0, "risk": 0.0, "stability": 39.8749839208529}, {"path": "reports\\error-analysis-phase32-checkpoint.json", "name": "error-analysis-phase32-checkpoint.json", "category": "Configuration", "size": 20689, "lines": 792, "references": 0, "risk": 6.0, "stability": 39.8981575319629}, {"path": "reports\\report_20260210_195913.json", "name": "report_20260210_195913.json", "category": "Configuration", "size": 21468, "lines": 790, "references": 0, "risk": 6.0, "stability": 39.98090846921035}, {"path": "reports\\report_20260210_195913.md", "name": "report_20260210_195913.md", "category": "Core Logic", "size": 106, "lines": 7, "references": 0, "risk": 0.0, "stability": 20.680908473265116}, {"path": "reports\\2026-02-10_21-51-26\\analysis_report.json", "name": "analysis_report.json", "category": "Configuration", "size": 107766, "lines": 4026, "references": 0, "risk": 0.0, "stability": 39.98870254807092}, {"path": "reports\\2026-02-10_21-51-26\\dashboard.html", "name": "dashboard.html", "category": "UI Component", "size": 37120, "lines": 778, "references": 0, "risk": 0.0, "stability": 39.9887025480687}, {"path": "reports\\2026-02-10_22-56-02\\complete_analysis.json", "name": "complete_analysis.json", "category": "Configuration", "size": 353460, "lines": 14408, "references": 0, "risk": 0.0, "stability": 39.99322640722934}, {"path": "reports\\2026-02-10_22-56-02\\dashboard.html", "name": "dashboard.html", "category": "Core Logic", "size": 13867, "lines": 140, "references": 0, "risk": 0.0, "stability": 33.99322640722825}, {"path": "reports\\2026-02-10_22-57-23\\complete_analysis.json", "name": "complete_analysis.json", "category": "Configuration", "size": 353460, "lines": 14408, "references": 0, "risk": 0.0, "stability": 39.99329197938078}, {"path": "reports\\2026-02-10_22-57-23\\dashboard.html", "name": "dashboard.html", "category": "Core Logic", "size": 13867, "lines": 140, "references": 0, "risk": 0.0, "stability": 33.99329197937968}, {"path": "scripts\\## GitHub Copilot Chat.md", "name": "## GitHub Copilot Chat.md", "category": "Script", "size": 10161, "lines": 136, "references": 0, "risk": 0.0, "stability": 33.428813781948}, {"path": "scripts\\clear-storage.js", "name": "clear-storage.js", "category": "Script", "size": 1438, "lines": 55, "references": 0, "risk": 0.0, "stability": 25.32881378194662}, {"path": "scripts\\convert-to-aliases.ts", "name": "convert-to-aliases.ts", "category": "Script", "size": 2274, "lines": 56, "references": 0, "risk": 0.0, "stability": 25.428813781945518}, {"path": "scripts\\debug-speech.js", "name": "debug-speech.js", "category": "Script", "size": 4263, "lines": 114, "references": 0, "risk": 0.0, "stability": 31.22881378194331}, {"path": "scripts\\FILE-OPTIMIZER-README.md", "name": "FILE-OPTIMIZER-README.md", "category": "Script", "size": 7250, "lines": 228, "references": 0, "risk": 0.0, "stability": 39.8288137819422}, {"path": "scripts\\file-optimizer.ts", "name": "file-optimizer.ts", "category": "Script", "size": 49754, "lines": 1464, "references": 0, "risk": 4.0, "stability": 45.82881378194111}, {"path": "scripts\\project-file-comparison.ts", "name": "project-file-comparison.ts", "category": "Script", "size": 39119, "lines": 1168, "references": 0, "risk": 0.0, "stability": 45.82881378193862}, {"path": "scripts\\PROJECT_FILE_COMPARISON_README.md", "name": "PROJECT_FILE_COMPARISON_README.md", "category": "Script", "size": 6427, "lines": 203, "references": 0, "risk": 0.0, "stability": 39.82881378193751}, {"path": "scripts\\README.md", "name": "README.md", "category": "Script", "size": 3640, "lines": 81, "references": 0, "risk": 0.0, "stability": 27.928813781935304}, {"path": "scripts\\replace-console-log.js", "name": "replace-console-log.js", "category": "Script", "size": 2824, "lines": 109, "references": 0, "risk": 0.0, "stability": 30.72881378193393}, {"path": "scripts\\runtime-verification.js", "name": "runtime-verification.js", "category": "Script", "size": 4991, "lines": 153, "references": 0, "risk": 0.0, "stability": 43.12881378193282}, {"path": "scripts\\runtime-verification.ts", "name": "runtime-verification.ts", "category": "Script", "size": 7683, "lines": 209, "references": 0, "risk": 12.0, "stability": 43.82881378193062}, {"path": "scripts\\src-directory-analyzer.ts", "name": "src-directory-analyzer.ts", "category": "Script", "size": 41636, "lines": 1179, "references": 0, "risk": 0.0, "stability": 45.82881378192951}, {"path": "scripts\\SRC_DIRECTORY_ANALYZER_README.md", "name": "SRC_DIRECTORY_ANALYZER_README.md", "category": "Script", "size": 8531, "lines": 270, "references": 0, "risk": 0.0, "stability": 39.828813781927025}, {"path": "scripts\\ui-verification-test.ts", "name": "ui-verification-test.ts", "category": "Test", "size": 5352, "lines": 184, "references": 0, "risk": 14.0, "stability": 38.22881378192372}, {"path": "scripts\\update-dependencies.js", "name": "update-dependencies.js", "category": "Script", "size": 2096, "lines": 75, "references": 0, "risk": 0.0, "stability": 27.328813781916544}, {"path": "scripts\\update-readme-docs.js", "name": "update-readme-docs.js", "category": "Script", "size": 6878, "lines": 190, "references": 0, "risk": 0.0, "stability": 38.82881378191544}, {"path": "src\\App.css", "name": "App.css", "category": "Asset", "size": 13416, "lines": 766, "references": 0, "risk": 0.0, "stability": 39.828813781914334}, {"path": "src\\App.tsx", "name": "App.tsx", "category": "UI Component", "size": 43233, "lines": 1409, "references": 1, "risk": 13.0, "stability": 45.978243706086715}, {"path": "src\\constants.ts", "name": "constants.ts", "category": "Core Logic", "size": 140, "lines": 4, "references": 2, "risk": 10.0, "stability": 32.22881378191075}, {"path": "src\\index.css", "name": "index.css", "category": "Asset", "size": 112, "lines": 12, "references": 0, "risk": 0.0, "stability": 21.028813781909644}, {"path": "src\\index.ts", "name": "index.ts", "category": "Core Logic", "size": 79, "lines": 3, "references": 0, "risk": 30.0, "stability": 20.12881378190854}, {"path": "src\\index.tsx", "name": "index.tsx", "category": "UI Component", "size": 458, "lines": 20, "references": 0, "risk": 30.0, "stability": 21.828813781906334}, {"path": "src\\main.tsx", "name": "main.tsx", "category": "UI Component", "size": 1151, "lines": 49, "references": 0, "risk": 30.0, "stability": 24.72881378190523}, {"path": "src\\monaco-editor.ts", "name": "monaco-editor.ts", "category": "Core Logic", "size": 359, "lines": 17, "references": 0, "risk": 4.0, "stability": 25.686723074400867}, {"path": "src\\path.ts", "name": "path.ts", "category": "Core Logic", "size": 333, "lines": 17, "references": 0, "risk": 4.0, "stability": 25.68672305259909}, {"path": "src\\react.ts", "name": "react.ts", "category": "UI Component", "size": 639, "lines": 27, "references": 0, "risk": 4.0, "stability": 26.686723074397555}, {"path": "src\\vite-env.d.ts", "name": "vite-env.d.ts", "category": "Core Logic", "size": 349, "lines": 16, "references": 0, "risk": 0.0, "stability": 21.428813781899436}, {"path": "src\\vite.ts", "name": "vite.ts", "category": "Core Logic", "size": 355, "lines": 17, "references": 0, "risk": 4.0, "stability": 25.6867230525955}, {"path": "src\\components\\EditorTabs.ts", "name": "EditorTabs.ts", "category": "UI Component", "size": 112, "lines": 3, "references": 0, "risk": 0.0, "stability": 22.128813781895847}, {"path": "src\\components\\ErrorBoundary.tsx", "name": "ErrorBoundary.tsx", "category": "UI Component", "size": 2674, "lines": 114, "references": 0, "risk": 0.0, "stability": 33.27159040226511}, {"path": "src\\components\\index.ts", "name": "index.ts", "category": "UI Component", "size": 299, "lines": 11, "references": 0, "risk": 30.0, "stability": 20.92881378189364}, {"path": "src\\components\\InputArea.ts", "name": "InputArea.ts", "category": "UI Component", "size": 104, "lines": 3, "references": 0, "risk": 0.0, "stability": 22.128813781892262}, {"path": "src\\components\\InspectorPanel.ts", "name": "InspectorPanel.ts", "category": "UI Component", "size": 128, "lines": 3, "references": 0, "risk": 0.0, "stability": 22.128813781891157}, {"path": "src\\components\\LoadingScreen.tsx", "name": "LoadingScreen.tsx", "category": "UI Component", "size": 293, "lines": 13, "references": 1, "risk": 5.0, "stability": 27.12881378188895}, {"path": "src\\components\\MessageList.ts", "name": "MessageList.ts", "category": "UI Component", "size": 112, "lines": 3, "references": 0, "risk": 0.0, "stability": 22.128813781887846}, {"path": "src\\components\\Sidebar.ts", "name": "Sidebar.ts", "category": "UI Component", "size": 100, "lines": 3, "references": 0, "risk": 0.0, "stability": 22.128813781886464}, {"path": "src\\components\\app\\App.tsx", "name": "App.tsx", "category": "UI Component", "size": 43233, "lines": 1409, "references": 1, "risk": 13.0, "stability": 45.97824370605885}, {"path": "src\\components\\app\\AppNew.tsx", "name": "AppNew.tsx", "category": "UI Component", "size": 14449, "lines": 455, "references": 0, "risk": 6.0, "stability": 41.982651093889714}, {"path": "src\\components\\app\\AppProvider.tsx", "name": "AppProvider.tsx", "category": "UI Component", "size": 12133, "lines": 423, "references": 0, "risk": 0.0, "stability": 53.82881378188205}, {"path": "src\\components\\app\\index.ts", "name": "index.ts", "category": "UI Component", "size": 459, "lines": 12, "references": 0, "risk": 30.0, "stability": 29.028813781879567}, {"path": "src\\components\\chat\\ChatSidebar.tsx", "name": "ChatSidebar.tsx", "category": "UI Component", "size": 832, "lines": 25, "references": 0, "risk": 0.0, "stability": 24.42844804113772}, {"path": "src\\components\\chat\\ChatView.tsx", "name": "ChatView.tsx", "category": "UI Component", "size": 3080, "lines": 110, "references": 0, "risk": 0.0, "stability": 32.82881378187736}, {"path": "src\\components\\chat\\ConversationBranching.tsx", "name": "ConversationBranching.tsx", "category": "UI Component", "size": 8710, "lines": 222, "references": 0, "risk": 2.0, "stability": 47.828813781876256}, {"path": "src\\components\\chat\\EnhancedInputArea.tsx", "name": "EnhancedInputArea.tsx", "category": "UI Component", "size": 18877, "lines": 574, "references": 0, "risk": 0.0, "stability": 47.97505064300889}, {"path": "src\\components\\chat\\index.ts", "name": "index.ts", "category": "UI Component", "size": 384, "lines": 12, "references": 0, "risk": 30.0, "stability": 27.028813781872667}, {"path": "src\\components\\chat\\InputArea.tsx", "name": "InputArea.tsx", "category": "UI Component", "size": 32507, "lines": 676, "references": 0, "risk": 0.0, "stability": 43.89779757816676}, {"path": "src\\components\\chat\\MessageInput.tsx", "name": "MessageInput.tsx", "category": "UI Component", "size": 1343, "lines": 51, "references": 1, "risk": 5.0, "stability": 30.92881378186908}, {"path": "src\\components\\chat\\MessageList.tsx", "name": "MessageList.tsx", "category": "UI Component", "size": 1343, "lines": 47, "references": 1, "risk": 5.0, "stability": 32.528813781867974}, {"path": "src\\components\\chat\\StreamingStatus.tsx", "name": "StreamingStatus.tsx", "category": "UI Component", "size": 4980, "lines": 145, "references": 0, "risk": 0.0, "stability": 36.4750506442719}, {"path": "src\\components\\chat\\VirtualizedMessageList.tsx", "name": "VirtualizedMessageList.tsx", "category": "UI Component", "size": 15079, "lines": 460, "references": 0, "risk": 0.0, "stability": 45.97824372424351}, {"path": "src\\components\\chat\\message-list\\index.ts", "name": "index.ts", "category": "UI Component", "size": 281, "lines": 9, "references": 0, "risk": 30.0, "stability": 26.728813781863565}, {"path": "src\\components\\chat\\message-list\\MessageItem.tsx", "name": "MessageItem.tsx", "category": "UI Component", "size": 6826, "lines": 177, "references": 1, "risk": 7.0, "stability": 43.627864707788106}, {"path": "src\\components\\chat\\message-list\\MessageListVirtualized.tsx", "name": "MessageListVirtualized.tsx", "category": "UI Component", "size": 8237, "lines": 206, "references": 0, "risk": 0.0, "stability": 41.89796193000812}, {"path": "src\\components\\chat\\message-list\\MessageTypes.ts", "name": "MessageTypes.ts", "category": "UI Component", "size": 345, "lines": 15, "references": 0, "risk": 4.0, "stability": 25.32881378185887}, {"path": "src\\components\\chat\\message-list\\ToolLog.tsx", "name": "ToolLog.tsx", "category": "UI Component", "size": 7102, "lines": 229, "references": 1, "risk": 7.0, "stability": 45.82881378185777}, {"path": "src\\components\\conversation\\ContextViewer.tsx", "name": "ContextViewer.tsx", "category": "UI Component", "size": 5267, "lines": 143, "references": 0, "risk": 0.0, "stability": 36.22786470778232}, {"path": "src\\components\\conversation\\ConversationList.tsx", "name": "ConversationList.tsx", "category": "UI Component", "size": 7672, "lines": 201, "references": 0, "risk": 0.0, "stability": 41.82881378185418}, {"path": "src\\components\\conversation\\ConversationSidebar.tsx", "name": "ConversationSidebar.tsx", "category": "UI Component", "size": 4090, "lines": 124, "references": 0, "risk": 0.0, "stability": 34.22881378185308}, {"path": "src\\components\\conversation\\index.ts", "name": "index.ts", "category": "UI Component", "size": 164, "lines": 7, "references": 0, "risk": 30.0, "stability": 24.52881378185197}, {"path": "src\\components\\editor\\CodeEditor.tsx", "name": "CodeEditor.tsx", "category": "UI Component", "size": 4418, "lines": 157, "references": 1, "risk": 5.0, "stability": 41.528813781850594}, {"path": "src\\components\\editor\\CSSLiveEditor.tsx", "name": "CSSLiveEditor.tsx", "category": "UI Component", "size": 13158, "lines": 400, "references": 0, "risk": 0.0, "stability": 49.82881378184838}, {"path": "src\\components\\editor\\DiffViewer.tsx", "name": "DiffViewer.tsx", "category": "UI Component", "size": 16802, "lines": 469, "references": 0, "risk": 0.0, "stability": 47.82881378184728}, {"path": "src\\components\\editor\\EditorTabs.tsx", "name": "EditorTabs.tsx", "category": "UI Component", "size": 5159, "lines": 111, "references": 0, "risk": 0.0, "stability": 34.928813781843694}, {"path": "src\\components\\editor\\EditorView.tsx", "name": "EditorView.tsx", "category": "UI Component", "size": 2526, "lines": 95, "references": 0, "risk": 0.0, "stability": 31.32881378184259}, {"path": "src\\components\\editor\\index.ts", "name": "index.ts", "category": "UI Component", "size": 5, "lines": 2, "references": 0, "risk": 30.0, "stability": 20.02881378184038}, {"path": "src\\components\\features\\DebuggingTools.tsx", "name": "DebuggingTools.tsx", "category": "UI Component", "size": 17926, "lines": 714, "references": 0, "risk": 14.0, "stability": 43.828813781839}, {"path": "src\\components\\features\\EnhancedSettingsModal.tsx", "name": "EnhancedSettingsModal.tsx", "category": "UI Component", "size": 26975, "lines": 874, "references": 0, "risk": 4.0, "stability": 41.828813781823}, {"path": "src\\components\\features\\index.ts", "name": "index.ts", "category": "UI Component", "size": 279, "lines": 9, "references": 0, "risk": 30.0, "stability": 26.728813781820513}, {"path": "src\\components\\features\\IntegratedTerminal.tsx", "name": "IntegratedTerminal.tsx", "category": "UI Component", "size": 17497, "lines": 688, "references": 0, "risk": 2.0, "stability": 45.828813781819406}, {"path": "src\\components\\features\\ModelSelector.tsx", "name": "ModelSelector.tsx", "category": "UI Component", "size": 10771, "lines": 365, "references": 0, "risk": 2.0, "stability": 41.828813781818305}, {"path": "src\\components\\modals\\AgentModal.tsx", "name": "AgentModal.tsx", "category": "UI Component", "size": 47547, "lines": 1003, "references": 0, "risk": 2.0, "stability": 41.828813781816095}, {"path": "src\\components\\modals\\CommandPalette.tsx", "name": "CommandPalette.tsx", "category": "UI Component", "size": 11325, "lines": 340, "references": 0, "risk": 0.0, "stability": 47.828813781814716}, {"path": "src\\components\\modals\\ConfirmDialog.tsx", "name": "ConfirmDialog.tsx", "category": "UI Component", "size": 2834, "lines": 88, "references": 0, "risk": 0.0, "stability": 32.62881378181251}, {"path": "src\\components\\modals\\index.ts", "name": "index.ts", "category": "UI Component", "size": 5, "lines": 2, "references": 0, "risk": 30.0, "stability": 20.028813781811408}, {"path": "src\\components\\modals\\McpToolModal.tsx", "name": "McpToolModal.tsx", "category": "UI Component", "size": 14051, "lines": 349, "references": 0, "risk": 6.0, "stability": 41.828813781810304}, {"path": "src\\components\\modals\\PromptDialog.tsx", "name": "PromptDialog.tsx", "category": "UI Component", "size": 4276, "lines": 132, "references": 0, "risk": 0.0, "stability": 37.02881378180783}, {"path": "src\\components\\modals\\SettingsModal.tsx", "name": "SettingsModal.tsx", "category": "UI Component", "size": 8790, "lines": 274, "references": 1, "risk": 5.0, "stability": 45.828813781806716}, {"path": "src\\components\\modals\\VoiceChatModal.tsx", "name": "VoiceChatModal.tsx", "category": "UI Component", "size": 12743, "lines": 342, "references": 0, "risk": 2.0, "stability": 43.82881378180451}, {"path": "src\\components\\monitoring\\index.ts", "name": "index.ts", "category": "UI Component", "size": 5, "lines": 2, "references": 0, "risk": 30.0, "stability": 20.028813781803127}, {"path": "src\\components\\panels\\CodeMetricsPanel.tsx", "name": "CodeMetricsPanel.tsx", "category": "UI Component", "size": 9288, "lines": 280, "references": 0, "risk": 0.0, "stability": 41.828813781802026}, {"path": "src\\components\\panels\\EmptyFilePreview.tsx", "name": "EmptyFilePreview.tsx", "category": "UI Component", "size": 957, "lines": 41, "references": 1, "risk": 5.0, "stability": 29.928813781799818}, {"path": "src\\components\\panels\\EnhancedErrorDisplay.tsx", "name": "EnhancedErrorDisplay.tsx", "category": "UI Component", "size": 13411, "lines": 445, "references": 0, "risk": 0.0, "stability": 55.828813781798715}, {"path": "src\\components\\panels\\ErrorHistoryPanel.tsx", "name": "ErrorHistoryPanel.tsx", "category": "UI Component", "size": 10796, "lines": 269, "references": 0, "risk": 0.0, "stability": 41.828813781797336}, {"path": "src\\components\\panels\\ExplainabilityPanel.tsx", "name": "ExplainabilityPanel.tsx", "category": "UI Component", "size": 4832, "lines": 141, "references": 0, "risk": 0.0, "stability": 35.92881378179513}, {"path": "src\\components\\panels\\index.ts", "name": "index.ts", "category": "UI Component", "size": 5, "lines": 2, "references": 0, "risk": 30.0, "stability": 20.02881378179402}, {"path": "src\\components\\panels\\InspectorPanel.tsx", "name": "InspectorPanel.tsx", "category": "UI Component", "size": 6146, "lines": 147, "references": 0, "risk": 0.0, "stability": 38.52881378179292}, {"path": "src\\components\\panels\\LocalAITestPanel.tsx", "name": "LocalAITestPanel.tsx", "category": "UI Component", "size": 9654, "lines": 254, "references": 0, "risk": 6.0, "stability": 41.82881378179044}, {"path": "src\\components\\panels\\MonitorPanel.tsx", "name": "MonitorPanel.tsx", "category": "UI Component", "size": 10044, "lines": 246, "references": 0, "risk": 0.0, "stability": 41.975050649043034}, {"path": "src\\components\\panels\\PerformanceMetrics.tsx", "name": "PerformanceMetrics.tsx", "category": "UI Component", "size": 10706, "lines": 289, "references": 0, "risk": 0.0, "stability": 47.82881378178712}, {"path": "src\\components\\panels\\RuntimeUIVerificationPanel.tsx", "name": "RuntimeUIVerificationPanel.tsx", "category": "UI Component", "size": 6056, "lines": 147, "references": 0, "risk": 4.0, "stability": 36.52881378178574}, {"path": "src\\components\\panels\\SystemStatusDashboard.tsx", "name": "SystemStatusDashboard.tsx", "category": "UI Component", "size": 13899, "lines": 362, "references": 0, "risk": 0.0, "stability": 49.82881378178464}, {"path": "src\\components\\panels\\SystemStatusPanel.tsx", "name": "SystemStatusPanel.tsx", "category": "UI Component", "size": 11856, "lines": 275, "references": 0, "risk": 0.0, "stability": 43.82881378178243}, {"path": "src\\components\\preview\\index.ts", "name": "index.ts", "category": "UI Component", "size": 249, "lines": 8, "references": 0, "risk": 30.0, "stability": 32.62881378178133}, {"path": "src\\components\\preview\\LiveCodeEditor.tsx", "name": "LiveCodeEditor.tsx", "category": "UI Component", "size": 3916, "lines": 135, "references": 0, "risk": 0.0, "stability": 35.32881378177885}, {"path": "src\\components\\preview\\PreviewPanel.tsx", "name": "PreviewPanel.tsx", "category": "UI Component", "size": 10955, "lines": 346, "references": 1, "risk": 7.0, "stability": 45.82881378176284}, {"path": "src\\components\\preview\\PreviewPanelLegacy.tsx", "name": "PreviewPanelLegacy.tsx", "category": "UI Component", "size": 356, "lines": 10, "references": 0, "risk": 0.0, "stability": 22.927864707687387}, {"path": "src\\components\\preview\\splitView.tsx", "name": "splitView.tsx", "category": "UI Component", "size": 2816, "lines": 102, "references": 0, "risk": 0.0, "stability": 38.12843415213073}, {"path": "src\\components\\ribbon\\AISettingsTab.tsx", "name": "AISettingsTab.tsx", "category": "UI Component", "size": 5041, "lines": 163, "references": 0, "risk": 0.0, "stability": 44.128813781759256}, {"path": "src\\components\\ribbon\\CodeMetricsModal.tsx", "name": "CodeMetricsModal.tsx", "category": "UI Component", "size": 2413, "lines": 58, "references": 0, "risk": 0.0, "stability": 27.628813781757046}, {"path": "src\\components\\ribbon\\index.ts", "name": "index.ts", "category": "UI Component", "size": 5, "lines": 2, "references": 0, "risk": 30.0, "stability": 20.028813781755666}, {"path": "src\\components\\ribbon\\ProjectStructureModal.tsx", "name": "ProjectStructureModal.tsx", "category": "UI Component", "size": 5003, "lines": 105, "references": 0, "risk": 0.0, "stability": 32.32881378175456}, {"path": "src\\components\\ribbon\\RibbonComponents.tsx", "name": "RibbonComponents.tsx", "category": "UI Component", "size": 13172, "lines": 442, "references": 5, "risk": 25.0, "stability": 71.82881378175236}, {"path": "src\\components\\ribbon\\RibbonHomeTab.tsx", "name": "RibbonHomeTab.tsx", "category": "UI Component", "size": 13490, "lines": 486, "references": 0, "risk": 0.0, "stability": 43.82881378174987}, {"path": "src\\components\\ribbon\\RibbonIntelligenceTab.tsx", "name": "RibbonIntelligenceTab.tsx", "category": "UI Component", "size": 6746, "lines": 240, "references": 0, "risk": 0.0, "stability": 43.828813781748764}, {"path": "src\\components\\ribbon\\RibbonMcpTab.tsx", "name": "RibbonMcpTab.tsx", "category": "UI Component", "size": 19118, "lines": 554, "references": 0, "risk": 2.0, "stability": 43.82881378174656}, {"path": "src\\components\\ribbon\\ribbonModals.ts", "name": "ribbonModals.ts", "category": "UI Component", "size": 500, "lines": 12, "references": 0, "risk": 0.0, "stability": 33.028813781745455}, {"path": "src\\components\\ribbon\\RibbonSettingsTab.tsx", "name": "RibbonSettingsTab.tsx", "category": "UI Component", "size": 24166, "lines": 533, "references": 0, "risk": 2.0, "stability": 41.828813781744074}, {"path": "src\\components\\ribbon\\RibbonViewTab.tsx", "name": "RibbonViewTab.tsx", "category": "UI Component", "size": 10912, "lines": 378, "references": 0, "risk": 0.0, "stability": 43.82881378174187}, {"path": "src\\components\\ribbon\\RIBBON_REFACTORING_SUMMARY.md", "name": "RIBBON_REFACTORING_SUMMARY.md", "category": "UI Component", "size": 6091, "lines": 261, "references": 0, "risk": 0.0, "stability": 41.82881378174076}, {"path": "src\\components\\ribbon\\ToolChainsModal.tsx", "name": "ToolChainsModal.tsx", "category": "UI Component", "size": 1485, "lines": 43, "references": 0, "risk": 0.0, "stability": 26.128813781739662}, {"path": "src\\components\\ribbon\\ToolExecutionHistoryModal.tsx", "name": "ToolExecutionHistoryModal.tsx", "category": "UI Component", "size": 2201, "lines": 57, "references": 0, "risk": 0.0, "stability": 27.528813781738556}, {"path": "src\\components\\ribbon\\ToolManagerModal.tsx", "name": "ToolManagerModal.tsx", "category": "UI Component", "size": 4684, "lines": 120, "references": 0, "risk": 0.0, "stability": 33.82881378173718}, {"path": "src\\components\\ribbon\\ToolUsageAnalyticsModal.tsx", "name": "ToolUsageAnalyticsModal.tsx", "category": "UI Component", "size": 1797, "lines": 49, "references": 0, "risk": 0.0, "stability": 26.878243724113815}, {"path": "src\\components\\sidebar\\ConversationSidebar.tsx", "name": "ConversationSidebar.tsx", "category": "UI Component", "size": 4090, "lines": 124, "references": 1, "risk": 5.0, "stability": 38.22881378173386}, {"path": "src\\components\\sidebar\\EnhancedFileTree.tsx", "name": "EnhancedFileTree.tsx", "category": "UI Component", "size": 19503, "lines": 673, "references": 0, "risk": 0.0, "stability": 49.82881378173276}, {"path": "src\\components\\sidebar\\FileTreeTypes.ts", "name": "FileTreeTypes.ts", "category": "UI Component", "size": 779, "lines": 30, "references": 0, "risk": 0.0, "stability": 28.828813781731384}, {"path": "src\\components\\sidebar\\index.ts", "name": "index.ts", "category": "UI Component", "size": 5, "lines": 2, "references": 0, "risk": 30.0, "stability": 20.028813781729173}, {"path": "src\\components\\sidebar\\file-tree\\FileTreeTypes.ts", "name": "FileTreeTypes.ts", "category": "UI Component", "size": 779, "lines": 30, "references": 0, "risk": 0.0, "stability": 28.828813781728073}, {"path": "src\\components\\sidebar\\file-tree\\FileTreeVirtualized - Copy.tsx", "name": "FileTreeVirtualized - Copy.tsx", "category": "UI Component", "size": 8306, "lines": 279, "references": 0, "risk": 0.0, "stability": 45.87284271691215}, {"path": "src\\components\\sidebar\\file-tree\\FileTreeVirtualized.tsx", "name": "FileTreeVirtualized.tsx", "category": "UI Component", "size": 19503, "lines": 674, "references": 0, "risk": 0.0, "stability": 49.828813781724484}, {"path": "src\\components\\sidebar\\file-tree\\index.ts", "name": "index.ts", "category": "UI Component", "size": 188, "lines": 7, "references": 0, "risk": 30.0, "stability": 22.52881378172338}, {"path": "src\\components\\ui\\accessibility.tsx", "name": "accessibility.tsx", "category": "UI Component", "size": 10987, "lines": 404, "references": 0, "risk": 0.0, "stability": 59.828813781722275}, {"path": "src\\components\\ui\\AccessibilityChecker.tsx", "name": "AccessibilityChecker.tsx", "category": "UI Component", "size": 17102, "lines": 423, "references": 0, "risk": 0.0, "stability": 49.82881378171979}, {"path": "src\\components\\ui\\ErrorBoundary.tsx", "name": "ErrorBoundary.tsx", "category": "UI Component", "size": 4142, "lines": 158, "references": 0, "risk": 0.0, "stability": 37.67176517060758}, {"path": "src\\components\\ui\\ErrorDisplay.tsx", "name": "ErrorDisplay.tsx", "category": "UI Component", "size": 9154, "lines": 249, "references": 1, "risk": 5.0, "stability": 47.828813781717585}, {"path": "src\\components\\ui\\errorHandler.ts", "name": "errorHandler.ts", "category": "UI Component", "size": 3919, "lines": 164, "references": 0, "risk": 0.0, "stability": 40.327864707642405}, {"path": "src\\components\\ui\\errors.ts", "name": "errors.ts", "category": "UI Component", "size": 5591, "lines": 214, "references": 1, "risk": 5.0, "stability": 63.828813781714}, {"path": "src\\components\\ui\\EventBus.ts", "name": "EventBus.ts", "category": "UI Component", "size": 4474, "lines": 171, "references": 1, "risk": 7.0, "stability": 60.9288137817129}, {"path": "src\\components\\ui\\HelpSystem.tsx", "name": "HelpSystem.tsx", "category": "UI Component", "size": 18057, "lines": 502, "references": 0, "risk": 0.0, "stability": 49.828813781710686}, {"path": "src\\components\\ui\\Icons.tsx", "name": "Icons.tsx", "category": "UI Component", "size": 12927, "lines": 235, "references": 0, "risk": 0.0, "stability": 59.828813781709584}, {"path": "src\\components\\ui\\index.ts", "name": "index.ts", "category": "UI Component", "size": 1213, "lines": 69, "references": 0, "risk": 30.0, "stability": 46.728813781707096}, {"path": "src\\components\\ui\\KeyboardShortcuts.tsx", "name": "KeyboardShortcuts.tsx", "category": "UI Component", "size": 18030, "lines": 432, "references": 0, "risk": 0.0, "stability": 49.828813781705996}, {"path": "src\\components\\ui\\NotificationToast.tsx", "name": "NotificationToast.tsx", "category": "UI Component", "size": 4762, "lines": 144, "references": 0, "risk": 0.0, "stability": 54.327864707629715}, {"path": "src\\components\\ui\\primitives.tsx", "name": "primitives.tsx", "category": "UI Component", "size": 10684, "lines": 416, "references": 0, "risk": 0.0, "stability": 59.828813781702685}, {"path": "src\\components\\ui\\ProgressIndicators.tsx", "name": "ProgressIndicators.tsx", "category": "UI Component", "size": 12961, "lines": 434, "references": 0, "risk": 0.0, "stability": 59.8288137817013}, {"path": "src\\config\\config.ts", "name": "config.ts", "category": "Configuration", "size": 8298, "lines": 155, "references": 0, "risk": 0.0, "stability": 37.3288137816991}, {"path": "src\\config\\constants.ts", "name": "constants.ts", "category": "Configuration", "size": 44226, "lines": 969, "references": 0, "risk": 0.0, "stability": 47.82881378169799}, {"path": "src\\contexts\\AppStateContext.tsx", "name": "AppStateContext.tsx", "category": "UI Component", "size": 8288, "lines": 301, "references": 0, "risk": 0.0, "stability": 55.98413625342896}, {"path": "src\\contexts\\DatabaseContext.tsx", "name": "DatabaseContext.tsx", "category": "UI Component", "size": 23726, "lines": 720, "references": 0, "risk": 2.0, "stability": 57.82881378169441}, {"path": "src\\contexts\\index.ts", "name": "index.ts", "category": "Context Provider", "size": 1242, "lines": 66, "references": 0, "risk": 30.0, "stability": 46.42881378169331}, {"path": "src\\contexts\\LMStudioProvider.tsx", "name": "LMStudioProvider.tsx", "category": "UI Component", "size": 4198, "lines": 144, "references": 0, "risk": 0.0, "stability": 46.228813781692196}, {"path": "src\\contexts\\ModalContext.tsx", "name": "ModalContext.tsx", "category": "UI Component", "size": 6987, "lines": 265, "references": 0, "risk": 0.0, "stability": 59.82881378168972}, {"path": "src\\contexts\\NotificationContext.tsx", "name": "NotificationContext.tsx", "category": "UI Component", "size": 5299, "lines": 198, "references": 0, "risk": 0.0, "stability": 59.628813781688606}, {"path": "src\\features\\index.ts", "name": "index.ts", "category": "Core Logic", "size": 2226, "lines": 95, "references": 0, "risk": 30.0, "stability": 49.32881378168751}, {"path": "src\\features\\PreviewPane.tsx", "name": "PreviewPane.tsx", "category": "UI Component", "size": 16308, "lines": 446, "references": 0, "risk": 10.0, "stability": 41.8288137816853}, {"path": "src\\features\\ai\\AgentCollaboration.tsx", "name": "AgentCollaboration.tsx", "category": "UI Component", "size": 11486, "lines": 282, "references": 0, "risk": 0.0, "stability": 41.92855336501725}, {"path": "src\\features\\ai\\AgentReasoning.tsx", "name": "AgentReasoning.tsx", "category": "UI Component", "size": 13327, "lines": 340, "references": 0, "risk": 0.0, "stability": 53.82881378168281}, {"path": "src\\features\\ai\\AgentSelector.tsx", "name": "AgentSelector.tsx", "category": "UI Component", "size": 10684, "lines": 282, "references": 0, "risk": 0.0, "stability": 41.8719677168658}, {"path": "src\\features\\ai\\AISettingsHub.tsx", "name": "AISettingsHub.tsx", "category": "UI Component", "size": 22680, "lines": 547, "references": 0, "risk": 0.0, "stability": 43.9782437058541}, {"path": "src\\features\\ai\\AISuggestions.tsx", "name": "AISuggestions.tsx", "category": "UI Component", "size": 14778, "lines": 445, "references": 0, "risk": 2.0, "stability": 51.82881378167812}, {"path": "src\\features\\ai\\AutonomousModeControl.tsx", "name": "AutonomousModeControl.tsx", "category": "UI Component", "size": 8358, "lines": 218, "references": 0, "risk": 0.0, "stability": 41.82881378167592}, {"path": "src\\features\\ai\\EnhancedSettingsPanel.tsx", "name": "EnhancedSettingsPanel.tsx", "category": "UI Component", "size": 12433, "lines": 298, "references": 0, "risk": 0.0, "stability": 43.82881378167481}, {"path": "src\\features\\ai\\index.ts", "name": "index.ts", "category": "Core Logic", "size": 5, "lines": 2, "references": 0, "risk": 30.0, "stability": 20.02881378167371}, {"path": "src\\features\\ai\\LocalAISettings.tsx", "name": "LocalAISettings.tsx", "category": "UI Component", "size": 21653, "lines": 592, "references": 0, "risk": 8.0, "stability": 41.92786470759826}, {"path": "src\\features\\ai\\McpConnectionStatus.tsx", "name": "McpConnectionStatus.tsx", "category": "UI Component", "size": 11200, "lines": 312, "references": 1, "risk": 5.0, "stability": 45.82881378167012}, {"path": "src\\features\\ai\\MultiAgentStatus.tsx", "name": "MultiAgentStatus.tsx", "category": "UI Component", "size": 5527, "lines": 173, "references": 0, "risk": 0.0, "stability": 41.27505066244608}, {"path": "src\\features\\ai\\SpeechTest.tsx", "name": "SpeechTest.tsx", "category": "UI Component", "size": 10202, "lines": 238, "references": 0, "risk": 6.0, "stability": 41.82881378166792}, {"path": "src\\features\\ai\\AISettingsHub\\APITestTab.tsx", "name": "APITestTab.tsx", "category": "UI Component", "size": 18302, "lines": 462, "references": 1, "risk": 13.0, "stability": 45.82881378166543}, {"path": "src\\features\\ai\\AISettingsHub\\BehaviorTab.tsx", "name": "BehaviorTab.tsx", "category": "UI Component", "size": 18211, "lines": 380, "references": 1, "risk": 5.0, "stability": 45.97505067195192}, {"path": "src\\features\\ai\\AISettingsHub\\ConnectionTab.tsx", "name": "ConnectionTab.tsx", "category": "UI Component", "size": 18079, "lines": 401, "references": 1, "risk": 13.0, "stability": 45.82881378166323}, {"path": "src\\features\\ai\\AISettingsHub\\CustomProviderModal.tsx", "name": "CustomProviderModal.tsx", "category": "UI Component", "size": 11710, "lines": 321, "references": 1, "risk": 9.0, "stability": 45.82881378166101}, {"path": "src\\features\\ai\\AISettingsHub\\index.ts", "name": "index.ts", "category": "Core Logic", "size": 723, "lines": 29, "references": 0, "risk": 30.0, "stability": 42.72881378165964}, {"path": "src\\features\\ai\\AISettingsHub\\LocalAITab.tsx", "name": "LocalAITab.tsx", "category": "UI Component", "size": 24425, "lines": 529, "references": 1, "risk": 7.0, "stability": 45.975050674152044}, {"path": "src\\features\\ai\\AISettingsHub\\ModelsTab.tsx", "name": "ModelsTab.tsx", "category": "UI Component", "size": 23282, "lines": 445, "references": 1, "risk": 5.0, "stability": 45.975574944474076}, {"path": "src\\features\\ai\\AISettingsHub\\ProvidersTab.tsx", "name": "ProvidersTab.tsx", "category": "UI Component", "size": 11682, "lines": 290, "references": 1, "risk": 9.0, "stability": 45.82881378165522}, {"path": "src\\features\\ai\\AISettingsHub\\types.ts", "name": "types.ts", "category": "Core Logic", "size": 3151, "lines": 163, "references": 2, "risk": 10.0, "stability": 64.12881378165383}, {"path": "src\\features\\ai\\AISettingsHub\\VoiceInputTab.tsx", "name": "VoiceInputTab.tsx", "category": "UI Component", "size": 17803, "lines": 376, "references": 1, "risk": 7.0, "stability": 45.82881378165163}, {"path": "src\\features\\ai\\gemini-tester\\GeminiTesterConfig.ts", "name": "GeminiTesterConfig.ts", "category": "Test", "size": 2216, "lines": 80, "references": 2, "risk": 10.0, "stability": 37.82881378165053}, {"path": "src\\features\\ai\\gemini-tester\\GeminiTesterConfigPanel.tsx", "name": "GeminiTesterConfigPanel.tsx", "category": "UI Component", "size": 10408, "lines": 258, "references": 1, "risk": 5.0, "stability": 45.82881378164943}, {"path": "src\\features\\ai\\gemini-tester\\GeminiTesterContext.tsx", "name": "GeminiTesterContext.tsx", "category": "UI Component", "size": 13184, "lines": 436, "references": 5, "risk": 31.0, "stability": 71.82881378164694}, {"path": "src\\features\\ai\\gemini-tester\\GeminiTesterControls.tsx", "name": "GeminiTesterControls.tsx", "category": "UI Component", "size": 9980, "lines": 243, "references": 1, "risk": 5.0, "stability": 45.828813781645835}, {"path": "src\\features\\ai\\gemini-tester\\GeminiTesterCore.tsx", "name": "GeminiTesterCore.tsx", "category": "UI Component", "size": 3393, "lines": 133, "references": 0, "risk": 0.0, "stability": 39.12881378164474}, {"path": "src\\features\\ai\\gemini-tester\\GeminiTesterResults.tsx", "name": "GeminiTesterResults.tsx", "category": "UI Component", "size": 13520, "lines": 367, "references": 1, "risk": 5.0, "stability": 45.82881378164225}, {"path": "src\\features\\ai\\gemini-tester\\GeminiTesterService.ts", "name": "GeminiTesterService.ts", "category": "Service", "size": 17096, "lines": 522, "references": 1, "risk": 11.0, "stability": 45.828813781641145}, {"path": "src\\features\\ai\\gemini-tester\\GeminiTesterTypes.ts", "name": "GeminiTesterTypes.ts", "category": "Test", "size": 7005, "lines": 276, "references": 2, "risk": 12.0, "stability": 67.82881378164004}, {"path": "src\\features\\ai\\gemini-tester\\GeminiTesterUI.tsx", "name": "GeminiTesterUI.tsx", "category": "UI Component", "size": 7162, "lines": 202, "references": 1, "risk": 5.0, "stability": 45.828813781637834}, {"path": "src\\features\\ai\\gemini-tester\\GeminiTesterUtils.ts", "name": "GeminiTesterUtils.ts", "category": "Utility", "size": 19620, "lines": 646, "references": 1, "risk": 25.0, "stability": 59.828813781636455}, {"path": "src\\features\\ai\\gemini-tester\\index.tsx", "name": "index.tsx", "category": "UI Component", "size": 5268, "lines": 189, "references": 0, "risk": 30.0, "stability": 58.72881378163536}, {"path": "src\\features\\code-intelligence\\CodeIntelligenceDashboard.tsx", "name": "CodeIntelligenceDashboard.tsx", "category": "UI Component", "size": 36941, "lines": 852, "references": 0, "risk": 4.0, "stability": 41.828813781633144}, {"path": "src\\features\\code-intelligence\\CodeIntelligenceImpactMap.tsx", "name": "CodeIntelligenceImpactMap.tsx", "category": "UI Component", "size": 10791, "lines": 318, "references": 1, "risk": 25.0, "stability": 45.97505066357995}, {"path": "src\\features\\code-intelligence\\CodeIntelligenceSettings.tsx", "name": "CodeIntelligenceSettings.tsx", "category": "UI Component", "size": 11223, "lines": 267, "references": 0, "risk": 0.0, "stability": 41.82881378163066}, {"path": "src\\features\\code-intelligence\\CodeIntelligenceTimeline.tsx", "name": "CodeIntelligenceTimeline.tsx", "category": "UI Component", "size": 14119, "lines": 424, "references": 1, "risk": 19.0, "stability": 45.9750506648035}, {"path": "src\\features\\code-intelligence\\CodeNavigation.tsx", "name": "CodeNavigation.tsx", "category": "UI Component", "size": 15269, "lines": 435, "references": 0, "risk": 0.0, "stability": 49.828813781627346}, {"path": "src\\features\\code-intelligence\\DependencyGraph.tsx", "name": "DependencyGraph.tsx", "category": "UI Component", "size": 7344, "lines": 258, "references": 1, "risk": 25.0, "stability": 45.97505066586396}, {"path": "src\\features\\code-intelligence\\ImpactHeatmap.tsx", "name": "ImpactHeatmap.tsx", "category": "UI Component", "size": 7374, "lines": 233, "references": 1, "risk": 19.0, "stability": 45.97505066719679}, {"path": "src\\features\\code-intelligence\\index.ts", "name": "index.ts", "category": "Core Logic", "size": 5, "lines": 2, "references": 0, "risk": 30.0, "stability": 20.02881378162266}, {"path": "src\\features\\code-intelligence\\RefactoringSuggestions.tsx", "name": "RefactoringSuggestions.tsx", "category": "UI Component", "size": 11030, "lines": 304, "references": 0, "risk": 0.0, "stability": 43.828813781621555}, {"path": "src\\features\\collaboration\\CollaborationIndicator.tsx", "name": "CollaborationIndicator.tsx", "category": "UI Component", "size": 12740, "lines": 380, "references": 0, "risk": 0.0, "stability": 51.828813781620454}, {"path": "src\\features\\help\\HelpSystem.tsx", "name": "HelpSystem.tsx", "category": "UI Component", "size": 22370, "lines": 680, "references": 0, "risk": 0.0, "stability": 59.82881378161797}, {"path": "src\\features\\keyboard\\keyboardShortcuts.ts", "name": "keyboardShortcuts.ts", "category": "Core Logic", "size": 15078, "lines": 405, "references": 0, "risk": 0.0, "stability": 59.828813781616866}, {"path": "src\\features\\onboarding\\OnboardingSystem.tsx", "name": "OnboardingSystem.tsx", "category": "UI Component", "size": 16312, "lines": 575, "references": 0, "risk": 0.0, "stability": 59.975050652461476}, {"path": "src\\google\\generative-ai.ts", "name": "generative-ai.ts", "category": "Core Logic", "size": 880, "lines": 30, "references": 0, "risk": 2.0, "stability": 26.986723157732023}, {"path": "src\\hooks\\index.ts", "name": "index.ts", "category": "React Hook", "size": 5574, "lines": 264, "references": 1, "risk": 35.0, "stability": 63.82881378161217}, {"path": "src\\hooks\\useAgentConfig.ts", "name": "useAgentConfig.ts", "category": "React Hook", "size": 2775, "lines": 83, "references": 0, "risk": 4.0, "stability": 30.27505064984963}, {"path": "src\\hooks\\useButtonFeedback.ts", "name": "useButtonFeedback.ts", "category": "React Hook", "size": 6201, "lines": 211, "references": 0, "risk": 0.0, "stability": 47.828813781609966}, {"path": "src\\hooks\\useButtonFeedback.tsx", "name": "useButtonFeedback.tsx", "category": "UI Component", "size": 6091, "lines": 215, "references": 0, "risk": 0.0, "stability": 49.82881378160776}, {"path": "src\\hooks\\useChatState.ts", "name": "useChatState.ts", "category": "State Management", "size": 431, "lines": 18, "references": 0, "risk": 0.0, "stability": 23.62881378160638}, {"path": "src\\hooks\\useCodeEditor.ts", "name": "useCodeEditor.ts", "category": "React Hook", "size": 7764, "lines": 267, "references": 0, "risk": 0.0, "stability": 43.82881378160417}, {"path": "src\\hooks\\useConversation.ts", "name": "useConversation.ts", "category": "React Hook", "size": 2296, "lines": 77, "references": 0, "risk": 0.0, "stability": 31.628475818640105}, {"path": "src\\hooks\\useEditorHandlers.ts", "name": "useEditorHandlers.ts", "category": "React Hook", "size": 12322, "lines": 417, "references": 0, "risk": 4.0, "stability": 41.92786470752789}, {"path": "src\\hooks\\useEditorState.ts", "name": "useEditorState.ts", "category": "State Management", "size": 444, "lines": 18, "references": 0, "risk": 0.0, "stability": 23.628813781600584}, {"path": "src\\hooks\\useKeyboardShortcuts.ts", "name": "useKeyboardShortcuts.ts", "category": "React Hook", "size": 4977, "lines": 137, "references": 0, "risk": 0.0, "stability": 41.67505065110326}, {"path": "src\\hooks\\useNetworkStatus.ts", "name": "useNetworkStatus.ts", "category": "React Hook", "size": 2546, "lines": 97, "references": 0, "risk": 0.0, "stability": 33.6278647075232}, {"path": "src\\hooks\\usePreview.ts", "name": "usePreview.ts", "category": "React Hook", "size": 4653, "lines": 174, "references": 0, "risk": 0.0, "stability": 41.22881378159617}, {"path": "src\\hooks\\useSpeechRecognition.ts", "name": "useSpeechRecognition.ts", "category": "React Hook", "size": 8500, "lines": 282, "references": 0, "risk": 4.0, "stability": 41.82881378159479}, {"path": "src\\hooks\\useUIPanelState.ts", "name": "useUIPanelState.ts", "category": "State Management", "size": 950, "lines": 32, "references": 0, "risk": 0.0, "stability": 25.02881378159258}, {"path": "src\\hooks\\useVisibilityAwareInterval.ts", "name": "useVisibilityAwareInterval.ts", "category": "React Hook", "size": 4882, "lines": 191, "references": 0, "risk": 0.0, "stability": 44.92881378159148}, {"path": "src\\hooks\\ai\\useAIProvider.ts", "name": "useAIProvider.ts", "category": "React Hook", "size": 12992, "lines": 466, "references": 0, "risk": 0.0, "stability": 57.82881378159037}, {"path": "src\\hooks\\ai\\useLMStudio.ts", "name": "useLMStudio.ts", "category": "React Hook", "size": 11545, "lines": 418, "references": 0, "risk": 2.0, "stability": 55.82881378158789}, {"path": "src\\hooks\\ai\\useLocalAI.ts", "name": "useLocalAI.ts", "category": "React Hook", "size": 14388, "lines": 541, "references": 0, "risk": 0.0, "stability": 53.82881378158679}, {"path": "src\\hooks\\ai\\useMultiAgent.ts", "name": "useMultiAgent.ts", "category": "React Hook", "size": 13014, "lines": 465, "references": 0, "risk": 0.0, "stability": 55.82881378158568}, {"path": "src\\hooks\\code\\useCodeIntelligence.ts", "name": "useCodeIntelligence.ts", "category": "React Hook", "size": 19928, "lines": 678, "references": 0, "risk": 0.0, "stability": 59.92786470751051}, {"path": "src\\hooks\\code\\useSandbox.ts", "name": "useSandbox.ts", "category": "React Hook", "size": 12594, "lines": 463, "references": 0, "risk": 0.0, "stability": 57.8288137815821}, {"path": "src\\hooks\\core\\useAgentOrchestrator.tsx", "name": "useAgentOrchestrator.tsx", "category": "UI Component", "size": 13882, "lines": 538, "references": 0, "risk": 0.0, "stability": 59.82881378158099}, {"path": "src\\hooks\\core\\useAutonomousMode.tsx", "name": "useAutonomousMode.tsx", "category": "UI Component", "size": 12637, "lines": 466, "references": 0, "risk": 0.0, "stability": 57.82881378157989}, {"path": "src\\hooks\\core\\useContextManager.tsx", "name": "useContextManager.tsx", "category": "UI Component", "size": 12147, "lines": 447, "references": 0, "risk": 0.0, "stability": 59.92786470750471}, {"path": "src\\hooks\\core\\useGemini.tsx", "name": "useGemini.tsx", "category": "UI Component", "size": 14292, "lines": 537, "references": 0, "risk": 0.0, "stability": 59.87196771676149}, {"path": "src\\hooks\\core\\useMcp.tsx", "name": "useMcp.tsx", "category": "UI Component", "size": 18117, "lines": 702, "references": 0, "risk": 0.0, "stability": 59.87196771676038}, {"path": "src\\hooks\\core\\useModelSelection.tsx", "name": "useModelSelection.tsx", "category": "UI Component", "size": 11566, "lines": 427, "references": 0, "risk": 0.0, "stability": 57.82881378157409}, {"path": "src\\hooks\\core\\useSecureStorage.ts", "name": "useSecureStorage.ts", "category": "React Hook", "size": 12153, "lines": 422, "references": 1, "risk": 7.0, "stability": 59.82881378157299}, {"path": "src\\hooks\\core\\useStateTransaction.ts", "name": "useStateTransaction.ts", "category": "State Management", "size": 9524, "lines": 359, "references": 0, "risk": 0.0, "stability": 51.8288137815705}, {"path": "src\\hooks\\utils\\useCache.ts", "name": "useCache.ts", "category": "React Hook", "size": 8705, "lines": 366, "references": 0, "risk": 0.0, "stability": 53.8288137815694}, {"path": "src\\hooks\\utils\\useNetworkReliability.ts", "name": "useNetworkReliability.ts", "category": "React Hook", "size": 10395, "lines": 387, "references": 0, "risk": 0.0, "stability": 51.8288137815683}, {"path": "src\\hooks\\utils\\useRuntimeGuardrails.ts", "name": "useRuntimeGuardrails.ts", "category": "React Hook", "size": 12157, "lines": 425, "references": 0, "risk": 0.0, "stability": 59.87209387415979}, {"path": "src\\hooks\\utils\\useTelemetry.ts", "name": "useTelemetry.ts", "category": "React Hook", "size": 10261, "lines": 372, "references": 0, "risk": 0.0, "stability": 55.82881378156471}, {"path": "src\\hooks\\voice\\useSpeechRecognition.tsx", "name": "useSpeechRecognition.tsx", "category": "UI Component", "size": 10734, "lines": 387, "references": 0, "risk": 8.0, "stability": 59.92856725378583}, {"path": "src\\hooks\\voice\\useVoiceCommands.tsx", "name": "useVoiceCommands.tsx", "category": "UI Component", "size": 28893, "lines": 755, "references": 0, "risk": 10.0, "stability": 59.8288137815625}, {"path": "src\\jest\\globals.ts", "name": "globals.ts", "category": "Core Logic", "size": 368, "lines": 17, "references": 0, "risk": 4.0, "stability": 25.686723175691785}, {"path": "src\\llm\\agent.ts", "name": "agent.ts", "category": "Core Logic", "size": 6166, "lines": 213, "references": 4, "risk": 20.0, "stability": 61.927864707484844}, {"path": "src\\llm\\cache.ts", "name": "cache.ts", "category": "Core Logic", "size": 3584, "lines": 145, "references": 2, "risk": 10.0, "stability": 48.32881378155781}, {"path": "src\\llm\\config.ts", "name": "config.ts", "category": "Configuration", "size": 4239, "lines": 159, "references": 3, "risk": 15.0, "stability": 67.7288137815556}, {"path": "src\\llm\\context.ts", "name": "context.ts", "category": "Context Provider", "size": 4066, "lines": 143, "references": 1, "risk": 5.0, "stability": 44.1288137815545}, {"path": "src\\llm\\contextAbstraction.ts", "name": "contextAbstraction.ts", "category": "Context Provider", "size": 11625, "lines": 377, "references": 1, "risk": 5.0, "stability": 47.82881378155312}, {"path": "src\\llm\\cost.ts", "name": "cost.ts", "category": "Core Logic", "size": 3601, "lines": 121, "references": 3, "risk": 15.0, "stability": 55.92881378155202}, {"path": "src\\llm\\gateway.ts", "name": "gateway.ts", "category": "Test", "size": 6595, "lines": 219, "references": 2, "risk": 16.0, "stability": 51.82881378154981}, {"path": "src\\llm\\index.ts", "name": "index.ts", "category": "Test", "size": 6083, "lines": 233, "references": 1, "risk": 41.0, "stability": 63.8288137815487}, {"path": "src\\llm\\optimizer.ts", "name": "optimizer.ts", "category": "Core Logic", "size": 1786, "lines": 59, "references": 3, "risk": 15.0, "stability": 41.72881378154732}, {"path": "src\\llm\\quota.ts", "name": "quota.ts", "category": "Core Logic", "size": 4838, "lines": 199, "references": 4, "risk": 20.0, "stability": 75.72881378154513}, {"path": "src\\llm\\README.md", "name": "README.md", "category": "Core Logic", "size": 9286, "lines": 305, "references": 0, "risk": 0.0, "stability": 39.828813781544014}, {"path": "src\\llm\\stream.ts", "name": "stream.ts", "category": "Test", "size": 3016, "lines": 122, "references": 1, "risk": 7.0, "stability": 40.02881378154291}, {"path": "src\\llm\\telemetry.ts", "name": "telemetry.ts", "category": "Core Logic", "size": 4887, "lines": 216, "references": 5, "risk": 25.0, "stability": 79.82881378154042}, {"path": "src\\llm\\types.ts", "name": "types.ts", "category": "Core Logic", "size": 1015, "lines": 50, "references": 6, "risk": 30.0, "stability": 58.828813781539324}, {"path": "src\\llm\\providers\\geminiGateway.ts", "name": "geminiGateway.ts", "category": "Test", "size": 8743, "lines": 273, "references": 1, "risk": 7.0, "stability": 43.927864707464146}, {"path": "src\\llm\\providers\\index.ts", "name": "index.ts", "category": "Core Logic", "size": 292, "lines": 10, "references": 0, "risk": 30.0, "stability": 28.828813781536013}, {"path": "src\\llm\\__tests__\\run-all-tests.ts", "name": "run-all-tests.ts", "category": "Test", "size": 1402, "lines": 51, "references": 0, "risk": 0.0, "stability": 26.928813781534632}, {"path": "src\\llm\\__tests__\\test-agent.ts", "name": "test-agent.ts", "category": "Test", "size": 1339, "lines": 50, "references": 0, "risk": 4.0, "stability": 24.82881378153353}, {"path": "src\\llm\\__tests__\\test-cost.ts", "name": "test-cost.ts", "category": "Test", "size": 1415, "lines": 48, "references": 0, "risk": 0.0, "stability": 24.628813781532426}, {"path": "src\\llm\\__tests__\\test-quota.ts", "name": "test-quota.ts", "category": "Test", "size": 2369, "lines": 81, "references": 0, "risk": 0.0, "stability": 27.928813781530216}, {"path": "src\\llm\\__tests__\\test-telemetry.ts", "name": "test-telemetry.ts", "category": "Test", "size": 2504, "lines": 76, "references": 0, "risk": 0.0, "stability": 27.428813781528838}, {"path": "src\\mcp\\demo.ts", "name": "demo.ts", "category": "Core Logic", "size": 13258, "lines": 272, "references": 0, "risk": 0.0, "stability": 39.82881378152773}, {"path": "src\\mcp\\EXECUTION_TRACE.md", "name": "EXECUTION_TRACE.md", "category": "Core Logic", "size": 5219, "lines": 217, "references": 0, "risk": 0.0, "stability": 39.828813781526634}, {"path": "src\\mcp\\index.ts", "name": "index.ts", "category": "Core Logic", "size": 1788, "lines": 45, "references": 0, "risk": 30.0, "stability": 24.427864707450347}, {"path": "src\\mcp\\INTEGRATION_GUIDE.md", "name": "INTEGRATION_GUIDE.md", "category": "Core Logic", "size": 13296, "lines": 394, "references": 0, "risk": 6.0, "stability": 41.82881378152304}, {"path": "src\\mcp\\package.json", "name": "package.json", "category": "Configuration", "size": 507, "lines": 26, "references": 0, "risk": 0.0, "stability": 22.42881378152194}, {"path": "src\\mcp\\QUICK_REFERENCE.md", "name": "QUICK_REFERENCE.md", "category": "Core Logic", "size": 6176, "lines": 220, "references": 0, "risk": 4.0, "stability": 39.828813781520836}, {"path": "src\\mcp\\README.md", "name": "README.md", "category": "Core Logic", "size": 6747, "lines": 242, "references": 0, "risk": 2.0, "stability": 39.828813781518626}, {"path": "src\\mcp\\SUMMARY.md", "name": "SUMMARY.md", "category": "Core Logic", "size": 5764, "lines": 209, "references": 0, "risk": 0.0, "stability": 39.82881378151725}, {"path": "src\\mcp\\tsconfig.json", "name": "tsconfig.json", "category": "Configuration", "size": 473, "lines": 21, "references": 0, "risk": 0.0, "stability": 21.928813781516144}, {"path": "src\\mcp\\verify.ts", "name": "verify.ts", "category": "Test", "size": 8746, "lines": 210, "references": 0, "risk": 0.0, "stability": 39.82881378151394}, {"path": "src\\mcp\\policy\\enforcement.ts", "name": "enforcement.ts", "category": "Core Logic", "size": 4583, "lines": 167, "references": 3, "risk": 15.0, "stability": 56.52881378151284}, {"path": "src\\mcp\\policy\\policy.json", "name": "policy.json", "category": "Configuration", "size": 2334, "lines": 67, "references": 1, "risk": 5.0, "stability": 30.528813781511452}, {"path": "src\\mcp\\runtime\\context.ts", "name": "context.ts", "category": "Context Provider", "size": 2730, "lines": 111, "references": 2, "risk": 14.0, "stability": 46.92881378150925}, {"path": "src\\mcp\\runtime\\executor.ts", "name": "executor.ts", "category": "Core Logic", "size": 4364, "lines": 162, "references": 3, "risk": 21.0, "stability": 54.02881378150815}, {"path": "src\\mcp\\tools\\analysis.ts", "name": "analysis.ts", "category": "Core Logic", "size": 1972, "lines": 82, "references": 1, "risk": 5.0, "stability": 40.02881378150704}, {"path": "src\\mcp\\tools\\code-generation.ts", "name": "code-generation.ts", "category": "Core Logic", "size": 4326, "lines": 167, "references": 3, "risk": 17.0, "stability": 62.52881378150566}, {"path": "src\\mcp\\tools\\execution.ts", "name": "execution.ts", "category": "Core Logic", "size": 1366, "lines": 66, "references": 1, "risk": 5.0, "stability": 36.42881378150345}, {"path": "src\\mcp\\tools\\registry.ts", "name": "registry.ts", "category": "Core Logic", "size": 1715, "lines": 89, "references": 8, "risk": 42.0, "stability": 66.72881378150234}, {"path": "src\\mcp\\tools\\validators.ts", "name": "validators.ts", "category": "Core Logic", "size": 6790, "lines": 273, "references": 3, "risk": 17.0, "stability": 71.82881378150124}, {"path": "src\\monaco-editor\\react.ts", "name": "react.ts", "category": "Core Logic", "size": 799, "lines": 30, "references": 0, "risk": 2.0, "stability": 26.986723073995776}, {"path": "src\\providers\\DevAppProvider.tsx", "name": "DevAppProvider.tsx", "category": "UI Component", "size": 467, "lines": 16, "references": 0, "risk": 0.0, "stability": 23.428813781497656}, {"path": "src\\providers\\MinimalAppProvider.tsx", "name": "MinimalAppProvider.tsx", "category": "UI Component", "size": 405, "lines": 13, "references": 0, "risk": 0.0, "stability": 23.12881378149655}, {"path": "src\\reports\\autofixer_report_20260210_193604.json", "name": "autofixer_report_20260210_193604.json", "category": "Configuration", "size": 350, "lines": 15, "references": 0, "risk": 0.0, "stability": 21.479299984482427}, {"path": "src\\reports\\autofixer_report_20260210_193604.md", "name": "autofixer_report_20260210_193604.md", "category": "Core Logic", "size": 134, "lines": 11, "references": 0, "risk": 0.0, "stability": 21.07929998448105}, {"path": "src\\runtime\\browser-stub.ts", "name": "browser-stub.ts", "category": "Core Logic", "size": 3190, "lines": 88, "references": 0, "risk": 0.0, "stability": 48.62881378149186}, {"path": "src\\runtime\\EventBus.ts", "name": "EventBus.ts", "category": "Test", "size": 4474, "lines": 171, "references": 0, "risk": 2.0, "stability": 56.92881378149076}, {"path": "src\\runtime\\toolRuntime.ts", "name": "toolRuntime.ts", "category": "Core Logic", "size": 33, "lines": 2, "references": 1, "risk": 5.0, "stability": 24.028813781488548}, {"path": "src\\services\\agentOrchestrator.ts", "name": "agentOrchestrator.ts", "category": "Service", "size": 68076, "lines": 1914, "references": 0, "risk": 20.0, "stability": 47.92849896667235}, {"path": "src\\services\\autonomousController.ts", "name": "autonomousController.ts", "category": "Service", "size": 12325, "lines": 409, "references": 2, "risk": 10.0, "stability": 53.82881378148606}, {"path": "src\\services\\chaosTesting.ts", "name": "chaosTesting.ts", "category": "Service", "size": 7305, "lines": 235, "references": 2, "risk": 14.0, "stability": 49.87196771666905}, {"path": "src\\services\\codeAnalysisService.ts", "name": "codeAnalysisService.ts", "category": "Service", "size": 10596, "lines": 362, "references": 0, "risk": 4.0, "stability": 45.82881378148275}, {"path": "src\\services\\contextManager.ts", "name": "contextManager.ts", "category": "Service", "size": 3707, "lines": 119, "references": 0, "risk": 6.0, "stability": 35.8278647074073}, {"path": "src\\services\\continuousVerification.ts", "name": "continuousVerification.ts", "category": "Service", "size": 16459, "lines": 448, "references": 0, "risk": 0.0, "stability": 41.9278647074062}, {"path": "src\\services\\databaseService.ts", "name": "databaseService.ts", "category": "Service", "size": 106, "lines": 3, "references": 0, "risk": 0.0, "stability": 22.128813781478062}, {"path": "src\\services\\debugService.ts", "name": "debugService.ts", "category": "Service", "size": 7298, "lines": 290, "references": 0, "risk": 2.0, "stability": 47.82881378147696}, {"path": "src\\services\\defaultModels.ts", "name": "defaultModels.ts", "category": "Service", "size": 1561, "lines": 56, "references": 1, "risk": 5.0, "stability": 35.42881378147558}, {"path": "src\\services\\error-handler-global.ts", "name": "error-handler-global.ts", "category": "Service", "size": 1505, "lines": 43, "references": 1, "risk": 5.0, "stability": 30.128813781474477}, {"path": "src\\services\\errorHandler.ts", "name": "errorHandler.ts", "category": "Service", "size": 13973, "lines": 442, "references": 15, "risk": 50.0, "stability": 89.82881378147226}, {"path": "src\\services\\fatalAIError.ts", "name": "fatalAIError.ts", "category": "Service", "size": 4507, "lines": 133, "references": 2, "risk": 10.0, "stability": 47.128813781471166}, {"path": "src\\services\\filesystemAdapter.ts", "name": "filesystemAdapter.ts", "category": "Service", "size": 106, "lines": 3, "references": 1, "risk": 5.0, "stability": 26.128813781469784}, {"path": "src\\services\\GeminiClient.ts", "name": "GeminiClient.ts", "category": "Service", "size": 7934, "lines": 323, "references": 0, "risk": 14.0, "stability": 41.927864707394605}, {"path": "src\\services\\geminiService.ts", "name": "geminiService.ts", "category": "Service", "size": 128306, "lines": 3011, "references": 0, "risk": 20.0, "stability": 41.97824371201186}, {"path": "src\\services\\gitService.ts", "name": "gitService.ts", "category": "Service", "size": 7694, "lines": 290, "references": 0, "risk": 20.0, "stability": 47.82881378146537}, {"path": "src\\services\\hybridDecisionEngine.ts", "name": "hybridDecisionEngine.ts", "category": "Service", "size": 11105, "lines": 363, "references": 5, "risk": 29.0, "stability": 63.82881378146399}, {"path": "src\\services\\index.ts", "name": "index.ts", "category": "Service", "size": 2010, "lines": 69, "references": 0, "risk": 30.0, "stability": 46.82786470738881}, {"path": "src\\services\\mcpAgentIntegration.ts", "name": "mcpAgentIntegration.ts", "category": "Service", "size": 2243, "lines": 79, "references": 1, "risk": 5.0, "stability": 37.72881378146067}, {"path": "src\\services\\mcpConnectionManager.ts", "name": "mcpConnectionManager.ts", "category": "Service", "size": 11656, "lines": 378, "references": 2, "risk": 10.0, "stability": 55.82881378145957}, {"path": "src\\services\\mcpService.ts", "name": "mcpService.ts", "category": "Service", "size": 146283, "lines": 4582, "references": 7, "risk": 55.0, "stability": 77.97505066934062}, {"path": "src\\services\\multiAgentService.ts", "name": "multiAgentService.ts", "category": "Service", "size": 14525, "lines": 415, "references": 1, "risk": 15.0, "stability": 51.82881378145599}, {"path": "src\\services\\notificationDeduplicator.ts", "name": "notificationDeduplicator.ts", "category": "Service", "size": 2142, "lines": 80, "references": 1, "risk": 5.0, "stability": 33.82881378145488}, {"path": "src\\services\\planningFeedback.ts", "name": "planningFeedback.ts", "category": "Service", "size": 9729, "lines": 293, "references": 2, "risk": 12.0, "stability": 53.927864707379705}, {"path": "src\\services\\promptEvolution.ts", "name": "promptEvolution.ts", "category": "Service", "size": 6027, "lines": 210, "references": 1, "risk": 5.0, "stability": 45.828813781451295}, {"path": "src\\services\\promptProfessionalizer.ts", "name": "promptProfessionalizer.ts", "category": "Service", "size": 7734, "lines": 267, "references": 2, "risk": 10.0, "stability": 51.828813781450194}, {"path": "src\\services\\runtimeUIVerification.ts", "name": "runtimeUIVerification.ts", "category": "Service", "size": 30101, "lines": 862, "references": 0, "risk": 20.0, "stability": 43.828813781449085}, {"path": "src\\services\\sandboxAdvanced.ts", "name": "sandboxAdvanced.ts", "category": "Service", "size": 21605, "lines": 847, "references": 0, "risk": 4.0, "stability": 59.927864707372805}, {"path": "src\\services\\sandboxIntegration.ts", "name": "sandboxIntegration.ts", "category": "Service", "size": 9622, "lines": 327, "references": 1, "risk": 7.0, "stability": 47.828813781445504}, {"path": "src\\services\\sandboxManager.ts", "name": "sandboxManager.ts", "category": "Service", "size": 16471, "lines": 587, "references": 6, "risk": 32.0, "stability": 81.8288137814444}, {"path": "src\\services\\secureStorage.ts", "name": "secureStorage.ts", "category": "Service", "size": 76, "lines": 3, "references": 0, "risk": 0.0, "stability": 20.22786470736922}, {"path": "src\\services\\selfHealingEngine.ts", "name": "selfHealingEngine.ts", "category": "Service", "size": 17826, "lines": 462, "references": 1, "risk": 19.0, "stability": 45.828813781441085}, {"path": "src\\services\\speechRecognitionService.ts", "name": "speechRecognitionService.ts", "category": "Service", "size": 18727, "lines": 497, "references": 0, "risk": 12.0, "stability": 47.828813781439706}, {"path": "src\\services\\stateTransaction.ts", "name": "stateTransaction.ts", "category": "Service", "size": 12731, "lines": 462, "references": 1, "risk": 23.0, "stability": 53.8288137814386}, {"path": "src\\services\\streamLifecycleManager.ts", "name": "streamLifecycleManager.ts", "category": "Service", "size": 8849, "lines": 258, "references": 0, "risk": 0.0, "stability": 41.8288137814375}, {"path": "src\\services\\taskDecompositionEngine.ts", "name": "taskDecompositionEngine.ts", "category": "Service", "size": 11886, "lines": 326, "references": 3, "risk": 29.0, "stability": 57.82881378143529}, {"path": "src\\services\\telemetryService.ts", "name": "telemetryService.ts", "category": "Service", "size": 115, "lines": 3, "references": 6, "risk": 30.0, "stability": 46.12881378143391}, {"path": "src\\services\\tokenOptimizer.ts", "name": "tokenOptimizer.ts", "category": "Service", "size": 9119, "lines": 318, "references": 6, "risk": 30.0, "stability": 65.82881378143281}, {"path": "src\\services\\toolValidator.ts", "name": "toolValidator.ts", "category": "Service", "size": 102, "lines": 3, "references": 0, "risk": 0.0, "stability": 22.128813781431706}, {"path": "src\\services\\uiActionRegistry.ts", "name": "uiActionRegistry.ts", "category": "Service", "size": 1527, "lines": 64, "references": 0, "risk": 0.0, "stability": 28.228813781429494}, {"path": "src\\services\\ultimateGeminiTester.ts", "name": "ultimateGeminiTester.ts", "category": "Service", "size": 61021, "lines": 1844, "references": 2, "risk": 30.0, "stability": 49.92786470735405}, {"path": "src\\services\\utilityTools.ts", "name": "utilityTools.ts", "category": "Service", "size": 23561, "lines": 818, "references": 1, "risk": 25.0, "stability": 47.92786470735294}, {"path": "src\\services\\VoskRendererService.ts", "name": "VoskRendererService.ts", "category": "Service", "size": 5049, "lines": 182, "references": 0, "risk": 4.0, "stability": 44.0288137814248}, {"path": "src\\services\\VoskSpeechService.ts", "name": "VoskSpeechService.ts", "category": "Service", "size": 4148, "lines": 152, "references": 0, "risk": 8.0, "stability": 39.02881378142371}, {"path": "src\\services\\ai\\geminiService - Copy.ts", "name": "geminiService - Copy.ts", "category": "Service", "size": 128227, "lines": 2978, "references": 0, "risk": 20.0, "stability": 41.97505063357508}, {"path": "src\\services\\ai\\geminiService.ts", "name": "geminiService.ts", "category": "Service", "size": 128306, "lines": 3011, "references": 7, "risk": 55.0, "stability": 69.9782437119666}, {"path": "src\\services\\ai\\geminiServiceOptimized.ts", "name": "geminiServiceOptimized.ts", "category": "Service", "size": 16292, "lines": 430, "references": 1, "risk": 15.0, "stability": 45.92786470734494}, {"path": "src\\services\\ai\\geminiSmartLayer.ts", "name": "geminiSmartLayer.ts", "category": "Service", "size": 8193, "lines": 279, "references": 2, "risk": 18.0, "stability": 51.82881378141791}, {"path": "src\\services\\ai\\index.ts", "name": "index.ts", "category": "Service", "size": 114, "lines": 6, "references": 0, "risk": 30.0, "stability": 24.4288137814168}, {"path": "src\\services\\ai\\localAIApiService.ts", "name": "localAIApiService.ts", "category": "Service", "size": 9760, "lines": 368, "references": 1, "risk": 19.0, "stability": 51.92851979993394}, {"path": "src\\services\\ai\\localAIClientApi.ts", "name": "localAIClientApi.ts", "category": "Service", "size": 3144, "lines": 138, "references": 0, "risk": 2.0, "stability": 35.72786470733914}, {"path": "src\\services\\ai\\localAILogger.ts", "name": "localAILogger.ts", "category": "Service", "size": 11401, "lines": 447, "references": 2, "risk": 20.0, "stability": 53.8719677165973}, {"path": "src\\services\\ai\\localAIModelService.ts", "name": "localAIModelService.ts", "category": "Service", "size": 39437, "lines": 1190, "references": 12, "risk": 66.0, "stability": 89.92786470733694}, {"path": "src\\services\\ai\\localAIWebEngine.ts", "name": "localAIWebEngine.ts", "category": "Service", "size": 11041, "lines": 351, "references": 1, "risk": 11.0, "stability": 51.82881378140853}, {"path": "src\\services\\ai\\modelArbitrator.ts", "name": "modelArbitrator.ts", "category": "Service", "size": 8398, "lines": 252, "references": 3, "risk": 17.0, "stability": 57.82881378140742}, {"path": "src\\services\\ai\\modelFallbackManager.ts", "name": "modelFallbackManager.ts", "category": "Service", "size": 13626, "lines": 410, "references": 1, "risk": 5.0, "stability": 47.92786470733225}, {"path": "src\\services\\ai\\modelInfo.ts", "name": "modelInfo.ts", "category": "Service", "size": 6211, "lines": 197, "references": 5, "risk": 25.0, "stability": 71.52881378140384}, {"path": "src\\services\\ai\\modelSelectionService.ts", "name": "modelSelectionService.ts", "category": "Service", "size": 12456, "lines": 367, "references": 0, "risk": 0.0, "stability": 45.928391327699025}, {"path": "src\\services\\ai\\modelService.ts", "name": "modelService.ts", "category": "Service", "size": 8618, "lines": 288, "references": 0, "risk": 6.0, "stability": 45.82881378140162}, {"path": "src\\services\\ai\\modelTelemetryService.ts", "name": "modelTelemetryService.ts", "category": "Service", "size": 2425, "lines": 108, "references": 2, "risk": 10.0, "stability": 50.72786470732645}, {"path": "src\\services\\ai\\modelTestingService.ts", "name": "modelTestingService.ts", "category": "Service", "size": 24241, "lines": 577, "references": 0, "risk": 8.0, "stability": 43.82881378139804}, {"path": "src\\services\\ai\\modelValidationStore.ts", "name": "modelValidationStore.ts", "category": "Service", "size": 25161, "lines": 709, "references": 6, "risk": 30.0, "stability": 67.92786470732287}, {"path": "src\\services\\ai\\smartModelSelector.ts", "name": "smartModelSelector.ts", "category": "Service", "size": 12281, "lines": 414, "references": 0, "risk": 0.0, "stability": 47.82881378139583}, {"path": "src\\services\\ai\\gemini\\CacheManager.ts", "name": "CacheManager.ts", "category": "Service", "size": 2831, "lines": 129, "references": 1, "risk": 5.0, "stability": 40.72881378139472}, {"path": "src\\services\\ai\\gemini\\CircuitBreaker.ts", "name": "CircuitBreaker.ts", "category": "Service", "size": 2143, "lines": 90, "references": 1, "risk": 5.0, "stability": 34.82881378139362}, {"path": "src\\services\\ai\\gemini\\GeminiClient.ts", "name": "GeminiClient.ts", "category": "Service", "size": 7280, "lines": 264, "references": 0, "risk": 0.0, "stability": 41.82881378139114}, {"path": "src\\services\\ai\\gemini\\index.ts", "name": "index.ts", "category": "Service", "size": 370, "lines": 12, "references": 0, "risk": 30.0, "stability": 35.028813781390035}, {"path": "src\\services\\ai\\gemini\\RetryPolicy.ts", "name": "RetryPolicy.ts", "category": "Service", "size": 1998, "lines": 83, "references": 2, "risk": 10.0, "stability": 38.12881378138893}, {"path": "src\\services\\ai\\gemini\\types.ts", "name": "types.ts", "category": "Service", "size": 1288, "lines": 53, "references": 3, "risk": 15.0, "stability": 49.12881378138645}, {"path": "src\\services\\ai\\gemini\\__tests__\\RetryPolicy.test.ts", "name": "RetryPolicy.test.ts", "category": "Service", "size": 3375, "lines": 119, "references": 0, "risk": 0.0, "stability": 31.728813781385348}, {"path": "src\\services\\aiProviders\\base.ts", "name": "base.ts", "category": "Service", "size": 2409, "lines": 103, "references": 3, "risk": 15.0, "stability": 42.12881378138424}, {"path": "src\\services\\aiProviders\\custom.ts", "name": "custom.ts", "category": "Service", "size": 6892, "lines": 233, "references": 0, "risk": 12.0, "stability": 41.82881378138313}, {"path": "src\\services\\aiProviders\\factory.ts", "name": "factory.ts", "category": "Service", "size": 3105, "lines": 117, "references": 0, "risk": 0.0, "stability": 35.528813781382034}, {"path": "src\\services\\aiProviders\\index.ts", "name": "index.ts", "category": "Service", "size": 267, "lines": 13, "references": 0, "risk": 30.0, "stability": 21.12881378137955}, {"path": "src\\services\\aiProviders\\openai.ts", "name": "openai.ts", "category": "Service", "size": 6173, "lines": 207, "references": 0, "risk": 8.0, "stability": 41.82881378137844}, {"path": "src\\services\\aiProviders\\storage.ts", "name": "storage.ts", "category": "Service", "size": 4809, "lines": 187, "references": 0, "risk": 0.0, "stability": 40.52881378137734}, {"path": "src\\services\\aiProviders\\types.ts", "name": "types.ts", "category": "Service", "size": 4941, "lines": 236, "references": 2, "risk": 14.0, "stability": 67.82881378137513}, {"path": "src\\services\\code\\codeCompletionService.ts", "name": "codeCompletionService.ts", "category": "Service", "size": 14595, "lines": 475, "references": 0, "risk": 0.0, "stability": 45.82881378137375}, {"path": "src\\services\\code\\filesystemAdapter.ts", "name": "filesystemAdapter.ts", "category": "Service", "size": 16351, "lines": 558, "references": 1, "risk": 15.0, "stability": 45.92854526285303}, {"path": "src\\services\\code\\index.ts", "name": "index.ts", "category": "Service", "size": 80, "lines": 3, "references": 0, "risk": 30.0, "stability": 20.128813781370443}, {"path": "src\\services\\codeIntelligence\\api.ts", "name": "api.ts", "category": "Service", "size": 9627, "lines": 359, "references": 2, "risk": 12.0, "stability": 51.828813781367955}, {"path": "src\\services\\codeIntelligence\\astExtractor.ts", "name": "astExtractor.ts", "category": "Service", "size": 13273, "lines": 445, "references": 4, "risk": 20.0, "stability": 57.927864707291675}, {"path": "src\\services\\codeIntelligence\\changeTracker.ts", "name": "changeTracker.ts", "category": "Service", "size": 9904, "lines": 328, "references": 2, "risk": 18.0, "stability": 49.97505066815239}, {"path": "src\\services\\codeIntelligence\\dependencyMapper.ts", "name": "dependencyMapper.ts", "category": "Service", "size": 13429, "lines": 479, "references": 2, "risk": 10.0, "stability": 49.828813781362165}, {"path": "src\\services\\codeIntelligence\\hashManager.ts", "name": "hashManager.ts", "category": "Service", "size": 2839, "lines": 115, "references": 1, "risk": 5.0, "stability": 37.32881378136106}, {"path": "src\\services\\codeIntelligence\\index.ts", "name": "index.ts", "category": "Service", "size": 743, "lines": 27, "references": 0, "risk": 30.0, "stability": 22.528813781359958}, {"path": "src\\services\\codeIntelligence\\indexer.ts", "name": "indexer.ts", "category": "Service", "size": 10946, "lines": 389, "references": 3, "risk": 15.0, "stability": 53.927864707283675}, {"path": "src\\services\\codeIntelligence\\nodeCompat.ts", "name": "nodeCompat.ts", "category": "Service", "size": 5298, "lines": 195, "references": 5, "risk": 27.0, "stability": 79.32881378135637}, {"path": "src\\services\\codeIntelligence\\analysis\\aiAnalyzer.ts", "name": "aiAnalyzer.ts", "category": "Service", "size": 6810, "lines": 215, "references": 1, "risk": 5.0, "stability": 45.92860429061453}, {"path": "src\\services\\codeIntelligence\\analysis\\breakingChangeDetector.ts", "name": "breakingChangeDetector.ts", "category": "Service", "size": 11622, "lines": 358, "references": 1, "risk": 5.0, "stability": 45.82881378135306}, {"path": "src\\services\\codeIntelligence\\analysis\\impactAnalyzer.ts", "name": "impactAnalyzer.ts", "category": "Service", "size": 11706, "lines": 405, "references": 2, "risk": 10.0, "stability": 53.828813781351954}, {"path": "src\\services\\codeIntelligence\\api\\restServer.ts", "name": "restServer.ts", "category": "Service", "size": 7270, "lines": 246, "references": 0, "risk": 20.0, "stability": 43.9278647072765}, {"path": "src\\services\\codeIntelligence\\ast\\astDiff.ts", "name": "astDiff.ts", "category": "Service", "size": 14091, "lines": 417, "references": 1, "risk": 5.0, "stability": 49.828813781348366}, {"path": "src\\services\\codeIntelligence\\cpg\\cpgAnalyzer.ts", "name": "cpgAnalyzer.ts", "category": "Service", "size": 11984, "lines": 443, "references": 3, "risk": 15.0, "stability": 57.828813781347264}, {"path": "src\\services\\codeIntelligence\\history\\snapshotDiff.ts", "name": "snapshotDiff.ts", "category": "Service", "size": 5815, "lines": 204, "references": 2, "risk": 10.0, "stability": 53.82881378134478}, {"path": "src\\services\\codeIntelligence\\history\\snapshotManager.ts", "name": "snapshotManager.ts", "category": "Service", "size": 12297, "lines": 415, "references": 0, "risk": 0.0, "stability": 43.927864707269606}, {"path": "src\\services\\codeIntelligence\\history\\trendAnalyzer.ts", "name": "trendAnalyzer.ts", "category": "Service", "size": 9199, "lines": 253, "references": 1, "risk": 5.0, "stability": 47.828813781342575}, {"path": "src\\services\\codeIntelligence\\vcs\\gitIntegration.ts", "name": "gitIntegration.ts", "category": "Service", "size": 9874, "lines": 384, "references": 1, "risk": 5.0, "stability": 51.927864707266295}, {"path": "src\\services\\codeIntelligence\\vscode\\vscodeWatcher.ts", "name": "vscodeWatcher.ts", "category": "Service", "size": 3913, "lines": 144, "references": 1, "risk": 7.0, "stability": 40.32840521652417}, {"path": "src\\services\\errorHandling\\ErrorManager.ts", "name": "ErrorManager.ts", "category": "Service", "size": 7322, "lines": 293, "references": 0, "risk": 4.0, "stability": 45.92786470726381}, {"path": "src\\services\\errorHandling\\ErrorPresentation.ts", "name": "ErrorPresentation.ts", "category": "Service", "size": 12010, "lines": 411, "references": 1, "risk": 7.0, "stability": 63.828813781335676}, {"path": "src\\services\\errorHandling\\index.ts", "name": "index.ts", "category": "Service", "size": 71, "lines": 3, "references": 0, "risk": 30.0, "stability": 20.12881378133457}, {"path": "src\\services\\gemini\\apiClient.ts", "name": "apiClient.ts", "category": "Service", "size": 7765, "lines": 272, "references": 0, "risk": 16.0, "stability": 47.92786470725939}, {"path": "src\\services\\gemini\\errorHandler.ts", "name": "errorHandler.ts", "category": "Service", "size": 11867, "lines": 410, "references": 1, "risk": 19.0, "stability": 61.82881378133098}, {"path": "src\\services\\gemini\\GeminiAdapter.ts", "name": "GeminiAdapter.ts", "category": "Service", "size": 7449, "lines": 305, "references": 0, "risk": 0.0, "stability": 45.92786470725581}, {"path": "src\\services\\gemini\\GeminiClient.ts", "name": "GeminiClient.ts", "category": "Service", "size": 7927, "lines": 323, "references": 1, "risk": 19.0, "stability": 45.828813781328776}, {"path": "src\\services\\gemini\\index.ts", "name": "index.ts", "category": "Service", "size": 6944, "lines": 298, "references": 0, "risk": 30.0, "stability": 53.82881378132629}, {"path": "src\\services\\gemini\\ModelManager.ts", "name": "ModelManager.ts", "category": "Service", "size": 8122, "lines": 275, "references": 1, "risk": 5.0, "stability": 45.82881378132519}, {"path": "src\\services\\gemini\\RetryPolicy.ts", "name": "RetryPolicy.ts", "category": "Service", "size": 4084, "lines": 175, "references": 1, "risk": 9.0, "stability": 45.32881378132298}, {"path": "src\\services\\gemini\\streamProcessor.ts", "name": "streamProcessor.ts", "category": "Service", "size": 9848, "lines": 383, "references": 0, "risk": 6.0, "stability": 45.97824372370072}, {"path": "src\\services\\gemini\\types.ts", "name": "types.ts", "category": "Service", "size": 4504, "lines": 209, "references": 2, "risk": 12.0, "stability": 67.82881378132049}, {"path": "src\\services\\mcp\\fileOperations.ts", "name": "fileOperations.ts", "category": "Service", "size": 12779, "lines": 600, "references": 1, "risk": 5.0, "stability": 45.82881378131829}, {"path": "src\\services\\mcp\\index.ts", "name": "index.ts", "category": "Service", "size": 4397, "lines": 152, "references": 0, "risk": 34.0, "stability": 45.12842373502089}, {"path": "src\\services\\mcp\\types.ts", "name": "types.ts", "category": "Service", "size": 6717, "lines": 296, "references": 0, "risk": 4.0, "stability": 59.828813781316086}, {"path": "src\\services\\monitoring\\capabilityMonitor.ts", "name": "capabilityMonitor.ts", "category": "Service", "size": 5553, "lines": 180, "references": 0, "risk": 0.0, "stability": 39.8288137813136}, {"path": "src\\services\\monitoring\\completionReporter.ts", "name": "completionReporter.ts", "category": "Service", "size": 11069, "lines": 335, "references": 0, "risk": 0.0, "stability": 53.92786470723842}, {"path": "src\\services\\monitoring\\index.ts", "name": "index.ts", "category": "Service", "size": 264, "lines": 8, "references": 0, "risk": 30.0, "stability": 20.62881378131139}, {"path": "src\\services\\monitoring\\llmMonitor.ts", "name": "llmMonitor.ts", "category": "Service", "size": 4125, "lines": 144, "references": 0, "risk": 0.0, "stability": 48.2288137813089}, {"path": "src\\services\\monitoring\\memoryPressureMonitor.ts", "name": "memoryPressureMonitor.ts", "category": "Service", "size": 4076, "lines": 125, "references": 1, "risk": 5.0, "stability": 40.3288137813078}, {"path": "src\\services\\monitoring\\productivityMetrics.ts", "name": "productivityMetrics.ts", "category": "Service", "size": 8191, "lines": 329, "references": 7, "risk": 35.0, "stability": 75.8288137813067}, {"path": "src\\services\\monitoring\\streamingMonitor.ts", "name": "streamingMonitor.ts", "category": "Service", "size": 6825, "lines": 267, "references": 0, "risk": 4.0, "stability": 45.87196771648968}, {"path": "src\\services\\monitoring\\telemetryService.ts", "name": "telemetryService.ts", "category": "Service", "size": 13295, "lines": 554, "references": 5, "risk": 25.0, "stability": 71.92786470722903}, {"path": "src\\services\\network\\circuitBreaker.ts", "name": "circuitBreaker.ts", "category": "Service", "size": 2423, "lines": 93, "references": 3, "risk": 15.0, "stability": 45.128813781302014}, {"path": "src\\services\\network\\degradedMode.ts", "name": "degradedMode.ts", "category": "Service", "size": 4261, "lines": 127, "references": 8, "risk": 40.0, "stability": 66.5288137812998}, {"path": "src\\services\\network\\index.ts", "name": "index.ts", "category": "Service", "size": 273, "lines": 8, "references": 0, "risk": 30.0, "stability": 20.628813781298696}, {"path": "src\\services\\network\\networkReliabilityService.ts", "name": "networkReliabilityService.ts", "category": "Service", "size": 11056, "lines": 356, "references": 2, "risk": 12.0, "stability": 57.82881378129731}, {"path": "src\\services\\network\\networkReliabilityVerification.ts", "name": "networkReliabilityVerification.ts", "category": "Service", "size": 4806, "lines": 174, "references": 2, "risk": 10.0, "stability": 47.228813781295116}, {"path": "src\\services\\network\\providerLimit.ts", "name": "providerLimit.ts", "category": "Service", "size": 862, "lines": 32, "references": 4, "risk": 22.0, "stability": 43.028813781294005}, {"path": "src\\services\\network\\rateLimitService.ts", "name": "rateLimitService.ts", "category": "Service", "size": 5911, "lines": 193, "references": 0, "risk": 0.0, "stability": 43.128813781292905}, {"path": "src\\services\\network\\requestCoalescer.ts", "name": "requestCoalescer.ts", "category": "Service", "size": 1881, "lines": 69, "references": 1, "risk": 5.0, "stability": 32.7288137812918}, {"path": "src\\services\\policies\\defaultPolicies.ts", "name": "defaultPolicies.ts", "category": "Service", "size": 9089, "lines": 335, "references": 0, "risk": 0.0, "stability": 53.92786470721524}, {"path": "src\\services\\policies\\index.ts", "name": "index.ts", "category": "Service", "size": 36, "lines": 2, "references": 0, "risk": 30.0, "stability": 20.02881378128821}, {"path": "src\\services\\security\\adversarialDetector.ts", "name": "adversarialDetector.ts", "category": "Service", "size": 5134, "lines": 149, "references": 4, "risk": 20.0, "stability": 56.7288137812871}, {"path": "src\\services\\security\\agentVerifier.ts", "name": "agentVerifier.ts", "category": "Service", "size": 7517, "lines": 253, "references": 0, "risk": 12.0, "stability": 39.927864707210546}, {"path": "src\\services\\security\\aiBehaviorValidation.ts", "name": "aiBehaviorValidation.ts", "category": "Service", "size": 45464, "lines": 1281, "references": 4, "risk": 36.0, "stability": 69.92786470720944}, {"path": "src\\services\\security\\apiKeyMasking.ts", "name": "apiKeyMasking.ts", "category": "Service", "size": 4201, "lines": 160, "references": 0, "risk": 10.0, "stability": 49.82881378128242}, {"path": "src\\services\\security\\auditLogger.ts", "name": "auditLogger.ts", "category": "Service", "size": 13026, "lines": 525, "references": 1, "risk": 9.0, "stability": 57.92786470720613}, {"path": "src\\services\\security\\goalIntegrityGuard.ts", "name": "goalIntegrityGuard.ts", "category": "Service", "size": 2882, "lines": 108, "references": 3, "risk": 15.0, "stability": 44.72786470720476}, {"path": "src\\services\\security\\index.ts", "name": "index.ts", "category": "Service", "size": 402, "lines": 12, "references": 0, "risk": 30.0, "stability": 23.12786470720365}, {"path": "src\\services\\security\\killSwitch.ts", "name": "killSwitch.ts", "category": "Service", "size": 3145, "lines": 109, "references": 3, "risk": 15.0, "stability": 44.72881378127552}, {"path": "src\\services\\security\\policyEngine.ts", "name": "policyEngine.ts", "category": "Service", "size": 11060, "lines": 428, "references": 3, "risk": 15.0, "stability": 67.92786470720034}, {"path": "src\\services\\security\\runtimeGuardrails.ts", "name": "runtimeGuardrails.ts", "category": "Service", "size": 10787, "lines": 276, "references": 4, "risk": 28.0, "stability": 57.927864707198964}, {"path": "src\\services\\security\\secureStorage.ts", "name": "secureStorage.ts", "category": "Service", "size": 24172, "lines": 713, "references": 4, "risk": 40.0, "stability": 61.828813781270824}, {"path": "src\\services\\security\\toolValidator.ts", "name": "toolValidator.ts", "category": "Service", "size": 6162, "lines": 232, "references": 2, "risk": 20.0, "stability": 53.82881378126972}, {"path": "src\\services\\storage\\contextDatabaseBridge.ts", "name": "contextDatabaseBridge.ts", "category": "Service", "size": 10472, "lines": 397, "references": 7, "risk": 51.0, "stability": 75.82881378126862}, {"path": "src\\services\\storage\\contextManager.ts", "name": "contextManager.ts", "category": "Service", "size": 14839, "lines": 420, "references": 4, "risk": 22.0, "stability": 57.927864707193166}, {"path": "src\\services\\storage\\databaseService.ts", "name": "databaseService.ts", "category": "Service", "size": 19287, "lines": 583, "references": 2, "risk": 30.0, "stability": 55.828813781265026}, {"path": "src\\services\\storage\\importanceCache.ts", "name": "importanceCache.ts", "category": "Service", "size": 3553, "lines": 144, "references": 1, "risk": 5.0, "stability": 40.22881378126392}, {"path": "src\\services\\storage\\index.ts", "name": "index.ts", "category": "Service", "size": 183, "lines": 6, "references": 0, "risk": 30.0, "stability": 20.428813781262825}, {"path": "src\\services\\storage\\responseCache.ts", "name": "responseCache.ts", "category": "Service", "size": 5769, "lines": 209, "references": 2, "risk": 14.0, "stability": 49.82881378126034}, {"path": "src\\services\\__tests__\\filesystemAdapter.test.ts", "name": "filesystemAdapter.test.ts", "category": "Service", "size": 20526, "lines": 715, "references": 0, "risk": 0.0, "stability": 39.828813781259235}, {"path": "src\\services\\__tests__\\sandboxAdvanced.test.ts", "name": "sandboxAdvanced.test.ts", "category": "Service", "size": 18541, "lines": 584, "references": 0, "risk": 0.0, "stability": 39.828813781258134}, {"path": "src\\services\\__tests__\\sandboxIntegration.test.ts", "name": "sandboxIntegration.test.ts", "category": "Service", "size": 11641, "lines": 380, "references": 0, "risk": 0.0, "stability": 39.828813781257026}, {"path": "src\\services\\__tests__\\sandboxManager.test.ts", "name": "sandboxManager.test.ts", "category": "Service", "size": 17827, "lines": 561, "references": 0, "risk": 4.0, "stability": 39.828813781254546}, {"path": "src\\stores\\appStore.ts", "name": "appStore.ts", "category": "State Management", "size": 14120, "lines": 493, "references": 0, "risk": 10.0, "stability": 59.928610077549735}, {"path": "src\\stores\\codeIntelligenceStore.ts", "name": "codeIntelligenceStore.ts", "category": "State Management", "size": 5228, "lines": 188, "references": 0, "risk": 0.0, "stability": 56.62881378125233}, {"path": "src\\stores\\conversationStore.ts", "name": "conversationStore.ts", "category": "State Management", "size": 12875, "lines": 409, "references": 0, "risk": 0.0, "stability": 53.828813781251235}, {"path": "src\\stores\\index.ts", "name": "index.ts", "category": "State Management", "size": 1198, "lines": 69, "references": 0, "risk": 30.0, "stability": 46.728813781248746}, {"path": "src\\stores\\projectStore.ts", "name": "projectStore.ts", "category": "State Management", "size": 11239, "lines": 392, "references": 0, "risk": 2.0, "stability": 55.97824372362649}, {"path": "src\\stores\\settingsStore.ts", "name": "settingsStore.ts", "category": "State Management", "size": 9962, "lines": 350, "references": 1, "risk": 9.0, "stability": 63.82881378124654}, {"path": "src\\styles\\animations.css", "name": "animations.css", "category": "Asset", "size": 7491, "lines": 409, "references": 0, "risk": 0.0, "stability": 39.828813781244335}, {"path": "src\\test\\setup.ts", "name": "setup.ts", "category": "Test", "size": 1255, "lines": 53, "references": 0, "risk": 2.0, "stability": 25.128813781242958}, {"path": "src\\testing-library\\react.ts", "name": "react.ts", "category": "Test", "size": 367, "lines": 17, "references": 0, "risk": 4.0, "stability": 25.686723178533768}, {"path": "src\\theme\\designTokens.ts", "name": "designTokens.ts", "category": "Core Logic", "size": 15983, "lines": 546, "references": 0, "risk": 0.0, "stability": 55.82881378124075}, {"path": "src\\theme\\index.ts", "name": "index.ts", "category": "Core Logic", "size": 164, "lines": 9, "references": 0, "risk": 30.0, "stability": 22.72881378123854}, {"path": "src\\theme\\themeSystem.ts", "name": "themeSystem.ts", "category": "Core Logic", "size": 28097, "lines": 1024, "references": 3, "risk": 15.0, "stability": 71.82881378123716}, {"path": "src\\types\\additional.ts", "name": "additional.ts", "category": "Core Logic", "size": 8969, "lines": 408, "references": 1, "risk": 5.0, "stability": 63.978243700183654}, {"path": "src\\types\\ai.ts", "name": "ai.ts", "category": "Core Logic", "size": 4322, "lines": 203, "references": 0, "risk": 0.0, "stability": 59.92780452197459}, {"path": "src\\types\\codeIntelligence.ts", "name": "codeIntelligence.ts", "category": "Core Logic", "size": 3583, "lines": 157, "references": 0, "risk": 0.0, "stability": 55.52881378123275}, {"path": "src\\types\\common.ts", "name": "common.ts", "category": "Core Logic", "size": 5883, "lines": 284, "references": 0, "risk": 12.0, "stability": 59.82881378123136}, {"path": "src\\types\\conversation.ts", "name": "conversation.ts", "category": "Core Logic", "size": 3165, "lines": 142, "references": 1, "risk": 5.0, "stability": 58.12780452196991}, {"path": "src\\types\\core.ts", "name": "core.ts", "category": "Core Logic", "size": 2758, "lines": 135, "references": 1, "risk": 5.0, "stability": 57.427804521968795}, {"path": "src\\types\\editor.ts", "name": "editor.ts", "category": "Core Logic", "size": 4037, "lines": 173, "references": 0, "risk": 0.0, "stability": 57.12881378122695}, {"path": "src\\types\\index.ts", "name": "index.ts", "category": "Core Logic", "size": 1155, "lines": 45, "references": 0, "risk": 30.0, "stability": 30.427864707151496}, {"path": "src\\types\\ipc.ts", "name": "ipc.ts", "category": "Core Logic", "size": 1096, "lines": 21, "references": 0, "risk": 0.0, "stability": 27.92881378122336}, {"path": "src\\types\\prettier.d.ts", "name": "prettier.d.ts", "category": "Core Logic", "size": 1498, "lines": 58, "references": 0, "risk": 18.0, "stability": 41.62881378122226}, {"path": "src\\types\\preview.ts", "name": "preview.ts", "category": "Core Logic", "size": 2814, "lines": 135, "references": 0, "risk": 2.0, "stability": 53.39839595714708}, {"path": "src\\types\\types.ts", "name": "types.ts", "category": "Core Logic", "size": 10510, "lines": 461, "references": 0, "risk": 18.0, "stability": 59.927804521959416}, {"path": "src\\types\\uiPatterns.ts", "name": "uiPatterns.ts", "category": "Test", "size": 9785, "lines": 193, "references": 0, "risk": 2.0, "stability": 51.12881378121757}, {"path": "src\\utils\\agentTelemetry.ts", "name": "agentTelemetry.ts", "category": "Utility", "size": 4651, "lines": 170, "references": 0, "risk": 6.0, "stability": 42.82881378121647}, {"path": "src\\utils\\apiClient.ts", "name": "apiClient.ts", "category": "Service", "size": 9832, "lines": 368, "references": 0, "risk": 2.0, "stability": 59.82881378121536}, {"path": "src\\utils\\errorHandler.ts", "name": "errorHandler.ts", "category": "Utility", "size": 3957, "lines": 164, "references": 1, "risk": 5.0, "stability": 44.27650706824991}, {"path": "src\\utils\\errors.ts", "name": "errors.ts", "category": "Utility", "size": 5591, "lines": 214, "references": 1, "risk": 5.0, "stability": 63.82881378121178}, {"path": "src\\utils\\EventBus.ts", "name": "EventBus.ts", "category": "Utility", "size": 3474, "lines": 142, "references": 2, "risk": 10.0, "stability": 46.07583114232179}, {"path": "src\\utils\\index.ts", "name": "index.ts", "category": "Utility", "size": 1222, "lines": 67, "references": 0, "risk": 30.0, "stability": 46.576347346023276}, {"path": "src\\utils\\logger.ts", "name": "logger.ts", "category": "Utility", "size": 11155, "lines": 345, "references": 0, "risk": 0.0, "stability": 59.876443410836714}, {"path": "src\\utils\\monitoring.ts", "name": "monitoring.ts", "category": "Utility", "size": 11587, "lines": 482, "references": 0, "risk": 0.0, "stability": 59.876454984909685}, {"path": "src\\utils\\performanceUtils.ts", "name": "performanceUtils.ts", "category": "Utility", "size": 9106, "lines": 377, "references": 0, "risk": 8.0, "stability": 59.87196771638895}, {"path": "src\\utils\\stateUpdateLogger.ts", "name": "stateUpdateLogger.ts", "category": "State Management", "size": 3689, "lines": 152, "references": 0, "risk": 2.0, "stability": 41.07639132749897}, {"path": "src\\utils\\storageManager.ts", "name": "storageManager.ts", "category": "Utility", "size": 8574, "lines": 261, "references": 0, "risk": 14.0, "stability": 43.87642836453462}, {"path": "src\\vitejs\\plugin-react.ts", "name": "plugin-react.ts", "category": "Core Logic", "size": 336, "lines": 17, "references": 0, "risk": 4.0, "stability": 25.68672305189763}, {"path": "src\\vitest\\config.ts", "name": "config.ts", "category": "Test", "size": 357, "lines": 17, "references": 0, "risk": 4.0, "stability": 25.68672305189542}, {"path": "styles\\design-tokens.css", "name": "design-tokens.css", "category": "Asset", "size": 6708, "lines": 223, "references": 0, "risk": 0.0, "stability": 39.82881378119687}, {"path": "types\\codeIntelligence.ts", "name": "codeIntelligence.ts", "category": "Core Logic", "size": 3557, "lines": 157, "references": 0, "risk": 0.0, "stability": 55.528813781195495}, {"path": "types\\common.ts", "name": "common.ts", "category": "Core Logic", "size": 5868, "lines": 284, "references": 0, "risk": 12.0, "stability": 59.82881378119329}, {"path": "types\\prettier.d.ts", "name": "prettier.d.ts", "category": "Core Logic", "size": 1476, "lines": 58, "references": 0, "risk": 18.0, "stability": 41.62881378119218}, {"path": "vscode-extension\\package-lock.json", "name": "package-lock.json", "category": "Configuration", "size": 1772, "lines": 55, "references": 0, "risk": 0.0, "stability": 25.328813781191077}, {"path": "vscode-extension\\package.json", "name": "package.json", "category": "Configuration", "size": 1007, "lines": 44, "references": 0, "risk": 0.0, "stability": 24.2288137811897}, {"path": "vscode-extension\\tsconfig.json", "name": "tsconfig.json", "category": "Configuration", "size": 248, "lines": 13, "references": 0, "risk": 0.0, "stability": 21.128813781187493}, {"path": "vscode-extension\\src\\diagnostics.ts", "name": "diagnostics.ts", "category": "Core Logic", "size": 3969, "lines": 120, "references": 1, "risk": 9.0, "stability": 37.82881378118638}, {"path": "vscode-extension\\src\\extension.ts", "name": "extension.ts", "category": "Core Logic", "size": 4714, "lines": 138, "references": 0, "risk": 0.0, "stability": 37.628813781185286}, {"path": "vscode-extension\\src\\fileWatcher.ts", "name": "fileWatcher.ts", "category": "Test", "size": 2712, "lines": 88, "references": 1, "risk": 5.0, "stability": 34.62881378118391}, {"path": "vscode-extension\\src\\ipc.ts", "name": "ipc.ts", "category": "Core Logic", "size": 4052, "lines": 149, "references": 2, "risk": 12.0, "stability": 44.72881378118169}, {"path": "vscode-extension\\src\\statusBar.ts", "name": "statusBar.ts", "category": "Core Logic", "size": 2133, "lines": 65, "references": 1, "risk": 5.0, "stability": 32.32881378118059}, {"path": "__mocks__\\google-genai.js", "name": "google-genai.js", "category": "Core Logic", "size": 460, "lines": 22, "references": 0, "risk": 0.0, "stability": 22.028813781179487}, {"path": "__mocks__\\react-markdown.js", "name": "react-markdown.js", "category": "Core Logic", "size": 205, "lines": 7, "references": 0, "risk": 0.0, "stability": 20.52881378117811}, {"path": "__mocks__\\react-syntax-highlighter-prism-style.js", "name": "react-syntax-highlighter-prism-style.js", "category": "Core Logic", "size": 22, "lines": 2, "references": 0, "risk": 0.0, "stability": 20.0288137811759}, {"path": "__mocks__\\react-syntax-highlighter.js", "name": "react-syntax-highlighter.js", "category": "Core Logic", "size": 226, "lines": 12, "references": 0, "risk": 0.0, "stability": 21.028813781174797}, {"path": "__tests__\\runtime-verification.test.tsx", "name": "runtime-verification.test.tsx", "category": "UI Component", "size": 4214, "lines": 111, "references": 0, "risk": 8.0, "stability": 30.928813781173695}, {"path": "__tests__\\components\\EditorTabs.test.tsx", "name": "EditorTabs.test.tsx", "category": "UI Component", "size": 3588, "lines": 112, "references": 0, "risk": 0.0, "stability": 31.028813781172587}, {"path": "__tests__\\components\\InputArea.test.tsx", "name": "InputArea.test.tsx", "category": "UI Component", "size": 10532, "lines": 317, "references": 0, "risk": 0.0, "stability": 39.828813781171206}, {"path": "__tests__\\components\\InspectorPanel.test.tsx", "name": "InspectorPanel.test.tsx", "category": "UI Component", "size": 1315, "lines": 42, "references": 0, "risk": 0.0, "stability": 24.028813781169}, {"path": "__tests__\\components\\MessageList.test.tsx", "name": "MessageList.test.tsx", "category": "UI Component", "size": 11392, "lines": 370, "references": 0, "risk": 0.0, "stability": 39.828813781167895}, {"path": "__tests__\\components\\Sidebar.test.tsx", "name": "Sidebar.test.tsx", "category": "UI Component", "size": 4255, "lines": 135, "references": 0, "risk": 0.0, "stability": 33.328813781166794}, {"path": "__tests__\\integration\\file-workflow.test.tsx", "name": "file-workflow.test.tsx", "category": "UI Component", "size": 9219, "lines": 258, "references": 0, "risk": 0.0, "stability": 39.828813781165415}, {"path": "__tests__\\services\\agentOrchestrator.test.ts", "name": "agentOrchestrator.test.ts", "category": "Service", "size": 793, "lines": 27, "references": 0, "risk": 0.0, "stability": 22.528813781163205}, {"path": "__tests__\\services\\contextManager.test.ts", "name": "contextManager.test.ts", "category": "Service", "size": 5378, "lines": 189, "references": 0, "risk": 0.0, "stability": 38.7288137811621}, {"path": "__tests__\\services\\databaseService.test.ts", "name": "databaseService.test.ts", "category": "Service", "size": 8238, "lines": 253, "references": 0, "risk": 0.0, "stability": 43.828813781161}, {"path": "__tests__\\services\\errorHandler.test.ts", "name": "errorHandler.test.ts", "category": "Service", "size": 7742, "lines": 220, "references": 0, "risk": 0.0, "stability": 39.828813781159624}, {"path": "__tests__\\services\\geminiService.test.ts", "name": "geminiService.test.ts", "category": "Service", "size": 4628, "lines": 168, "references": 0, "risk": 0.0, "stability": 36.62881378115741}, {"path": "__tests__\\services\\secureStorage.test.ts", "name": "secureStorage.test.ts", "category": "Service", "size": 9928, "lines": 313, "references": 0, "risk": 0.0, "stability": 39.82881378115631}, {"path": "__tests__\\services\\stateTransaction.test.ts", "name": "stateTransaction.test.ts", "category": "Service", "size": 11874, "lines": 410, "references": 0, "risk": 12.0, "stability": 39.828813781155205}, {"path": "__tests__\\services\\telemetryService.test.ts", "name": "telemetryService.test.ts", "category": "Service", "size": 11793, "lines": 349, "references": 0, "risk": 0.0, "stability": 39.828813781153826}, {"path": "__tests__\\services\\toolValidator.test.ts", "name": "toolValidator.test.ts", "category": "Service", "size": 9399, "lines": 315, "references": 0, "risk": 0.0, "stability": 39.82881378115162}];
+
+// Toggle cluster expansion
+function toggleCluster(id) {
+    const cluster = document.querySelector(`[data-cluster-id="${id}"]`);
+    cluster.classList.toggle('expanded');
+}
+
+// Search functionality
+const searchBox = document.getElementById('searchBox');
+if (searchBox) {
+    searchBox.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        // Simple search implementation
+        console.log('Searching for:', term);
+    });
+}
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        const filter = e.target.dataset.filter;
+        console.log('Filter:', filter);
+    });
+});
+
+// Simple chart rendering (using canvas)
+function renderCategoryChart() {
+    const canvas = document.getElementById('categoryChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const data = window.chartData;
+    
+    // Simple bar chart
+    const maxValue = Math.max(...data.categoryCounts);
+    const barWidth = canvas.width / data.categories.length;
+    const barSpacing = 10;
+    
+    data.categories.forEach((cat, i) => {
+        const barHeight = (data.categoryCounts[i] / maxValue) * (canvas.height - 40);
+        const x = i * barWidth + barSpacing;
+        const y = canvas.height - barHeight - 20;
+        
+        ctx.fillStyle = '#6366f1';
+        ctx.fillRect(x, y, barWidth - barSpacing * 2, barHeight);
+        
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '10px sans-serif';
+        ctx.fillText(data.categoryCounts[i], x + 5, y - 5);
+    });
+}
+
+// Initialize charts
+setTimeout(() => {
+    renderCategoryChart();
+}, 100);
+
+console.log('✓ Dashboard initialized');
+console.log(`📊 Loaded ${files.length} files`);
+</script>
+</body>
+</html>

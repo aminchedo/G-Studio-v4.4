@@ -1,0 +1,3061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gemini Models Checker — Advanced Rate Limiting & VPN Detection</title>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       RESET & VARIABLES
+       ═══════════════════════════════════════════════════════════════ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #0f1419;
+      --bg-card: #151b26;
+      --bg-card-hover: #1a2130;
+      --bg-input: #0d1117;
+      --bg-code: #0c1118;
+      --border: #1e2736;
+      --border-focus: #4f8cff;
+      --border-success: #22c55e;
+      --border-warning: #f59e0b;
+      --border-error: #ef4444;
+      --text-primary: #e8ecf4;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --blue: #4f8cff;
+      --blue-hover: #3b6de0;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --purple: #a78bfa;
+      --cyan: #22d3ee;
+      --orange: #fb923c;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════════════════════════════ */
+    .header {
+      background: linear-gradient(135deg, #0f1419 0%, #1a2130 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .header-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .header-text h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       TABS
+       ═══════════════════════════════════════════════════════════════ */
+    .tabs {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 4px;
+      padding: 0 32px;
+      position: sticky;
+      top: 89px;
+      z-index: 99;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .tab:hover {
+      color: var(--text-secondary);
+    }
+
+    .tab.active {
+      color: var(--blue);
+      border-bottom-color: var(--blue);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       CONTAINER
+       ═══════════════════════════════════════════════════════════════ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       API SECTION
+       ═══════════════════════════════════════════════════════════════ */
+    .api-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .api-section label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .api-section label svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 12px 44px 12px 14px;
+      font-size: 0.88rem;
+      font-family: 'Consolas', 'Fira Code', monospace;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      outline: none;
+      transition: all var(--transition);
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+    }
+
+    .input-wrapper input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .btn-toggle-visibility {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+
+    .btn-toggle-visibility:hover {
+      color: var(--text-secondary);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .btn-toggle-visibility svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue-hover));
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(79, 140, 255, 0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(79, 140, 255, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       ALERT BOX
+       ═══════════════════════════════════════════════════════════════ */
+    .alert {
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .alert svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .alert-info {
+      background: rgba(79, 140, 255, 0.1);
+      border: 1px solid rgba(79, 140, 255, 0.2);
+      color: var(--blue);
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      color: var(--green);
+    }
+
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      color: var(--yellow);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: var(--red);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       VPN STATUS
+       ═══════════════════════════════════════════════════════════════ */
+    .vpn-status {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .vpn-status-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .vpn-status-header svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .vpn-status-header h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .vpn-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .vpn-info-item {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+    }
+
+    .vpn-info-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 4px;
+    }
+
+    .vpn-info-value {
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-family: 'Consolas', monospace;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       STATS BAR
+       ═══════════════════════════════════════════════════════════════ */
+    .stats-bar {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stats-bar.visible {
+      display: grid;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+      transition: all var(--transition);
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+
+    .stat-total .stat-value { color: var(--blue); }
+    .stat-working .stat-value { color: var(--green); }
+    .stat-failed .stat-value { color: var(--red); }
+    .stat-testing .stat-value { color: var(--yellow); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       RATE LIMIT MONITOR
+       ═══════════════════════════════════════════════════════════════ */
+    .rate-limit-monitor {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .rate-limit-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .rate-limit-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rate-limit-title svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .rate-limit-status {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .rate-limit-status.safe {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--green);
+    }
+
+    .rate-limit-status.warning {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--yellow);
+    }
+
+    .rate-limit-status.danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+    }
+
+    .rate-limit-bars {
+      display: grid;
+      gap: 12px;
+    }
+
+    .rate-limit-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rate-limit-bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+    }
+
+    .rate-limit-bar-label {
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .rate-limit-bar-value {
+      color: var(--text-muted);
+      font-family: 'Consolas', monospace;
+    }
+
+    .rate-limit-bar-track {
+      height: 6px;
+      background: var(--bg-secondary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .rate-limit-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+
+    .rate-limit-bar-fill.safe { background: var(--green); }
+    .rate-limit-bar-fill.warning { background: var(--yellow); }
+    .rate-limit-bar-fill.danger { background: var(--red); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PROGRESS
+       ═══════════════════════════════════════════════════════════════ */
+    .progress-section {
+      display: none;
+      margin-bottom: 20px;
+    }
+
+    .progress-section.visible {
+      display: block;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-secondary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--green));
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .progress-text {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FILTERS
+       ═══════════════════════════════════════════════════════════════ */
+    .filter-bar {
+      display: none;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .filter-bar.visible {
+      display: flex;
+    }
+
+    .filter-tab {
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-tab svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .filter-tab:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .filter-tab.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       MODELS GRID
+       ═══════════════════════════════════════════════════════════════ */
+    .models-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .model-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .model-card:hover {
+      border-color: var(--border-focus);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .model-card.status-working {
+      border-left: 3px solid var(--green);
+    }
+
+    .model-card.status-failed {
+      border-left: 3px solid var(--red);
+      opacity: 0.7;
+    }
+
+    .model-card.status-testing {
+      border-left: 3px solid var(--yellow);
+    }
+
+    .model-card.status-pending {
+      border-left: 3px solid var(--border);
+    }
+
+    .model-card.expanded {
+      border-color: var(--blue);
+    }
+
+    .model-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .status-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .status-working .status-icon {
+      background: rgba(34, 197, 94, 0.15);
+    }
+
+    .status-failed .status-icon {
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    .status-testing .status-icon {
+      background: rgba(245, 158, 11, 0.15);
+    }
+
+    .status-pending .status-icon {
+      background: rgba(107, 114, 128, 0.15);
+    }
+
+    .status-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .model-info {
+      min-width: 0;
+    }
+
+    .model-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: 'Consolas', 'Fira Code', monospace;
+      word-break: break-all;
+    }
+
+    .model-display-name {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .model-meta {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .meta-tag {
+      font-size: 0.68rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .meta-tag svg {
+      width: 11px;
+      height: 11px;
+    }
+
+    .meta-tag.method-generate {
+      background: rgba(79, 140, 255, 0.15);
+      color: var(--blue);
+    }
+
+    .meta-tag.method-embed {
+      background: rgba(167, 139, 250, 0.15);
+      color: var(--purple);
+    }
+
+    .meta-tag.method-count {
+      background: rgba(34, 211, 238, 0.15);
+      color: var(--cyan);
+    }
+
+    .model-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .model-status-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      display: inline-block;
+    }
+
+    .badge-working {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--green);
+    }
+
+    .badge-failed {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+    }
+
+    .badge-testing {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--yellow);
+    }
+
+    .badge-pending {
+      background: rgba(107, 114, 128, 0.15);
+      color: var(--text-muted);
+    }
+
+    .model-latency {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      justify-content: flex-end;
+    }
+
+    .model-latency svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       EXPANDED DETAILS
+       ═══════════════════════════════════════════════════════════════ */
+    .model-details {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      animation: slideDown 0.3s ease;
+    }
+
+    .model-card.expanded .model-details {
+      display: block;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .details-section {
+      margin-bottom: 16px;
+    }
+
+    .details-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .details-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .details-title svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .detail-item {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+    }
+
+    .detail-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 4px;
+    }
+
+    .detail-value {
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-family: 'Consolas', 'Fira Code', monospace;
+    }
+
+    .code-block {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-family: 'Consolas', 'Fira Code', monospace;
+      font-size: 0.75rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    .code-block pre {
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .code-block .btn-copy {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+      font-size: 0.7rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .code-block .btn-copy svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .code-block .btn-copy:hover {
+      color: var(--text-primary);
+      background: var(--bg-card-hover);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       EMPTY STATE
+       ═══════════════════════════════════════════════════════════════ */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+
+    .empty-state h3 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state p {
+      font-size: 0.85rem;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       INFO BOX
+       ═══════════════════════════════════════════════════════════════ */
+    .info-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .info-box h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-box h3 svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .info-box p {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+
+    .info-box ul {
+      margin-left: 20px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .info-box code {
+      background: var(--bg-code);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Consolas', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--blue);
+    }
+
+    .info-box a {
+      color: var(--blue);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    .info-box a:hover {
+      color: var(--blue-hover);
+      text-decoration: underline;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LOG SECTION
+       ═══════════════════════════════════════════════════════════════ */
+    .log-section {
+      margin-top: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: none;
+    }
+
+    .log-section.visible {
+      display: block;
+    }
+
+    .log-header {
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .log-header-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .log-header-title svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .log-body {
+      padding: 12px 16px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Consolas', 'Fira Code', monospace;
+      font-size: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .log-entry {
+      padding: 2px 0;
+    }
+
+    .log-time {
+      color: var(--text-muted);
+    }
+
+    .log-ok {
+      color: var(--green);
+    }
+
+    .log-err {
+      color: var(--red);
+    }
+
+    .log-info {
+      color: var(--blue);
+    }
+
+    .log-warn {
+      color: var(--yellow);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px;
+      }
+
+      .tabs {
+        padding: 0 16px;
+        overflow-x: auto;
+      }
+
+      .input-row {
+        flex-direction: column;
+      }
+
+      .model-header {
+        grid-template-columns: auto 1fr;
+      }
+
+      .model-right {
+        grid-column: 1 / -1;
+        text-align: left;
+        margin-top: 8px;
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .vpn-info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>Gemini Models Checker</h1>
+      <p>Advanced rate limiting, VPN detection, and real access testing with TypeScript/JavaScript examples</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABS
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="tabs">
+    <button class="tab active" data-tab="checker">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      Model Checker
+    </button>
+    <button class="tab" data-tab="vpn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      VPN Impact
+    </button>
+    <button class="tab" data-tab="ratelimit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      Rate Limiting Guide
+    </button>
+    <button class="tab" data-tab="typescript">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="16 18 22 12 16 6"/>
+        <polyline points="8 6 2 12 8 18"/>
+      </svg>
+      TypeScript Guide
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       MAIN CONTAINER
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="container">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 1: MODEL CHECKER
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="tab-content active" id="tab-checker">
+
+      <!-- API Key Section -->
+      <div class="api-section">
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Google AI (Gemini) API Key
+        </label>
+        <div class="input-row">
+          <div class="input-wrapper">
+            <input
+              id="apiKey"
+              type="password"
+              placeholder="AIzaSy..."
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <button class="btn-toggle-visibility" id="btnToggle" type="button">
+              <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <button class="btn btn-primary" id="btnCheck" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+            </svg>
+            <span>Check Models</span>
+          </button>
+          <button class="btn btn-secondary" id="btnExport" type="button" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Export JSON</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- VPN Status -->
+      <div class="vpn-status" id="vpnStatus" style="display:none;">
+        <div class="vpn-status-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          <h3>Network & VPN Status</h3>
+        </div>
+        <div class="vpn-info-grid" id="vpnInfoGrid"></div>
+      </div>
+
+      <!-- Rate Limit Monitor -->
+      <div class="rate-limit-monitor" id="rateLimitMonitor" style="display:none;">
+        <div class="rate-limit-header">
+          <div class="rate-limit-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Rate Limit Monitor
+          </div>
+          <div class="rate-limit-status safe" id="rateLimitStatus">SAFE</div>
+        </div>
+        <div class="rate-limit-bars" id="rateLimitBars"></div>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="stats-bar" id="statsBar">
+        <div class="stat-card stat-total">
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-label">Total Found</div>
+        </div>
+        <div class="stat-card stat-working">
+          <div class="stat-value" id="statWorking">0</div>
+          <div class="stat-label">Working ✓</div>
+        </div>
+        <div class="stat-card stat-failed">
+          <div class="stat-value" id="statFailed">0</div>
+          <div class="stat-label">Failed ✗</div>
+        </div>
+        <div class="stat-card stat-testing">
+          <div class="stat-value" id="statTesting">0</div>
+          <div class="stat-label">Testing…</div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-section" id="progressSection">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Preparing…</div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-tab active" data-filter="all">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+          </svg>
+          All
+        </button>
+        <button class="filter-tab" data-filter="working">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Working
+        </button>
+        <button class="filter-tab" data-filter="failed">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          Failed
+        </button>
+        <button class="filter-tab" data-filter="generate">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Generate
+        </button>
+        <button class="filter-tab" data-filter="embed">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Embed
+        </button>
+      </div>
+
+      <!-- Models Grid -->
+      <div class="models-grid" id="modelsGrid">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <h3>Enter your API key to begin</h3>
+          <p>We'll list all models, then <strong>actually test each one</strong> with intelligent rate limiting to avoid 429 errors.</p>
+        </div>
+      </div>
+
+      <!-- Log Section -->
+      <div class="log-section" id="logSection">
+        <div class="log-header">
+          <div class="log-header-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            Live Log
+          </div>
+          <button class="btn btn-secondary" id="btnClearLog" type="button" style="padding:4px 10px;font-size:0.7rem;">
+            Clear
+          </button>
+        </div>
+        <div class="log-body" id="logBody"></div>
+      </div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 2: VPN IMPACT
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="tab-content" id="tab-vpn">
+      <div class="info-box">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          How VPN Affects Gemini API Access
+        </h3>
+
+        <p><strong>با VPN:</strong></p>
+        <ul>
+          <li>ممکنه Google برخی مدل‌ها رو <strong>محدود کنه</strong> یا <strong>بلاک کنه</strong></li>
+          <li>ممکنه <code>403 Forbidden</code> یا <code>429 Too Many Requests</code> بگیری</li>
+          <li>برخی کشورها (مثل ایران) به صورت کامل بلاک هستن</li>
+          <li>VPN های رایگان معمولاً مشکل بیشتری دارن</li>
+          <li><strong>Latency بالاتر</strong> — پاسخ کندتر میشه</li>
+        </ul>
+
+        <p><strong>بدون VPN:</strong></p>
+        <ul>
+          <li>دسترسی <strong>مستقیم و سریع‌تر</strong></li>
+          <li>احتمال <code>429</code> کمتر (اگه rate limit رو رعایت کنی)</li>
+          <li>Latency پایین‌تر</li>
+          <li><strong>اما:</strong> در برخی کشورها (مثل ایران) بدون VPN اصلاً دسترسی نداری</li>
+        </ul>
+
+        <p><strong>راه‌حل‌های پیشنهادی:</strong></p>
+        <ul>
+          <li>از VPN های <strong>premium و معتبر</strong> استفاده کن (ExpressVPN, NordVPN)</li>
+          <li>سرور VPN رو به کشورهای <strong>دوستانه با Google</strong> تغییر بده (آمریکا، کانادا، آلمان)</li>
+          <li>اگه میشه، از <strong>Proxy های مخصوص API</strong> استفاده کن</li>
+          <li><strong>Rate Limiting هوشمند</strong> رو فعال کن (این ابزار این کار رو میکنه)</li>
+          <li>از <code>Retry-After</code> header توی پاسخ 429 استفاده کن</li>
+        </ul>
+
+        <p><strong>تشخیص VPN در این ابزار:</strong></p>
+        <ul>
+          <li>این ابزار IP و موقعیت جغرافیایی شما رو تشخیص میده</li>
+          <li>اگه از VPN استفاده میکنی، بهت نشون میده</li>
+          <li>Latency رو اندازه‌گیری میکنه تا ببینی چقدر تأخیر داری</li>
+        </ul>
+      </div>
+
+      <div class="alert alert-info" style="margin-top:20px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <div>
+          <strong>نکته مهم:</strong> Google AI Studio (Gemini) در برخی کشورها رسماً در دسترس نیست. لیست کامل کشورهای پشتیبانی‌شده رو از <a href="https://ai.google.dev/available_regions" target="_blank">این لینک</a> ببین.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 3: RATE LIMITING GUIDE
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="tab-content" id="tab-ratelimit">
+      <div class="info-box">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          How to Avoid 429 Errors (Rate Limiting)
+        </h3>
+
+        <p><strong>محدودیت‌های پیش‌فرض Gemini API (Free Tier):</strong></p>
+        <ul>
+          <li><code>RPM</code> (Requests Per Minute): <strong>15</strong></li>
+          <li><code>RPD</code> (Requests Per Day): <strong>1,500</strong></li>
+          <li><code>TPM</code> (Tokens Per Minute): <strong>1,000,000</strong></li>
+          <li><code>TPD</code> (Tokens Per Day): <strong>50,000,000</strong></li>
+        </ul>
+
+        <p><strong>استراتژی‌های جلوگیری از 429:</strong></p>
+
+        <p><strong>1. Request Queuing (صف درخواست)</strong></p>
+        <ul>
+          <li>درخواست‌ها رو توی یه صف بریز</li>
+          <li>هر بار فقط تعداد مشخصی رو اجرا کن</li>
+          <li>بین هر درخواست <strong>delay</strong> بذار</li>
+        </ul>
+
+        <p><strong>2. Exponential Backoff (تأخیر تصاعدی)</strong></p>
+        <ul>
+          <li>اگه 429 گرفتی، <strong>صبر کن</strong> و دوباره تلاش کن</li>
+          <li>هر بار تأخیر رو <strong>دو برابر</strong> کن: 1s → 2s → 4s → 8s</li>
+          <li>از <code>Retry-After</code> header استفاده کن</li>
+        </ul>
+
+        <p><strong>3. Token Counting (شمارش توکن)</strong></p>
+        <ul>
+          <li>قبل از ارسال، تعداد توکن‌ها رو حساب کن</li>
+          <li>از <code>countTokens</code> API استفاده کن</li>
+          <li>اگه نزدیک به limit شدی، <strong>صبر کن</strong></li>
+        </ul>
+
+        <p><strong>4. Concurrent Limiting (محدودیت همزمانی)</strong></p>
+        <ul>
+          <li>حداکثر <strong>2-3 درخواست همزمان</strong> بزن</li>
+          <li>از <code>Promise.all()</code> با محدودیت استفاده کن</li>
+          <li>این ابزار این کار رو خودکار انجام میده</li>
+        </ul>
+
+        <p><strong>5. Monitoring (نظارت)</strong></p>
+        <ul>
+          <li>تعداد درخواست‌های دقیقه و روز رو <strong>ردیابی کن</strong></li>
+          <li>یه <strong>dashboard</strong> بساز که وضعیت رو نشون بده</li>
+          <li>این ابزار یه Rate Limit Monitor داره</li>
+        </ul>
+
+        <p><strong>مثال کد TypeScript:</strong></p>
+      </div>
+
+      <div class="code-block" style="margin-top:16px;">
+        <button class="btn-copy" onclick="copyCode(this, 'ratelimit-example')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy
+        </button>
+        <pre id="ratelimit-example">// Rate Limiter با Exponential Backoff
+class RateLimiter {
+  private requestsPerMinute: number = 15;
+  private tokensPerMinute: number = 1000000;
+  private requestCount: number = 0;
+  private tokenCount: number = 0;
+  private resetTime: number = Date.now() + 60000;
+
+  async executeWithLimit&lt;T&gt;(
+    fn: () => Promise&lt;T&gt;,
+    estimatedTokens: number = 1000
+  ): Promise&lt;T&gt; {
+    // Check if we need to reset counters
+    if (Date.now() >= this.resetTime) {
+      this.requestCount = 0;
+      this.tokenCount = 0;
+      this.resetTime = Date.now() + 60000;
+    }
+
+    // Check limits
+    if (this.requestCount >= this.requestsPerMinute) {
+      const waitTime = this.resetTime - Date.now();
+      console.log(\`⏳ Rate limit reached. Waiting \${waitTime}ms...\`);
+      await this.sleep(waitTime);
+      return this.executeWithLimit(fn, estimatedTokens);
+    }
+
+    if (this.tokenCount + estimatedTokens > this.tokensPerMinute) {
+      const waitTime = this.resetTime - Date.now();
+      console.log(\`⏳ Token limit reached. Waiting \${waitTime}ms...\`);
+      await this.sleep(waitTime);
+      return this.executeWithLimit(fn, estimatedTokens);
+    }
+
+    // Execute with retry logic
+    let attempt = 0;
+    const maxAttempts = 5;
+
+    while (attempt < maxAttempts) {
+      try {
+        this.requestCount++;
+        this.tokenCount += estimatedTokens;
+
+        const result = await fn();
+        return result;
+      } catch (error: any) {
+        if (error.status === 429) {
+          attempt++;
+          const retryAfter = error.headers?.get('Retry-After');
+          const waitTime = retryAfter
+            ? parseInt(retryAfter) * 1000
+            : Math.pow(2, attempt) * 1000; // Exponential backoff
+
+          console.log(\`⚠️ 429 Error. Retry \${attempt}/\${maxAttempts} after \${waitTime}ms\`);
+          await this.sleep(waitTime);
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    throw new Error(\`Failed after \${maxAttempts} attempts\`);
+  }
+
+  private sleep(ms: number): Promise&lt;void&gt; {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+
+// Usage
+const limiter = new RateLimiter();
+
+async function generateContent(prompt: string) {
+  return limiter.executeWithLimit(async () => {
+    const response = await fetch(
+      \`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=YOUR_API_KEY\`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const error: any = new Error(\`HTTP \${response.status}\`);
+      error.status = response.status;
+      error.headers = response.headers;
+      throw error;
+    }
+
+    return response.json();
+  }, 1000); // Estimated tokens
+}</pre>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 4: TYPESCRIPT GUIDE
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="tab-content" id="tab-typescript">
+      <div class="info-box">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+          Complete TypeScript Implementation Guide
+        </h3>
+
+        <p><strong>1. نصب Dependencies:</strong></p>
+      </div>
+
+      <div class="code-block" style="margin-top:16px;">
+        <button class="btn-copy" onclick="copyCode(this, 'ts-install')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy
+        </button>
+        <pre id="ts-install">npm install typescript @types/node
+npm install --save-dev ts-node
+
+# Or with yarn
+yarn add typescript @types/node
+yarn add --dev ts-node</pre>
+      </div>
+
+      <div class="info-box" style="margin-top:16px;">
+        <p><strong>2. Type Definitions (تعریف Type‌ها):</strong></p>
+      </div>
+
+      <div class="code-block" style="margin-top:16px;">
+        <button class="btn-copy" onclick="copyCode(this, 'ts-types')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy
+        </button>
+        <pre id="ts-types">// types/gemini.ts
+
+export interface GeminiModel {
+  name: string;
+  displayName: string;
+  description: string;
+  version: string;
+  inputTokenLimit: number;
+  outputTokenLimit: number;
+  supportedGenerationMethods: string[];
+  temperature?: number;
+  topP?: number;
+  topK?: number;
+}
+
+export interface GenerateContentRequest {
+  contents: Array&lt;{
+    role?: 'user' | 'model';
+    parts: Array&lt;{ text: string }&gt;;
+  }&gt;;
+  generationConfig?: {
+    temperature?: number;
+    topK?: number;
+    topP?: number;
+    maxOutputTokens?: number;
+    stopSequences?: string[];
+  };
+  safetySettings?: Array&lt;{
+    category: string;
+    threshold: string;
+  }&gt;;
+}
+
+export interface GenerateContentResponse {
+  candidates: Array&lt;{
+    content: {
+      parts: Array&lt;{ text: string }&gt;;
+      role: string;
+    };
+    finishReason: string;
+    safetyRatings: Array&lt;{
+      category: string;
+      probability: string;
+    }&gt;;
+  }&gt;;
+  promptFeedback?: {
+    safetyRatings: Array&lt;{
+      category: string;
+      probability: string;
+    }&gt;;
+  };
+}
+
+export interface EmbedContentRequest {
+  content: {
+    parts: Array&lt;{ text: string }&gt;;
+  };
+}
+
+export interface EmbedContentResponse {
+  embedding: {
+    values: number[];
+  };
+}
+
+export interface ApiError {
+  error: {
+    code: number;
+    message: string;
+    status: string;
+  };
+}
+
+export interface RateLimitInfo {
+  requestsPerMinute: number;
+  requestsPerDay: number;
+  tokensPerMinute: number;
+  tokensPerDay: number;
+  currentRequests: number;
+  currentTokens: number;
+  resetTime: number;
+}</pre>
+      </div>
+
+      <div class="info-box" style="margin-top:16px;">
+        <p><strong>3. Gemini Client با Rate Limiting:</strong></p>
+      </div>
+
+      <div class="code-block" style="margin-top:16px;">
+        <button class="btn-copy" onclick="copyCode(this, 'ts-client')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy
+        </button>
+        <pre id="ts-client">// client/gemini-client.ts
+
+import {
+  GeminiModel,
+  GenerateContentRequest,
+  GenerateContentResponse,
+  EmbedContentRequest,
+  EmbedContentResponse,
+  ApiError,
+  RateLimitInfo
+} from '../types/gemini';
+
+export class GeminiClient {
+  private readonly apiKey: string;
+  private readonly baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
+  
+  // Rate limiting
+  private requestsPerMinute = 15;
+  private tokensPerMinute = 1000000;
+  private requestCount = 0;
+  private tokenCount = 0;
+  private resetTime = Date.now() + 60000;
+
+  constructor(apiKey: string) {
+    if (!apiKey) {
+      throw new Error('API key is required');
+    }
+    this.apiKey = apiKey;
+  }
+
+  /**
+   * List all available models
+   */
+  async listModels(): Promise&lt;GeminiModel[]&gt; {
+    const response = await this.fetchWithRetry(
+      \`\${this.baseUrl}/models?key=\${this.apiKey}\`
+    );
+
+    const data = await response.json();
+    return data.models || [];
+  }
+
+  /**
+   * Generate content
+   */
+  async generateContent(
+    model: string,
+    request: GenerateContentRequest,
+    estimatedTokens: number = 1000
+  ): Promise&lt;GenerateContentResponse&gt; {
+    return this.executeWithLimit(async () => {
+      const response = await this.fetchWithRetry(
+        \`\${this.baseUrl}/\${model}:generateContent?key=\${this.apiKey}\`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(request)
+        }
+      );
+
+      return response.json();
+    }, estimatedTokens);
+  }
+
+  /**
+   * Stream generate content
+   */
+  async* streamGenerateContent(
+    model: string,
+    request: GenerateContentRequest
+  ): AsyncGenerator&lt;string, void, unknown&gt; {
+    const response = await this.fetchWithRetry(
+      \`\${this.baseUrl}/\${model}:streamGenerateContent?alt=sse&key=\${this.apiKey}\`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request)
+      }
+    );
+
+    if (!response.body) {
+      throw new Error('No response body');
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const json = JSON.parse(line.slice(6));
+            const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) yield text;
+          } catch (e) {
+            // Skip invalid JSON
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Embed content
+   */
+  async embedContent(
+    model: string,
+    request: EmbedContentRequest
+  ): Promise&lt;EmbedContentResponse&gt; {
+    return this.executeWithLimit(async () => {
+      const response = await this.fetchWithRetry(
+        \`\${this.baseUrl}/\${model}:embedContent?key=\${this.apiKey}\`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(request)
+        }
+      );
+
+      return response.json();
+    }, 100); // Embeddings use fewer tokens
+  }
+
+  /**
+   * Count tokens
+   */
+  async countTokens(
+    model: string,
+    request: GenerateContentRequest
+  ): Promise&lt;number&gt; {
+    const response = await this.fetchWithRetry(
+      \`\${this.baseUrl}/\${model}:countTokens?key=\${this.apiKey}\`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request)
+      }
+    );
+
+    const data = await response.json();
+    return data.totalTokens || 0;
+  }
+
+  /**
+   * Get current rate limit status
+   */
+  getRateLimitInfo(): RateLimitInfo {
+    return {
+      requestsPerMinute: this.requestsPerMinute,
+      requestsPerDay: 1500, // Default
+      tokensPerMinute: this.tokensPerMinute,
+      tokensPerDay: 50000000, // Default
+      currentRequests: this.requestCount,
+      currentTokens: this.tokenCount,
+      resetTime: this.resetTime
+    };
+  }
+
+  /**
+   * Execute function with rate limiting
+   */
+  private async executeWithLimit&lt;T&gt;(
+    fn: () => Promise&lt;T&gt;,
+    estimatedTokens: number
+  ): Promise&lt;T&gt; {
+    // Reset counters if needed
+    if (Date.now() >= this.resetTime) {
+      this.requestCount = 0;
+      this.tokenCount = 0;
+      this.resetTime = Date.now() + 60000;
+    }
+
+    // Check limits
+    if (this.requestCount >= this.requestsPerMinute) {
+      const waitTime = this.resetTime - Date.now();
+      console.log(\`⏳ Rate limit reached. Waiting \${waitTime}ms...\`);
+      await this.sleep(waitTime);
+      return this.executeWithLimit(fn, estimatedTokens);
+    }
+
+    if (this.tokenCount + estimatedTokens > this.tokensPerMinute) {
+      const waitTime = this.resetTime - Date.now();
+      console.log(\`⏳ Token limit reached. Waiting \${waitTime}ms...\`);
+      await this.sleep(waitTime);
+      return this.executeWithLimit(fn, estimatedTokens);
+    }
+
+    this.requestCount++;
+    this.tokenCount += estimatedTokens;
+
+    return fn();
+  }
+
+  /**
+   * Fetch with retry and exponential backoff
+   */
+  private async fetchWithRetry(
+    url: string,
+    options?: RequestInit,
+    maxAttempts: number = 5
+  ): Promise&lt;Response&gt; {
+    let attempt = 0;
+
+    while (attempt < maxAttempts) {
+      try {
+        const response = await fetch(url, options);
+
+        if (response.status === 429) {
+          attempt++;
+          const retryAfter = response.headers.get('Retry-After');
+          const waitTime = retryAfter
+            ? parseInt(retryAfter) * 1000
+            : Math.pow(2, attempt) * 1000;
+
+          console.log(\`⚠️ 429 Error. Retry \${attempt}/\${maxAttempts} after \${waitTime}ms\`);
+          await this.sleep(waitTime);
+          continue;
+        }
+
+        if (!response.ok) {
+          const error: ApiError = await response.json();
+          throw new Error(
+            \`API Error: \${error.error.message} (\${error.error.status})\`
+          );
+        }
+
+        return response;
+      } catch (error) {
+        if (attempt === maxAttempts - 1) {
+          throw error;
+        }
+        attempt++;
+        await this.sleep(Math.pow(2, attempt) * 1000);
+      }
+    }
+
+    throw new Error(\`Failed after \${maxAttempts} attempts\`);
+  }
+
+  private sleep(ms: number): Promise&lt;void&gt; {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+
+// Usage Example
+async function main() {
+  const client = new GeminiClient('YOUR_API_KEY');
+
+  // List models
+  const models = await client.listModels();
+  console.log('Available models:', models.length);
+
+  // Generate content
+  const response = await client.generateContent(
+    'models/gemini-1.5-flash',
+    {
+      contents: [{
+        parts: [{ text: 'Explain quantum computing' }]
+      }],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 1000
+      }
+    }
+  );
+
+  console.log('Response:', response.candidates[0].content.parts[0].text);
+
+  // Stream content
+  console.log('\\nStreaming response:');
+  for await (const chunk of client.streamGenerateContent(
+    'models/gemini-1.5-flash',
+    {
+      contents: [{
+        parts: [{ text: 'Write a short poem about AI' }]
+      }]
+    }
+  )) {
+    process.stdout.write(chunk);
+  }
+
+  // Check rate limits
+  const rateLimitInfo = client.getRateLimitInfo();
+  console.log('\\nRate Limit Status:', rateLimitInfo);
+}
+
+main().catch(console.error);</pre>
+      </div>
+
+      <div class="alert alert-success" style="margin-top:20px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <div>
+          <strong>✅ این کد production-ready هست!</strong> شامل type safety کامل، error handling، rate limiting، retry logic، و exponential backoff.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════
+    // TAB SWITCHING
+    // ═══════════════════════════════════════════════════════════════
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.dataset.tab;
+        
+        // Update active tab
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Update active content
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.getElementById(`tab-${targetTab}`).classList.add('active');
+      });
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════════
+    let allModels = [];
+    let currentFilter = "all";
+    const BASE_URL = "https://generativelanguage.googleapis.com";
+
+    // Rate limiting state
+    const rateLimiter = {
+      requestsPerMinute: 15,
+      tokensPerMinute: 1000000,
+      requestCount: 0,
+      tokenCount: 0,
+      resetTime: Date.now() + 60000
+    };
+
+    // ═══════════════════════════════════════════════════════════════
+    // DOM ELEMENTS
+    // ═══════════════════════════════════════════════════════════════
+    const apiKeyInput = document.getElementById("apiKey");
+    const btnToggle = document.getElementById("btnToggle");
+    const eyeIcon = document.getElementById("eyeIcon");
+    const btnCheck = document.getElementById("btnCheck");
+    const btnExport = document.getElementById("btnExport");
+    const btnClearLog = document.getElementById("btnClearLog");
+    const vpnStatus = document.getElementById("vpnStatus");
+    const vpnInfoGrid = document.getElementById("vpnInfoGrid");
+    const rateLimitMonitor = document.getElementById("rateLimitMonitor");
+    const rateLimitStatus = document.getElementById("rateLimitStatus");
+    const rateLimitBars = document.getElementById("rateLimitBars");
+    const statsBar = document.getElementById("statsBar");
+    const progressSection = document.getElementById("progressSection");
+    const progressFill = document.getElementById("progressFill");
+    const progressText = document.getElementById("progressText");
+    const filterBar = document.getElementById("filterBar");
+    const modelsGrid = document.getElementById("modelsGrid");
+    const logSection = document.getElementById("logSection");
+    const logBody = document.getElementById("logBody");
+
+    // ═══════════════════════════════════════════════════════════════
+    // UTILITIES
+    // ═══════════════════════════════════════════════════════════════
+    function log(msg, type = "info") {
+      const time = new Date().toLocaleTimeString();
+      const cls = { info: "log-info", ok: "log-ok", err: "log-err", warn: "log-warn" }[type] || "log-info";
+      logBody.innerHTML += `<div class="log-entry"><span class="log-time">[${time}]</span> <span class="${cls}">${escapeHtml(msg)}</span></div>`;
+      logBody.scrollTop = logBody.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function formatNumber(n) {
+      if (!n && n !== 0) return "—";
+      return n.toLocaleString();
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // TOGGLE PASSWORD VISIBILITY
+    // ═══════════════════════════════════════════════════════════════
+    btnToggle.addEventListener("click", () => {
+      const isPassword = apiKeyInput.type === "password";
+      apiKeyInput.type = isPassword ? "text" : "password";
+      eyeIcon.innerHTML = isPassword
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // ENTER KEY SUPPORT
+    // ═══════════════════════════════════════════════════════════════
+    apiKeyInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") startCheck();
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // CLEAR LOG
+    // ═══════════════════════════════════════════════════════════════
+    btnClearLog.addEventListener("click", () => {
+      logBody.innerHTML = "";
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // COPY CODE
+    // ═══════════════════════════════════════════════════════════════
+    function copyCode(btn, id) {
+      const code = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Copied!`;
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+        }, 2000);
+      });
+    }
+    window.copyCode = copyCode;
+
+    // ═══════════════════════════════════════════════════════════════
+    // VPN DETECTION
+    // ═══════════════════════════════════════════════════════════════
+    async function detectVPN() {
+      try {
+        log("Detecting network & VPN status...", "info");
+        
+        const response = await fetch("https://ipapi.co/json/");
+        const data = await response.json();
+
+        vpnStatus.style.display = "block";
+        vpnInfoGrid.innerHTML = `
+          <div class="vpn-info-item">
+            <div class="vpn-info-label">IP Address</div>
+            <div class="vpn-info-value">${data.ip || "Unknown"}</div>
+          </div>
+          <div class="vpn-info-item">
+            <div class="vpn-info-label">Country</div>
+            <div class="vpn-info-value">${data.country_name || "Unknown"} (${data.country || ""})</div>
+          </div>
+          <div class="vpn-info-item">
+            <div class="vpn-info-label">City</div>
+            <div class="vpn-info-value">${data.city || "Unknown"}</div>
+          </div>
+          <div class="vpn-info-item">
+            <div class="vpn-info-label">ISP</div>
+            <div class="vpn-info-value">${data.org || "Unknown"}</div>
+          </div>
+          <div class="vpn-info-item">
+            <div class="vpn-info-label">Timezone</div>
+            <div class="vpn-info-value">${data.timezone || "Unknown"}</div>
+          </div>
+          <div class="vpn-info-item">
+            <div class="vpn-info-label">VPN Detected</div>
+            <div class="vpn-info-value" style="color:${data.org?.toLowerCase().includes('vpn') || data.org?.toLowerCase().includes('proxy') ? 'var(--yellow)' : 'var(--green)'}">
+              ${data.org?.toLowerCase().includes('vpn') || data.org?.toLowerCase().includes('proxy') ? 'Possible' : 'No'}
+            </div>
+          </div>
+        `;
+
+        log(`Network: ${data.country_name} (${data.ip})`, "ok");
+      } catch (err) {
+        log(`VPN detection failed: ${err.message}`, "warn");
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // RATE LIMIT MONITOR UPDATE
+    // ═══════════════════════════════════════════════════════════════
+    function updateRateLimitMonitor() {
+      // Reset if needed
+      if (Date.now() >= rateLimiter.resetTime) {
+        rateLimiter.requestCount = 0;
+        rateLimiter.tokenCount = 0;
+        rateLimiter.resetTime = Date.now() + 60000;
+      }
+
+      const requestPct = (rateLimiter.requestCount / rateLimiter.requestsPerMinute) * 100;
+      const tokenPct = (rateLimiter.tokenCount / rateLimiter.tokensPerMinute) * 100;
+
+      const maxPct = Math.max(requestPct, tokenPct);
+      const statusClass = maxPct < 50 ? 'safe' : maxPct < 80 ? 'warning' : 'danger';
+      const statusText = maxPct < 50 ? 'SAFE' : maxPct < 80 ? 'WARNING' : 'DANGER';
+
+      rateLimitStatus.className = `rate-limit-status ${statusClass}`;
+      rateLimitStatus.textContent = statusText;
+
+      rateLimitBars.innerHTML = `
+        <div class="rate-limit-bar">
+          <div class="rate-limit-bar-header">
+            <span class="rate-limit-bar-label">Requests (RPM)</span>
+            <span class="rate-limit-bar-value">${rateLimiter.requestCount} / ${rateLimiter.requestsPerMinute}</span>
+          </div>
+          <div class="rate-limit-bar-track">
+            <div class="rate-limit-bar-fill ${requestPct < 50 ? 'safe' : requestPct < 80 ? 'warning' : 'danger'}" style="width:${requestPct}%"></div>
+          </div>
+        </div>
+        <div class="rate-limit-bar">
+          <div class="rate-limit-bar-header">
+            <span class="rate-limit-bar-label">Tokens (TPM)</span>
+            <span class="rate-limit-bar-value">${formatNumber(rateLimiter.tokenCount)} / ${formatNumber(rateLimiter.tokensPerMinute)}</span>
+          </div>
+          <div class="rate-limit-bar-track">
+            <div class="rate-limit-bar-fill ${tokenPct < 50 ? 'safe' : tokenPct < 80 ? 'warning' : 'danger'}" style="width:${tokenPct}%"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // UPDATE STATS
+    // ═══════════════════════════════════════════════════════════════
+    function updateStats() {
+      const total = allModels.length;
+      const working = allModels.filter(m => m.status === "working").length;
+      const failed = allModels.filter(m => m.status === "failed").length;
+      const testing = allModels.filter(m => m.status === "testing").length;
+
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("statWorking").textContent = working;
+      document.getElementById("statFailed").textContent = failed;
+      document.getElementById("statTesting").textContent = testing;
+
+      const done = working + failed;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      progressFill.style.width = pct + "%";
+      progressText.textContent = `Testing: ${done} / ${total} (${pct}%)`;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // FILTER
+    // ═══════════════════════════════════════════════════════════════
+    filterBar.addEventListener("click", (e) => {
+      const tab = e.target.closest(".filter-tab");
+      if (!tab) return;
+
+      currentFilter = tab.dataset.filter;
+      document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      renderModels();
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // RENDER MODELS
+    // ═══════════════════════════════════════════════════════════════
+    function renderModels() {
+      let filtered = allModels;
+
+      if (currentFilter === "working") {
+        filtered = allModels.filter(m => m.status === "working");
+      } else if (currentFilter === "failed") {
+        filtered = allModels.filter(m => m.status === "failed");
+      } else if (currentFilter === "generate") {
+        filtered = allModels.filter(m => m.methods.some(method => method.includes("generate")));
+      } else if (currentFilter === "embed") {
+        filtered = allModels.filter(m => m.methods.some(method => method.includes("embed")));
+      }
+
+      if (filtered.length === 0) {
+        modelsGrid.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <h3>No models match this filter</h3>
+            <p>Try a different filter.</p>
+          </div>`;
+        return;
+      }
+
+      modelsGrid.innerHTML = filtered.map(m => renderModelCard(m)).join("");
+
+      // Add click handlers
+      document.querySelectorAll(".model-card").forEach(card => {
+        card.addEventListener("click", (e) => {
+          if (e.target.closest(".btn-copy")) return;
+          card.classList.toggle("expanded");
+        });
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // RENDER MODEL CARD
+    // ═══════════════════════════════════════════════════════════════
+    function renderModelCard(m) {
+      const statusClass = `status-${m.status}`;
+      const badgeClass = `badge-${m.status}`;
+      const statusLabel = {
+        working: "WORKING",
+        failed: "FAILED",
+        testing: "TESTING",
+        pending: "PENDING"
+      }[m.status];
+
+      const statusIconHTML = {
+        working: `<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+        failed: `<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+        testing: `<div class="spinner"></div>`,
+        pending: `<svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+      }[m.status];
+
+      const methodTags = m.methods.map(method => {
+        let cls = "meta-tag";
+        let icon = "";
+        if (method.includes("generate")) {
+          cls += " method-generate";
+          icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+        } else if (method.includes("embed")) {
+          cls += " method-embed";
+          icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`;
+        } else if (method.includes("count")) {
+          cls += " method-count";
+          icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>`;
+        }
+        return `<span class="${cls}">${icon}${method}</span>`;
+      }).join("");
+
+      const latencyHTML = m.latency
+        ? `<div class="model-latency">
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+             </svg>
+             ${m.latency}ms
+           </div>`
+        : m.errorMsg
+          ? `<div class="model-latency" style="color:#ef4444;">⚠ Error</div>`
+          : "";
+
+      const detailsHTML = (m.status === "working" || m.status === "failed") ? renderModelDetails(m) : "";
+
+      return `
+        <div class="model-card ${statusClass}">
+          <div class="model-header">
+            <div class="status-icon">${statusIconHTML}</div>
+            <div class="model-info">
+              <div class="model-name">${escapeHtml(m.name)}</div>
+              <div class="model-display-name">${escapeHtml(m.displayName || "")}</div>
+              <div class="model-meta">${methodTags}</div>
+            </div>
+            <div class="model-right">
+              <div class="model-status-badge ${badgeClass}">${statusLabel}</div>
+              ${latencyHTML}
+            </div>
+          </div>
+          ${detailsHTML}
+        </div>
+      `;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // RENDER MODEL DETAILS
+    // ═══════════════════════════════════════════════════════════════
+    function renderModelDetails(m) {
+      const jsCode = generateJavaScriptExample(m);
+      const tsCode = generateTypeScriptExample(m);
+
+      return `
+        <div class="model-details">
+          <div class="details-section">
+            <div class="details-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Rate Limits & Quotas
+            </div>
+            <div class="details-grid">
+              <div class="detail-item">
+                <div class="detail-label">RPM (Requests Per Minute)</div>
+                <div class="detail-value">15</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">RPD (Requests Per Day)</div>
+                <div class="detail-value">1,500</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">TPM (Tokens Per Minute)</div>
+                <div class="detail-value">1,000,000</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">TPD (Tokens Per Day)</div>
+                <div class="detail-value">50,000,000</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Input Token Limit</div>
+                <div class="detail-value">${formatNumber(m.inputTokens)}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Output Token Limit</div>
+                <div class="detail-value">${formatNumber(m.outputTokens)}</div>
+              </div>
+            </div>
+          </div>
+
+          ${m.errorMsg ? `
+          <div class="details-section">
+            <div class="details-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              Error Details
+            </div>
+            <div style="padding:10px 12px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:6px;font-size:0.75rem;color:var(--red);font-family:'Consolas',monospace;">
+              ${escapeHtml(m.errorMsg)}
+            </div>
+          </div>` : ''}
+
+          <div class="details-section">
+            <div class="details-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+              JavaScript Usage
+            </div>
+            <div class="code-block">
+              <button class="btn-copy" onclick="copyCode(this, 'js-${m.name.replace(/[^a-zA-Z0-9]/g, '')}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                Copy
+              </button>
+              <pre id="js-${m.name.replace(/[^a-zA-Z0-9]/g, '')}">${escapeHtml(jsCode)}</pre>
+            </div>
+          </div>
+
+          <div class="details-section">
+            <div class="details-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+              TypeScript Usage
+            </div>
+            <div class="code-block">
+              <button class="btn-copy" onclick="copyCode(this, 'ts-${m.name.replace(/[^a-zA-Z0-9]/g, '')}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                Copy
+              </button>
+              <pre id="ts-${m.name.replace(/[^a-zA-Z0-9]/g, '')}">${escapeHtml(tsCode)}</pre>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // GENERATE JAVASCRIPT EXAMPLE
+    // ═══════════════════════════════════════════════════════════════
+    function generateJavaScriptExample(m) {
+      const isGenerate = m.methods.some(method => method.includes("generate"));
+      const isEmbed = m.methods.some(method => method.includes("embed"));
+
+      if (isGenerate) {
+        return `// Using ${m.name} for text generation
+const API_KEY = "YOUR_API_KEY";
+const MODEL = "${m.name}";
+
+async function generateContent(prompt) {
+  const response = await fetch(
+    \`https://generativelanguage.googleapis.com/v1beta/\${MODEL}:generateContent?key=\${API_KEY}\`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: prompt }]
+        }],
+        generationConfig: {
+          temperature: ${m.temperature || 1.0},
+          topK: ${m.topK || 40},
+          topP: ${m.topP || 0.95},
+          maxOutputTokens: ${Math.min(m.outputTokens || 8192, 8192)}
+        }
+      })
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(\`HTTP \${response.status}: \${await response.text()}\`);
+  }
+
+  const data = await response.json();
+  return data.candidates[0].content.parts[0].text;
+}
+
+// Usage
+generateContent("Explain quantum computing")
+  .then(result => console.log(result))
+  .catch(err => console.error(err));`;
+      } else if (isEmbed) {
+        return `// Using ${m.name} for embeddings
+const API_KEY = "YOUR_API_KEY";
+const MODEL = "${m.name}";
+
+async function embedContent(text) {
+  const response = await fetch(
+    \`https://generativelanguage.googleapis.com/v1beta/\${MODEL}:embedContent?key=\${API_KEY}\`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: {
+          parts: [{ text: text }]
+        }
+      })
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(\`HTTP \${response.status}: \${await response.text()}\`);
+  }
+
+  const data = await response.json();
+  return data.embedding.values;
+}
+
+// Usage
+embedContent("Hello, world!")
+  .then(embedding => console.log("Embedding:", embedding))
+  .catch(err => console.error(err));`;
+      } else {
+        return `// Using ${m.name}
+const API_KEY = "YOUR_API_KEY";
+const MODEL = "${m.name}";
+
+// Check model documentation for specific usage
+// https://ai.google.dev/api/rest/v1beta/models`;
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // GENERATE TYPESCRIPT EXAMPLE
+    // ═══════════════════════════════════════════════════════════════
+    function generateTypeScriptExample(m) {
+      const isGenerate = m.methods.some(method => method.includes("generate"));
+      const isEmbed = m.methods.some(method => method.includes("embed"));
+
+      if (isGenerate) {
+        return `// Using ${m.name} for text generation (TypeScript)
+interface GenerateContentRequest {
+  contents: Array<{
+    parts: Array<{ text: string }>;
+  }>;
+  generationConfig?: {
+    temperature?: number;
+    topK?: number;
+    topP?: number;
+    maxOutputTokens?: number;
+  };
+}
+
+interface GenerateContentResponse {
+  candidates: Array<{
+    content: {
+      parts: Array<{ text: string }>;
+    };
+    finishReason: string;
+  }>;
+}
+
+const API_KEY: string = "YOUR_API_KEY";
+const MODEL: string = "${m.name}";
+
+async function generateContent(prompt: string): Promise<string> {
+  const requestBody: GenerateContentRequest = {
+    contents: [{
+      parts: [{ text: prompt }]
+    }],
+    generationConfig: {
+      temperature: ${m.temperature || 1.0},
+      topK: ${m.topK || 40},
+      topP: ${m.topP || 0.95},
+      maxOutputTokens: ${Math.min(m.outputTokens || 8192, 8192)}
+    }
+  };
+
+  const response = await fetch(
+    \`https://generativelanguage.googleapis.com/v1beta/\${MODEL}:generateContent?key=\${API_KEY}\`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody)
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(\`HTTP \${response.status}: \${await response.text()}\`);
+  }
+
+  const data: GenerateContentResponse = await response.json();
+  return data.candidates[0].content.parts[0].text;
+}
+
+// Usage
+generateContent("Explain quantum computing")
+  .then((result: string) => console.log(result))
+  .catch((err: Error) => console.error(err));`;
+      } else if (isEmbed) {
+        return `// Using ${m.name} for embeddings (TypeScript)
+interface EmbedContentRequest {
+  content: {
+    parts: Array<{ text: string }>;
+  };
+}
+
+interface EmbedContentResponse {
+  embedding: {
+    values: number[];
+  };
+}
+
+const API_KEY: string = "YOUR_API_KEY";
+const MODEL: string = "${m.name}";
+
+async function embedContent(text: string): Promise<number[]> {
+  const requestBody: EmbedContentRequest = {
+    content: {
+      parts: [{ text: text }]
+    }
+  };
+
+  const response = await fetch(
+    \`https://generativelanguage.googleapis.com/v1beta/\${MODEL}:embedContent?key=\${API_KEY}\`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody)
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(\`HTTP \${response.status}: \${await response.text()}\`);
+  }
+
+  const data: EmbedContentResponse = await response.json();
+  return data.embedding.values;
+}
+
+// Usage
+embedContent("Hello, world!")
+  .then((embedding: number[]) => console.log("Embedding:", embedding))
+  .catch((err: Error) => console.error(err));`;
+      } else {
+        return `// Using ${m.name} (TypeScript)
+const API_KEY: string = "YOUR_API_KEY";
+const MODEL: string = "${m.name}";
+
+// Check model documentation for specific usage
+// https://ai.google.dev/api/rest/v1beta/models`;
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // FETCH MODELS LIST
+    // ═══════════════════════════════════════════════════════════════
+    async function fetchModelsList(apiKey) {
+      log("Fetching models list from API…", "info");
+
+      const res = await fetch(`${BASE_URL}/v1beta/models?key=${apiKey}`);
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status}: ${text}`);
+      }
+
+      const data = await res.json();
+
+      if (!data.models || data.models.length === 0) {
+        throw new Error("No models returned. Check your API key.");
+      }
+
+      log(`Found ${data.models.length} models in your account.`, "ok");
+      return data.models;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // TEST MODEL (WITH RATE LIMITING)
+    // ═══════════════════════════════════════════════════════════════
+    async function testModel(model, apiKey) {
+      // Check rate limits
+      if (Date.now() >= rateLimiter.resetTime) {
+        rateLimiter.requestCount = 0;
+        rateLimiter.tokenCount = 0;
+        rateLimiter.resetTime = Date.now() + 60000;
+      }
+
+      if (rateLimiter.requestCount >= rateLimiter.requestsPerMinute) {
+        const waitTime = rateLimiter.resetTime - Date.now();
+        log(`⏳ Rate limit reached. Waiting ${Math.round(waitTime/1000)}s...`, "warn");
+        await sleep(waitTime);
+      }
+
+      rateLimiter.requestCount++;
+      rateLimiter.tokenCount += 1000; // Estimated
+      updateRateLimitMonitor();
+
+      const name = model.name;
+      const methods = model.supportedGenerationMethods || [];
+
+      const start = performance.now();
+
+      try {
+        // Test generateContent
+        if (methods.includes("generateContent")) {
+          const url = `${BASE_URL}/v1beta/${name}:generateContent?key=${apiKey}`;
+          const body = {
+            contents: [{
+              parts: [{ text: "Say OK" }]
+            }],
+            generationConfig: {
+              maxOutputTokens: 5
+            }
+          };
+
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+
+          const latency = Math.round(performance.now() - start);
+
+          if (res.ok) {
+            const data = await res.json();
+            const hasContent = data.candidates && data.candidates.length > 0 && data.candidates[0].content;
+            if (hasContent) {
+              return { status: "working", latency, errorMsg: null };
+            } else {
+              const reason = data.candidates?.[0]?.finishReason || "no content";
+              return { status: "working", latency, errorMsg: `Response: ${reason}` };
+            }
+          } else {
+            const errText = await res.text();
+            let parsed = "";
+            try {
+              parsed = JSON.parse(errText).error?.message || errText;
+            } catch {
+              parsed = errText;
+            }
+            return { status: "failed", latency, errorMsg: `${res.status}: ${parsed}` };
+          }
+        }
+
+        // Test embedContent
+        if (methods.includes("embedContent")) {
+          const url = `${BASE_URL}/v1beta/${name}:embedContent?key=${apiKey}`;
+          const body = {
+            content: {
+              parts: [{ text: "test" }]
+            }
+          };
+
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+
+          const latency = Math.round(performance.now() - start);
+
+          if (res.ok) {
+            return { status: "working", latency, errorMsg: null };
+          } else {
+            const errText = await res.text();
+            let parsed = "";
+            try {
+              parsed = JSON.parse(errText).error?.message || errText;
+            } catch {
+              parsed = errText;
+            }
+            return { status: "failed", latency, errorMsg: `${res.status}: ${parsed}` };
+          }
+        }
+
+        // Test countTokens (fallback)
+        if (methods.includes("countTokens")) {
+          const url = `${BASE_URL}/v1beta/${name}:countTokens?key=${apiKey}`;
+          const body = {
+            contents: [{
+              parts: [{ text: "test" }]
+            }]
+          };
+
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+
+          const latency = Math.round(performance.now() - start);
+
+          if (res.ok) {
+            return { status: "working", latency, errorMsg: null };
+          } else {
+            const errText = await res.text();
+            let parsed = "";
+            try {
+              parsed = JSON.parse(errText).error?.message || errText;
+            } catch {
+              parsed = errText;
+            }
+            return { status: "failed", latency, errorMsg: `${res.status}: ${parsed}` };
+          }
+        }
+
+        return { status: "failed", latency: 0, errorMsg: "No testable method" };
+
+      } catch (err) {
+        const latency = Math.round(performance.now() - start);
+        return { status: "failed", latency, errorMsg: err.message };
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // START CHECK
+    // ═══════════════════════════════════════════════════════════════
+    async function startCheck() {
+      const apiKey = apiKeyInput.value.trim();
+      if (!apiKey) {
+        alert("Please enter your API key.");
+        return;
+      }
+
+      // Reset
+      allModels = [];
+      currentFilter = "all";
+      document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+      document.querySelector('[data-filter="all"]').classList.add("active");
+
+      btnCheck.disabled = true;
+      btnCheck.innerHTML = '<div class="spinner"></div><span>Checking…</span>';
+      btnExport.style.display = "none";
+
+      statsBar.classList.add("visible");
+      progressSection.classList.add("visible");
+      logSection.classList.add("visible");
+      filterBar.classList.add("visible");
+      rateLimitMonitor.style.display = "block";
+      logBody.innerHTML = "";
+
+      // VPN Detection
+      await detectVPN();
+
+      try {
+        // Step 1: Fetch models list
+        const rawModels = await fetchModelsList(apiKey);
+
+        // Step 2: Build state
+        allModels = rawModels.map(m => ({
+          name: m.name,
+          displayName: m.displayName || "",
+          description: m.description || "",
+          version: m.version || "",
+          methods: m.supportedGenerationMethods || [],
+          inputTokens: m.inputTokenLimit || 0,
+          outputTokens: m.outputTokenLimit || 0,
+          temperature: m.temperature,
+          topP: m.topP,
+          topK: m.topK,
+          status: "pending",
+          latency: null,
+          errorMsg: null
+        }));
+
+        updateStats();
+        renderModels();
+
+        // Step 3: Test each model (with rate limiting)
+        log("Starting tests with intelligent rate limiting...", "info");
+        
+        for (let i = 0; i < allModels.length; i++) {
+          const model = allModels[i];
+          model.status = "testing";
+          updateStats();
+          renderModels();
+
+          log(`Testing ${model.name}…`, "warn");
+
+          const result = await testModel(
+            { name: model.name, supportedGenerationMethods: model.methods },
+            apiKey
+          );
+
+          model.status = result.status;
+          model.latency = result.latency;
+          model.errorMsg = result.errorMsg;
+
+          if (result.status === "working") {
+            log(`✓ ${model.name} — ${result.latency}ms`, "ok");
+          } else {
+            log(`✗ ${model.name} — ${result.errorMsg || "unknown error"}`, "err");
+          }
+
+          updateStats();
+          renderModels();
+
+          // Small delay between tests
+          await sleep(500);
+        }
+
+        // Done
+        const working = allModels.filter(m => m.status === "working").length;
+        log(`\n━━━ Done! ${working} / ${allModels.length} models are actually working. ━━━`, "ok");
+
+        progressText.textContent = `Complete: ${working} working out of ${allModels.length} total`;
+
+        btnExport.style.display = "flex";
+
+      } catch (err) {
+        log(`FATAL: ${err.message}`, "err");
+        modelsGrid.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <h3>Error</h3>
+            <p>${escapeHtml(err.message)}</p>
+          </div>`;
+      } finally {
+        btnCheck.disabled = false;
+        btnCheck.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+          </svg>
+          <span>Check Models</span>`;
+      }
+    }
+
+    btnCheck.addEventListener("click", startCheck);
+
+    // ═══════════════════════════════════════════════════════════════
+    // EXPORT RESULTS (COMPLETE IMPLEMENTATION)
+    // ═══════════════════════════════════════════════════════════════
+      // ─── Export Results ───
+    function exportResults() {
+      const working = allModels.filter(m => m.status === "working");
+      const failed = allModels.filter(m => m.status === "failed");
+
+      const report = {
+        timestamp: new Date().toISOString(),
+        summary: {
+          total: allModels.length,
+          working: working.length,
+          failed: failed.length
+        },
+        workingModels: working.map(m => ({
+          name: m.name,
+          displayName: m.displayName,
+          methods: m.methods,
+          latency: m.latency + "ms",
+          inputTokens: m.inputTokens,
+          outputTokens: m.outputTokens
+        })),
+        failedModels: failed.map(m => ({
+          name: m.name,
+          error: m.errorMsg
+        }))
+      };
+
+      const json = JSON.stringify(report, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `gemini-models-report-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      log("Report exported!", "ok");
+    }
+
+    // ─── Enter key support ───
+    document.getElementById("apiKey").addEventListener("keydown", e => {
+      if (e.key === "Enter") startCheck();
+    });
+  </script>
+</body>
+</html>

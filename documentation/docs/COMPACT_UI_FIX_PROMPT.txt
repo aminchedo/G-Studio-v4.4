@@ -1,0 +1,83 @@
+🎯 G STUDIO UI/UX COMPLETE FIX - UPDATE EXISTING FILES
+
+⚠️ CRITICAL: This is an UPDATE task - modify existing files, don't recreate from scratch.
+
+📋 ISSUES TO FIX:
+
+1. RIGHT SIDEBAR - All panels must be identical size (same width/height). Fix: RightActivityBar.tsx, use CSS Grid/Flexbox for uniform layout.
+
+2. THEME SWITCHING - Sizes change when switching themes. Fix: Lock all dimensions in CSS variables (theme-independent). Only colors change, never sizes. Update: index.css, design-tokens.css.
+
+3. INCOMPLETE THEME - Not all components respond to theme. Fix: Audit ALL components, add missing theme classes. Check modals, dropdowns, tooltips, buttons.
+
+4. CHAT HEADER CONTACTS - Non-functional. Fix: Implement click handlers in MessageList.tsx, connect to state management, test all contact interactions.
+
+5. RIBBON OPTIONS - Some buttons don't work. Fix: Test EVERY button in all ribbon tabs (Home/View/Intelligence/MCP/Settings), implement missing handlers, connect to functions.
+
+6. PREVIEW ICON - Missing SVG icon. Fix: Add Eye or Monitor icon from lucide-react to PreviewPanel.tsx header.
+
+🔧 IMPLEMENTATION:
+
+CSS Pattern:
+```css
+:root {
+  --sidebar-width: 280px;
+  --panel-min-height: 300px;
+  --panel-padding: 16px;
+}
+/* Sizes same in both themes, only colors change */
+```
+
+Component Pattern:
+```typescript
+// UPDATE existing, don't recreate
+import { Eye } from 'lucide-react';
+const handleClick = useCallback(() => { /* implement */ }, []);
+<div className="panel" style={{ width: '100%', minHeight: '300px' }}>
+```
+
+📁 FILES TO UPDATE (not recreate):
+- components/RightActivityBar.tsx
+- components/Ribbon.tsx + all ribbon/*.tsx
+- components/MessageList.tsx
+- components/PreviewPanel.tsx
+- index.css, styles/design-tokens.css
+- App.tsx
+
+✅ SUCCESS CRITERIA:
+- All right sidebar panels identical size
+- Theme switch doesn't change sizes
+- All components fully themed
+- Chat contacts work
+- All ribbon buttons functional
+- Preview icon displays
+- No TypeScript/console errors
+- Responsive on all screens
+
+🎯 STEPS:
+1. Fix RightActivityBar sizing (uniform containers)
+2. Move all sizes to CSS variables (theme-independent)
+3. Audit/fix theme support in all components
+4. Implement chat header contact handlers
+5. Test/fix every ribbon button
+6. Add preview icon (lucide-react Eye/Monitor)
+7. Test everything in both themes
+
+⚠️ RULES:
+- UPDATE existing files only
+- Preserve all functionality
+- Use CSS variables for dimensions
+- Test thoroughly
+- No hardcoded sizes
+- Clean console
+- No TypeScript errors
+
+🎨 DESIGN:
+- Right panels: 100% width, 300px min-height, 16px padding
+- Icons: 20px headers, 16px buttons
+- Theme: Only colors change, sizes identical
+- Source: lucide-react for icons
+
+TEST: Switch themes 10x, click every button, check all panels same size, verify responsive, no errors.
+
+DELIVER: Updated files, testing report, change log, no breaking changes.

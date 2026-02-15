@@ -1,0 +1,25 @@
+{
+  "name": "mandatory-tool-enforcement",
+  "version": "1.0.0",
+  "description": "Runtime-enforced tool execution system with mandatory validation",
+  "main": "demo.ts",
+  "scripts": {
+    "demo": "ts-node demo.ts",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "keywords": [
+    "enforcement",
+    "policy",
+    "validation",
+    "tools",
+    "runtime"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}

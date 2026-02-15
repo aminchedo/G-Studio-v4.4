@@ -1,0 +1,83 @@
+/**
+ * Gemini Studio Theme
+ * Single source of truth for app colors. Bridges design tokens and component
+ * variables so there is no gap between token names used in index.css vs App/animations.
+ *
+ * Default: dark theme (main workspace #1A1E29, panels #272C3D / #30374C,
+ * purple accent #8B5CF6, green actions #36D399).
+ */
+
+/* ========== DARK THEME (Default – Gemini Studio look) ========== */
+:root {
+  /* Core surfaces */
+  --color-background: #1a1e29;
+  --color-surface: #272c3d;
+  --color-surface-elevated: #30374c;
+
+  /* Primary / accent – purple for active states, nav, Load Demo */
+  --color-primary: #8b5cf6;
+  --color-primary-hover: #7c3aed;
+  --color-primary-light: #a78bfa;
+
+  /* Success / run actions – green */
+  --color-success: #36d399;
+  --color-warning: #f59e0b;
+  --color-error: #f43f5e;
+  --color-info: #3b82f6;
+
+  /* Text */
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-text-tertiary: #94a3b8;
+
+  /* Borders */
+  --color-border: #334155;
+  --color-border-hover: #475569;
+
+  /* Bridge tokens – used by App.tsx, animations.css, and other components */
+  --bg-primary: var(--color-background);
+  --bg-secondary: var(--color-surface);
+  --bg-tertiary: var(--color-surface-elevated);
+  --border-primary: var(--color-border);
+  --border-secondary: var(--color-border-hover);
+  --border-color: var(--color-border);
+  --accent-primary: var(--color-primary);
+  --accent-primary-hover: var(--color-primary-hover);
+  --text-primary: var(--color-text-primary);
+  --text-muted: var(--color-text-tertiary);
+}
+
+/* ========== LIGHT THEME ========== */
+[data-theme="light"] {
+  --color-background: #ffffff;
+  --color-surface: #f8fafc;
+  --color-surface-elevated: #ffffff;
+
+  --color-primary: #7c3aed;
+  --color-primary-hover: #6d28d9;
+  --color-primary-light: #a78bfa;
+
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #94a3b8;
+
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
+
+  /* Bridge tokens for light mode */
+  --bg-primary: var(--color-background);
+  --bg-secondary: var(--color-surface);
+  --bg-tertiary: var(--color-surface-elevated);
+  --border-primary: var(--color-border);
+  --border-secondary: var(--color-border-hover);
+  --border-color: var(--color-border);
+  --accent-primary: var(--color-primary);
+  --accent-primary-hover: var(--color-primary-hover);
+  --text-primary: var(--color-text-primary);
+  --text-muted: var(--color-text-tertiary);
+}

@@ -1,0 +1,438 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://system.local/schemas/capability.schema.json",
+  "title": "Capability Schema",
+  "description": "Schema for capability definitions and grants",
+  "type": "object",
+  "definitions": {
+    "Capability": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "description",
+        "risk",
+        "requires",
+        "conflicts",
+        "metadata"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$",
+          "description": "Unique capability identifier"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Human-readable capability name"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Capability purpose and scope"
+        },
+        "parent": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$",
+          "description": "Parent capability ID"
+        },
+        "risk": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+          "description": "Risk level assessment"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$"
+          },
+          "uniqueItems": true,
+          "description": "Prerequisite capability IDs"
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$"
+          },
+          "uniqueItems": true,
+          "description": "Conflicting capability IDs"
+        },
+        "delegatable": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether capability can be delegated"
+        },
+        "metadata": {
+          "$ref": "#/definitions/CapabilityMetadata"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CapabilityMetadata": {
+      "type": "object",
+      "required": [
+        "version",
+        "createdAt",
+        "modifiedAt",
+        "deprecated"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "createdAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modifiedAt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "replacedBy": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CapabilityGrant": {
+      "type": "object",
+      "required": [
+        "grantId",
+        "capabilityId",
+        "grantee",
+        "grantor",
+        "scope",
+        "constraints",
+        "issuedAt",
+        "signature"
+      ],
+      "properties": {
+        "grantId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique grant identifier"
+        },
+        "capabilityId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$",
+          "description": "Capability being granted"
+        },
+        "grantee": {
+          "$ref": "#/definitions/Grantee",
+          "description": "Who receives the capability"
+        },
+        "grantor": {
+          "type": "string",
+          "description": "Who issued the grant"
+        },
+        "scope": {
+          "$ref": "#/definitions/GrantScope",
+          "description": "Grant limitations"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Constraint"
+          },
+          "description": "Additional restrictions"
+        },
+        "issuedAt": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Grant creation timestamp (Unix ms)"
+        },
+        "expiresAt": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Grant expiration timestamp (Unix ms)"
+        },
+        "revokedAt": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Grant revocation timestamp (Unix ms)"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[a-f0-9]+$",
+          "description": "Cryptographic signature"
+        }
+      },
+      "additionalProperties": false
+    },
+    "DelegatedGrant": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CapabilityGrant"
+        },
+        {
+          "type": "object",
+          "required": [
+            "parentGrantId",
+            "delegationDepth",
+            "delegatable"
+          ],
+          "properties": {
+            "parentGrantId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Parent grant ID"
+            },
+            "delegationDepth": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "description": "Delegation level"
+            },
+            "delegatable": {
+              "type": "boolean",
+              "description": "Can be further delegated"
+            }
+          }
+        }
+      ]
+    },
+    "Grantee": {
+      "type": "object",
+      "required": ["type", "id"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["TOOL", "USER", "ROLE"],
+          "description": "Grantee type"
+        },
+        "id": {
+          "type": "string",
+          "description": "Grantee identifier"
+        }
+      },
+      "additionalProperties": false
+    },
+    "GrantScope": {
+      "type": "object",
+      "required": [
+        "resources",
+        "actions",
+        "conditions"
+      ],
+      "properties": {
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific resources allowed (glob patterns)"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific actions allowed"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Condition"
+          },
+          "description": "Conditional restrictions"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Condition": {
+      "type": "object",
+      "required": ["type", "expression"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["TIME", "LOCATION", "CONTEXT"],
+          "description": "Condition type"
+        },
+        "expression": {
+          "type": "string",
+          "description": "Condition expression"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Constraint": {
+      "type": "object",
+      "required": ["type", "value"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Constraint type"
+        },
+        "value": {
+          "description": "Constraint value"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AuthorizationDecision": {
+      "type": "object",
+      "required": [
+        "granted",
+        "capabilities",
+        "timestamp",
+        "context"
+      ],
+      "properties": {
+        "granted": {
+          "type": "boolean",
+          "description": "Whether authorization was granted"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CapabilityDecision"
+          },
+          "description": "Individual capability decisions"
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Decision timestamp (Unix ms)"
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Execution context"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CapabilityDecision": {
+      "type": "object",
+      "required": [
+        "capabilityId",
+        "granted",
+        "reason"
+      ],
+      "properties": {
+        "capabilityId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$"
+        },
+        "granted": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Decision reason"
+        },
+        "grant": {
+          "$ref": "#/definitions/CapabilityGrant",
+          "description": "Grant used for authorization"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CapabilityViolation": {
+      "type": "object",
+      "required": [
+        "executionId",
+        "toolId",
+        "capabilityId",
+        "action",
+        "resource",
+        "severity",
+        "timestamp"
+      ],
+      "properties": {
+        "executionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "toolId": {
+          "type": "string"
+        },
+        "capabilityId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$"
+        },
+        "action": {
+          "type": "string"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "CapabilityAuditEvent": {
+      "type": "object",
+      "required": [
+        "eventId",
+        "timestamp",
+        "event",
+        "capabilityId",
+        "details"
+      ],
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event": {
+          "type": "string",
+          "enum": [
+            "GRANT_ISSUED",
+            "GRANT_REVOKED",
+            "GRANT_EXPIRED",
+            "GRANT_DELEGATED",
+            "AUTHORIZATION_GRANTED",
+            "AUTHORIZATION_DENIED",
+            "CAPABILITY_USED",
+            "CAPABILITY_VIOLATION"
+          ]
+        },
+        "capabilityId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$"
+        },
+        "grantId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "grantee": {
+          "$ref": "#/definitions/Grantee"
+        },
+        "grantor": {
+          "type": "string"
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

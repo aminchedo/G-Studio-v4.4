@@ -1,0 +1,570 @@
+import React, { useState, useEffect } from "react";
+import {
+  FilePlus,
+  UploadCloud,
+  Bug,
+  RefreshCw,
+  Terminal,
+  Trash2,
+  Cpu,
+  Check,
+  FolderPlus,
+  Download,
+  Box,
+  Layers,
+  Zap,
+  Command,
+  PanelRight,
+  Pin,
+  PinOff,
+  Key,
+  Mic,
+  UserCog,
+  Hammer,
+  Search,
+  Move,
+  FileEdit,
+  FileText,
+  History,
+  Lock,
+  Unlock,
+  Eye,
+  PenLine,
+  Settings,
+  Sparkles,
+  BrainCircuit,
+  Gauge,
+  FolderTree,
+  X,
+  FileJson,
+  FileCode,
+  Palette,
+  Globe,
+  File,
+  Copy,
+  Upload,
+  Home,
+  FolderOpen,
+  Save,
+  RotateCcw,
+  RotateCw,
+  FileSearch,
+  Code2,
+  CopyPlus,
+  FileX,
+  Hash,
+  WrapText,
+  AlignLeft,
+  Clipboard,
+  RefreshCcw,
+  FileCheck,
+  FilePen,
+  ArrowRightLeft,
+  FileSearch as FileSearchIcon,
+  Play,
+  ScanSearch,
+  Calculator,
+  Clock,
+  Fingerprint,
+  Hash as HashIcon,
+  Code,
+  FileCode as FileCodeIcon,
+  FileJson as FileJsonIcon,
+  Type,
+  Shuffle,
+  Droplets,
+  Ruler,
+  Save as SaveIcon,
+  Download as DownloadIcon,
+  List,
+  Trash2 as TrashIcon,
+  Plus,
+  Sun,
+  Moon,
+} from "lucide-react";
+import { ModelId, FileData } from "@/types/types";
+import { SUPPORTED_MODELS } from "@/config/constants";
+import {
+  ShareIcon,
+  StructureIcon,
+  DeepAuditIcon,
+  RefactorIcon,
+  OptimizeIcon,
+  InspectorIcon,
+  MinimapIcon,
+  PreviewIcon,
+  SecurityIcon,
+  FormatIcon,
+  ExecuteIcon,
+  ScanIcon,
+} from "@/components/ui/Icons";
+import { RibbonHomeTab } from "../ribbon/RibbonHomeTab";
+import { RibbonIntelligenceTab } from "../ribbon/RibbonIntelligenceTab";
+import { RibbonViewTab } from "../ribbon/RibbonViewTab";
+import { sendAgentTelemetry } from "@/utils/agentTelemetry";
+import { RibbonMcpTab } from "../ribbon/RibbonMcpTab";
+
+interface RibbonProps {
+  onNewFile: () => void;
+  onLoadDemo: () => void;
+  onImportProject: (files: Record<string, FileData>) => void;
+  onTriggerTool: (action: string) => void;
+  onToggleChat: () => void;
+  onOpenSettings: () => void;
+  onOpenCodeIntelligence?: () => void;
+  onOpenAgentModal?: () => void;
+  onOpenAISettings?: () => void;
+  onClearChat: () => void;
+  isDarkMode?: boolean;
+  onToggleTheme?: () => void;
+  chatVisible: boolean;
+  selectedModel: ModelId;
+  onSelectModel: (id: ModelId) => void;
+  onManageApiKey: () => void;
+  onChangeVoice: () => void;
+  onChangePersonality: () => void;
+  onRunMcpTool: (tool: string) => void;
+  agentConfig?: { apiKey: string; voice: string; persona: string };
+  files?: Record<string, FileData>;
+  isListening?: boolean;
+  onToggleListening?: () => void;
+  onShare?: () => void;
+  onNewFolder?: () => void;
+  onToggleSidebar?: () => void;
+  onToggleInspector?: () => void;
+  onTogglePreview?: () => void;
+  onToggleMonitor?: () => void;
+  onToggleMinimap?: () => void;
+  onToggleEditor?: () => void;
+  sidebarVisible?: boolean;
+  inspectorVisible?: boolean;
+  previewVisible?: boolean;
+  monitorVisible?: boolean;
+  minimapEnabled?: boolean;
+  editorVisible?: boolean;
+  onFormatFile?: () => void;
+  /** Format current file - alias for onFormatFile (App passes onFormat) */
+  onFormat?: () => void;
+  activeFile?: string | null;
+  onShowSpeechTest?: () => void;
+  onSaveFile?: () => void;
+  /** Save project/current file - alias for onSaveFile */
+  onSave?: () => void;
+  onSearchFiles?: () => void;
+  onFind?: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  onCloseFile?: () => void;
+  onDuplicateFile?: () => void;
+  onCopyFilePath?: () => void;
+  onGoToLine?: () => void;
+  onToggleWordWrap?: () => void;
+  onClearEditor?: () => void;
+  onRefresh?: () => void;
+  openFiles?: string[];
+  onRunCode?: () => void;
+  onShowRibbonModal?: (modalName: string) => void;
+  onOpenGeminiTester?: () => void;
+  onOpenAISettingsHub?: () => void;
+  /** Optional - used by App to toggle project structure view */
+  onToggleProjectStructure?: () => void;
+}
+
+type TabId = "home" | "intelligence" | "view" | "mcp";
+
+export const Ribbon: React.FC<RibbonProps> = React.memo(
+  ({
+    onNewFile,
+    onLoadDemo,
+    onImportProject,
+    onTriggerTool,
+    onToggleChat,
+    onOpenSettings,
+    onClearChat,
+    chatVisible,
+    selectedModel,
+    onSelectModel,
+    onManageApiKey,
+    onChangeVoice,
+    onChangePersonality,
+    onRunMcpTool,
+    agentConfig,
+    files = {},
+    isListening,
+    onToggleListening,
+    onShare,
+    onNewFolder,
+    onToggleSidebar,
+    onToggleInspector,
+    onTogglePreview,
+    onToggleMonitor,
+    onToggleMinimap,
+    onToggleEditor,
+    sidebarVisible = true,
+    inspectorVisible = false,
+    previewVisible = false,
+    monitorVisible = false,
+    minimapEnabled = true,
+    editorVisible = true,
+    onOpenCodeIntelligence,
+    onFormatFile,
+    onFormat,
+    activeFile,
+    onShowSpeechTest,
+    onSaveFile,
+    onSearchFiles,
+    onFind,
+    onUndo,
+    onRedo,
+    onCloseFile,
+    onDuplicateFile,
+    onCopyFilePath,
+    onGoToLine,
+    onToggleWordWrap,
+    onClearEditor,
+    onRefresh,
+    openFiles = [],
+    onRunCode,
+    onShowRibbonModal,
+    isDarkMode = true,
+    onToggleTheme,
+    onOpenGeminiTester,
+    onOpenAISettingsHub,
+  }) => {
+    const [activeTab, setActiveTab] = useState<TabId>("home");
+    const [isPinned, setIsPinned] = useState(true);
+    const [isHovered, setIsHovered] = useState(false);
+    const [safeMode, setSafeMode] = useState(true);
+    const [toolHistory, setToolHistory] = useState<string[]>([]);
+    const [toolStatuses, setToolStatuses] = useState<
+      Record<string, "running" | "success" | "error">
+    >({});
+
+    // Memoize default tool access to prevent re-initialization
+    const defaultToolAccess = React.useMemo(() => {
+      const defaultAccess: Record<string, boolean> = {};
+      const allTools = [
+        "create_file",
+        "read_file",
+        "write_code",
+        "move_file",
+        "delete_file",
+        "search_files",
+        "run",
+        "project_overview",
+        "calculate",
+        "get_current_time",
+        "generate_uuid",
+        "hash_text",
+        "base64_encode",
+        "base64_decode",
+        "format_json",
+        "text_transform",
+        "generate_random",
+        "color_converter",
+        "unit_converter",
+        "save_conversation",
+        "load_conversation",
+        "list_conversations",
+        "delete_conversation",
+      ];
+      allTools.forEach((tool) => {
+        defaultAccess[tool] = true;
+      });
+      return defaultAccess;
+    }, []);
+
+    const [toolAccess, setToolAccess] =
+      useState<Record<string, boolean>>(defaultToolAccess);
+    const isExpanded = isPinned || isHovered;
+
+    const tabs: { id: TabId; label: string }[] = [
+      { id: "home", label: "Home" },
+      { id: "view", label: "View" },
+      { id: "intelligence", label: "Intelligence" },
+      { id: "mcp", label: "MCP Tools" },
+    ];
+
+    const handleToolClick = React.useCallback(
+      (tool: string) => {
+        // If tool is disabled, just toggle access
+        if (!toolAccess[tool]) {
+          setToolAccess((prev) => ({ ...prev, [tool]: true }));
+          return;
+        }
+
+        // Set running state
+        setToolStatuses((prev) => ({ ...prev, [tool]: "running" }));
+        setToolHistory((prev) => [tool, ...prev].slice(0, 5));
+
+        // Execute tool - this will open modal or execute directly
+        onRunMcpTool(tool);
+
+        // Clear running state after a short delay (actual execution happens in modal/background)
+        setTimeout(() => {
+          setToolStatuses((prev) => {
+            const next = { ...prev };
+            // Keep success state if tool executed, otherwise clear
+            if (next[tool] === "running") {
+              next[tool] = "success";
+            }
+            return next;
+          });
+
+          // Clear status after showing success state
+          setTimeout(() => {
+            setToolStatuses((prev) => {
+              const next = { ...prev };
+              delete next[tool];
+              return next;
+            });
+          }, 2000);
+        }, 500);
+      },
+      [toolAccess, onRunMcpTool],
+    );
+
+    const getFileIcon = React.useCallback((filename: string) => {
+      const ext = filename.split(".").pop()?.toLowerCase();
+      const iconProps = {
+        strokeWidth: 2,
+        strokeLinecap: "round" as const,
+        strokeLinejoin: "round" as const,
+        className: "w-4 h-4",
+      };
+      switch (ext) {
+        case "tsx":
+        case "ts":
+          return (
+            <Code2
+              {...iconProps}
+              className={`${iconProps.className} text-ocean-600`}
+            />
+          );
+        case "jsx":
+        case "js":
+          return (
+            <FileCode
+              {...iconProps}
+              className={`${iconProps.className} text-amber-500`}
+            />
+          );
+        case "json":
+          return (
+            <FileJson
+              {...iconProps}
+              className={`${iconProps.className} text-orange-400`}
+            />
+          );
+        case "css":
+        case "scss":
+          return (
+            <Palette
+              {...iconProps}
+              className={`${iconProps.className} text-pink-500`}
+            />
+          );
+        case "html":
+          return (
+            <Globe
+              {...iconProps}
+              className={`${iconProps.className} text-emerald-500`}
+            />
+          );
+        default:
+          return (
+            <FileText
+              {...iconProps}
+              className={`${iconProps.className} text-slate-400`}
+            />
+          );
+      }
+    }, []);
+
+    const renderContent = () => {
+      switch (activeTab) {
+        case "home":
+          return (
+            <RibbonHomeTab
+              isExpanded={isExpanded}
+              onNewFile={onNewFile}
+              onNewFolder={onNewFolder}
+              onLoadDemo={onLoadDemo}
+              onImportProject={onImportProject}
+              onShare={onShare}
+              onSaveFile={onSaveFile}
+              onCloseFile={onCloseFile}
+              onDuplicateFile={onDuplicateFile}
+              onCopyFilePath={onCopyFilePath}
+              onUndo={onUndo}
+              onRedo={onRedo}
+              onFind={onFind}
+              onGoToLine={onGoToLine}
+              onFormatFile={onFormat ?? onFormatFile}
+              onToggleWordWrap={onToggleWordWrap}
+              onSearchFiles={onSearchFiles}
+              onClearEditor={onClearEditor}
+              onRefresh={onRefresh}
+              activeFile={activeFile}
+              files={files}
+              onShowStructureModal={() =>
+                onShowRibbonModal?.("projectStructure")
+              }
+              onRunCode={onRunCode}
+              onTogglePreview={onTogglePreview}
+              onToggleEditor={onToggleEditor}
+              onShowRibbonModal={onShowRibbonModal}
+              onOpenAISettingsHub={onOpenAISettingsHub}
+            />
+          );
+        case "intelligence":
+          return (
+            <RibbonIntelligenceTab
+              isExpanded={isExpanded}
+              onTriggerTool={onTriggerTool}
+              isListening={isListening}
+              onToggleListening={onToggleListening}
+              onShowSpeechTest={onShowSpeechTest}
+              agentConfig={agentConfig}
+              onOpenCodeIntelligence={onOpenCodeIntelligence}
+              onShowRibbonModal={onShowRibbonModal}
+            />
+          );
+        case "mcp":
+          return (
+            <RibbonMcpTab
+              isExpanded={isExpanded}
+              onRunMcpTool={onRunMcpTool}
+              safeMode={safeMode}
+              setSafeMode={setSafeMode}
+              toolStatuses={toolStatuses}
+              toolHistory={toolHistory}
+              toolAccess={toolAccess}
+              setToolAccess={setToolAccess}
+              handleToolClick={handleToolClick}
+              onShowRibbonModal={onShowRibbonModal}
+            />
+          );
+        case "view":
+          return (
+            <RibbonViewTab
+              isExpanded={isExpanded}
+              chatVisible={chatVisible}
+              sidebarVisible={sidebarVisible}
+              inspectorVisible={inspectorVisible}
+              previewVisible={previewVisible}
+              monitorVisible={monitorVisible}
+              minimapEnabled={minimapEnabled}
+              editorVisible={editorVisible}
+              onToggleChat={onToggleChat}
+              onToggleSidebar={onToggleSidebar}
+              onToggleInspector={onToggleInspector}
+              onTogglePreview={onTogglePreview}
+              onToggleMonitor={onToggleMonitor}
+              onToggleMinimap={onToggleMinimap}
+              onToggleEditor={onToggleEditor}
+              onFormatFile={onFormat ?? onFormatFile}
+              activeFile={activeFile}
+              files={files}
+              onImportProject={onImportProject}
+            />
+          );
+        default:
+          return null;
+      }
+    };
+
+    return (
+      <>
+        <div
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className={`bg-slate-900/70 backdrop-blur-md border-b border-slate-800/60 z-50 select-none shadow-md flex flex-col shrink-0 relative overflow-hidden transition-all duration-200 ${
+            isExpanded ? "h-[150px]" : "h-[80px]"
+          }`}
+          style={{
+            willChange: "height",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+          }}
+        >
+          {/* Background Decor - Enhanced */}
+          <div className="absolute top-0 right-0 p-8 opacity-[0.04] pointer-events-none transition-opacity duration-500">
+            <Sparkles
+              strokeWidth={0.5}
+              className="w-64 h-64 rotate-12 text-ocean-900"
+              style={{ filter: "blur(0.5px)" }}
+            />
+          </div>
+          {/* Subtle gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-ocean-50/20 to-transparent pointer-events-none opacity-50" />
+          {/* Animated shimmer effect */}
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none opacity-0 hover:opacity-100 transition-opacity duration-1000"
+            style={{ animation: "shimmer 3s ease-in-out infinite" }}
+          />
+
+          {/* Top Bar - Header */}
+          <div className="flex items-center px-4 h-11 relative z-10 shrink-0 border-b border-slate-800/60 bg-slate-900">
+            {/* Logo */}
+            <div className="flex items-center gap-2.5 mr-6 group cursor-pointer select-none">
+              <div className="w-8 h-8 rounded-md bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
+                <Sparkles strokeWidth={2.5} className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold text-base tracking-tight text-white">
+                Gemini Studio
+              </span>
+            </div>
+
+            {/* Menu Items */}
+            <div className="flex items-center gap-0.5">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id as TabId)}
+                  className={`px-3 py-1.5 rounded-md transition-all duration-200 text-sm ${
+                    activeTab === tab.id
+                      ? "bg-purple-600 text-white"
+                      : "text-white hover:bg-slate-800/50"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Right Icons */}
+            <div className="ml-auto flex items-center gap-2">
+              {/* Theme Toggle Button */}
+              {onToggleTheme && (
+                <button
+                  type="button"
+                  onClick={onToggleTheme}
+                  className="p-1.5 hover:bg-slate-800/50 rounded transition-all duration-200"
+                  title={
+                    isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"
+                  }
+                  data-action="toggle-theme"
+                >
+                  {isDarkMode ? (
+                    <Sun strokeWidth={2} className="w-4 h-4 text-white" />
+                  ) : (
+                    <Moon strokeWidth={2} className="w-4 h-4 text-white" />
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Ribbon Content Area */}
+          <div
+            className={`flex-1 px-5 py-3.5 flex items-start gap-10 overflow-x-auto no-scrollbar relative z-10 transition-opacity duration-300`}
+          >
+            {renderContent()}
+          </div>
+        </div>
+      </>
+    );
+  },
+);

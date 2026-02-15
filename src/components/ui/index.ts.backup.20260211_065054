@@ -1,0 +1,68 @@
+/**
+ * G Studio v2.3.0 - UI Components Index
+ * 
+ * Export all UI components for clean imports
+ */
+
+// Primitives
+export {
+  Button,
+  Input,
+  Badge,
+  Tooltip,
+  Skeleton,
+  Divider,
+  Spinner,
+  Avatar,
+  Card,
+} from './primitives';
+
+export type {
+  ButtonProps,
+  InputProps,
+  BadgeProps,
+  TooltipProps,
+  SkeletonProps,
+  DividerProps,
+  SpinnerProps,
+  AvatarProps,
+  CardProps,
+} from './primitives';
+
+// Accessibility
+export {
+  ScreenReaderOnly,
+  LiveRegion,
+  SkipLink,
+  FocusTrap,
+  useKeyboardNavigation,
+  useRovingTabIndex,
+  useReducedMotion,
+  useHighContrast,
+  announce,
+} from './accessibility';
+
+export type {
+  LiveRegionProps,
+  SkipLinkProps,
+  FocusTrapProps,
+  UseKeyboardNavigationOptions,
+  UseRovingTabIndexOptions,
+} from './accessibility';
+
+// Error handling & feedback
+export { ErrorBoundary } from './ErrorBoundary';
+export { ErrorDisplay } from './ErrorDisplay';
+export {
+  NotificationToast,
+  notificationManager,
+  showNotification,
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo,
+} from './NotificationToast';
+export type { NotificationType, Notification, NotificationToastProps } from './NotificationToast';
+
+// Icons (ribbon and shared)
+export * from './Icons';

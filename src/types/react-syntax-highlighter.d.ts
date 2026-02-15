@@ -1,0 +1,15 @@
+declare module "react-syntax-highlighter" {
+  // Minimal typing shim to unblock TypeScript builds.
+  // Prefer installing upstream types if/when available.
+  const SyntaxHighlighter: any;
+  export default SyntaxHighlighter;
+  export const Prism: any;
+}
+
+declare module "react-syntax-highlighter/dist/esm/styles/prism" {
+  export const dracula: any;
+  export const okaidia: any;
+  export const oneDark: any;
+  const styles: any;
+  export default styles;
+}

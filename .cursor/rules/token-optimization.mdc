@@ -1,0 +1,36 @@
+---
+description: Token optimization and memory usage for long sessions
+alwaysApply: true
+---
+
+# Token Optimization
+
+## Memory (MCP)
+
+- **Before starting**: Use `search_nodes` to check for existing project/context memories.
+- **After decisions**: Use `create_entities` and `add_observations` to store key facts (architecture choices, conventions, file locations).
+- **Avoid re-explaining**: If a fact exists in memory, retrieve it instead of re-reading files or asking the user.
+
+## Sequential Thinking
+
+- For complex problems, use `sequential_thinking` to break down into steps before acting.
+- Reduces backtracking and wasted tokens from trial-and-error.
+
+## File Access
+
+- **Partial reads**: Prefer `read_text_file` with `head` or `tail` when only start/end of file is needed.
+- **Avoid unchanged files**: Do not re-read files you already have in context unless the user explicitly changed them.
+- **Targeted reads**: Read only the specific files needed for the task; avoid broad directory scans.
+
+## Web & Docs
+
+- **Fetch**: Use `fetch` with `max_length` (e.g. 5000) for web content instead of loading full pages.
+- **Ref**: Use `ref_search_documentation` for docs before searching the web; returns only needed snippets.
+
+## Step-by-Step Workflow
+
+1. Search memory for relevant context.
+2. For complex tasks: use sequential_thinking to plan.
+3. Read only what's necessary (partial when possible).
+4. Execute the task.
+5. Store new decisions/facts in memory for future sessions.

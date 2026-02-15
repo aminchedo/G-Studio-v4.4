@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-Studio Code Analysis Report v9.2.1</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; }
+        .header h1 { font-size: 2.5em; }
+        .content { padding: 40px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; text-align: center; }
+        .stat-card .number { font-size: 2.5em; font-weight: bold; }
+        .section { margin-bottom: 50px; }
+        .section-title { font-size: 2em; color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        thead { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        tr:hover { background: #f9fafb; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+        .badge-critical { background: #dc2626; color: white; }
+        .badge-high { background: #f97316; color: white; }
+        .badge-medium { background: #eab308; color: black; }
+        .badge-low { background: #6b7280; color: white; }
+        .badge-high-value { background: #10b981; color: white; }
+        .score-bar { height: 20px; background: #e5e7eb; border-radius: 10px; overflow: hidden; margin: 5px 0; }
+        .score-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); }
+        .health-card { background: #f9fafb; border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #667eea; }
+        .health-card h3 { color: #667eea; }
+        .health-card ul { list-style: none; padding: 0; }
+        .health-card li { padding: 5px 0 5px 25px; position: relative; }
+        .health-card li.strength::before { content: "✓"; position: absolute; left: 0; color: #10b981; }
+        .health-card li.weakness::before { content: "⚠"; position: absolute; left: 0; color: #f59e0b; }
+        .health-card li.recommendation::before { content: "→"; position: absolute; left: 0; color: #3b82f6; }
+        .footer { text-align: center; padding: 30px; color: #6b7280; border-top: 1px solid #e5e7eb; }
+        details summary { cursor: pointer; color: #667eea; }
+        pre { background: #1f2937; color: #e5e7eb; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .file-path { color: #6b7280; font-size: 0.85em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 G-Studio Enterprise Code Analysis v9.2.1</h1>
+            <div class="subtitle">Framework: vite | Generated: 2026-02-13 19:10:22</div>
+        </div>
+        <div class="content">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card"><div class="number">314</div><div class="label">Files</div></div>
+                <div class="stat-card"><div class="number">56.4%</div><div class="label">TSX</div></div>
+                <div class="stat-card"><div class="number">16</div><div class="label">Valuable Unused</div></div>
+                <div class="stat-card"><div class="number">12</div><div class="label">Wiring Issues</div></div>
+                <div class="stat-card"><div class="number">0</div><div class="label">Clone Groups</div></div>
+                <div class="stat-card"><div class="number">0</div><div class="label">Cycles</div></div>
+            </div>
+
+            <!-- Valuable Unused -->
+            <div class="section">
+                <h2 class="section-title">💎 Valuable Unused Components (16)</h2>
+                <table>
+                    <thead><tr><th>Component</th><th>Score</th><th>Layer</th><th>Why</th><th>Suggested Location</th></tr></thead>
+                    <tbody>
+                <tr>
+                    <td><strong>ModalContext</strong><br><span class="file-path">src\contexts\ModalContext.tsx</span></td>
+                    <td><span class="badge badge-high">85</span></td>
+                    <td>contexts</td>
+                    <td>+25 MCP integration<br>+20 Voice capabilities<br>+15 Complexity</td>
+                    <td><code>src/App.tsx or AppProvider (wrap in provider)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>useSpeechRecognition</strong><br><span class="file-path">src\hooks\useSpeechRecognition.tsx</span></td>
+                    <td><span class="badge badge-medium">52</span></td>
+                    <td>types</td>
+                    <td>+20 Voice capabilities<br>+12 Complexity<br>+10 Well-typed</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>index</strong><br><span class="file-path">src\services\index.ts</span></td>
+                    <td><span class="badge badge-medium">45</span></td>
+                    <td>services</td>
+                    <td>+25 MCP integration<br>+20 Voice capabilities</td>
+                    <td><code>src/services/index.ts (add to barrel export)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>sandboxIntegration</strong><br><span class="file-path">src\services\sandboxIntegration.tsx</span></td>
+                    <td><span class="badge badge-medium">40</span></td>
+                    <td>types</td>
+                    <td>+25 MCP integration<br>+10 Well-typed<br>+5 363 lines</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>AppStateContext</strong><br><span class="file-path">src\contexts\AppStateContext.tsx</span></td>
+                    <td><span class="badge badge-low">35</span></td>
+                    <td>contexts</td>
+                    <td>+15 Complexity<br>+10 Well-typed<br>+5 356 lines</td>
+                    <td><code>src/App.tsx or AppProvider (wrap in provider)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>monitoring</strong><br><span class="file-path">src\utils\monitoring.tsx</span></td>
+                    <td><span class="badge badge-low">35</span></td>
+                    <td>types</td>
+                    <td>+15 Complexity<br>+10 Well-typed<br>+5 482 lines</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>EnhancedSettingsPanel</strong><br><span class="file-path">src\features\ai\EnhancedSettingsPanel.tsx</span></td>
+                    <td><span class="badge badge-low">34</span></td>
+                    <td>components</td>
+                    <td>+9 Complexity<br>+10 Well-typed<br>+10 Name: EnhancedSettingsPanel</td>
+                    <td><code>MainLayout or relevant feature</code></td>
+                </tr>
+                <tr>
+                    <td><strong>CodeIntelligenceDashboard</strong><br><span class="file-path">src\features\code-intelligence\CodeIntelligenceDashboard.tsx</span></td>
+                    <td><span class="badge badge-low">34</span></td>
+                    <td>components</td>
+                    <td>+9 Complexity<br>+10 Well-typed<br>+10 Name: CodeIntelligenceDashboard</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>DebuggingTools</strong><br><span class="file-path">src\components\features\DebuggingTools.tsx</span></td>
+                    <td><span class="badge badge-low">32</span></td>
+                    <td>components</td>
+                    <td>+12 Complexity<br>+10 Well-typed<br>+5 714 lines</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>accessibility</strong><br><span class="file-path">src\components\ui\accessibility.tsx</span></td>
+                    <td><span class="badge badge-low">32</span></td>
+                    <td>components</td>
+                    <td>+12 Complexity<br>+10 Well-typed<br>+5 404 lines</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>useCodeEditor</strong><br><span class="file-path">src\hooks\useCodeEditor.tsx</span></td>
+                    <td><span class="badge badge-low">32</span></td>
+                    <td>types</td>
+                    <td>+12 Complexity<br>+10 Well-typed<br>+5 267 lines</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>useLMStudio</strong><br><span class="file-path">src\hooks\ai\useLMStudio.tsx</span></td>
+                    <td><span class="badge badge-low">32</span></td>
+                    <td>types</td>
+                    <td>+12 Complexity<br>+10 Well-typed<br>+5 418 lines</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>useLocalAI</strong><br><span class="file-path">src\hooks\ai\useLocalAI.tsx</span></td>
+                    <td><span class="badge badge-low">32</span></td>
+                    <td>types</td>
+                    <td>+12 Complexity<br>+10 Well-typed<br>+5 541 lines</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>useCache</strong><br><span class="file-path">src\hooks\utils\useCache.tsx</span></td>
+                    <td><span class="badge badge-low">32</span></td>
+                    <td>types</td>
+                    <td>+12 Complexity<br>+10 Well-typed<br>+5 366 lines</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>useTelemetry</strong><br><span class="file-path">src\hooks\utils\useTelemetry.tsx</span></td>
+                    <td><span class="badge badge-low">32</span></td>
+                    <td>types</td>
+                    <td>+12 Complexity<br>+10 Well-typed<br>+5 372 lines</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr>
+                <tr>
+                    <td><strong>SystemStatusDashboard</strong><br><span class="file-path">src\components\panels\SystemStatusDashboard.tsx</span></td>
+                    <td><span class="badge badge-low">31</span></td>
+                    <td>components</td>
+                    <td>+6 Complexity<br>+10 Well-typed<br>+10 Name: SystemStatusDashboard</td>
+                    <td><code>App.tsx or appropriate parent component</code></td>
+                </tr></tbody>
+                </table>
+            </div>
+
+            <!-- Wiring Issues -->
+            <div class="section">
+                <h2 class="section-title">🔧 Wiring Issues (12)</h2>
+                <table>
+                    <thead><tr><th>File</th><th>Severity</th><th>Type</th><th>Current Import</th><th>Better Alternative</th><th>Fix</th></tr></thead>
+                    <tbody>
+                <tr>
+                    <td><strong>AppStateContext.tsx</strong><br><span class="file-path">Line 184</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(AppStateContext)</code></td>
+                    <td><code>Create custom hook useAppStateContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useAppStateContext = () => {
+  const context = useContext(AppStateContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>ModalContext.tsx</strong><br><span class="file-path">Line 174</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(ModalContext)</code></td>
+                    <td><code>Create custom hook useModalContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useModalContext = () => {
+  const context = useContext(ModalContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>GeminiTesterContext.tsx</strong><br><span class="file-path">Line 441</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(GeminiTesterContext)</code></td>
+                    <td><code>Create custom hook useGeminiTesterContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useGeminiTesterContext = () => {
+  const context = useContext(GeminiTesterContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>HelpSystem.tsx</strong><br><span class="file-path">Line 209</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(TooltipContext)</code></td>
+                    <td><code>Create custom hook useTooltipContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useTooltipContext = () => {
+  const context = useContext(TooltipContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>useAgentOrchestrator.tsx</strong><br><span class="file-path">Line 512</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(AgentOrchestratorContext)</code></td>
+                    <td><code>Create custom hook useAgentOrchestratorContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useAgentOrchestratorContext = () => {
+  const context = useContext(AgentOrchestratorContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>useAutonomousMode.tsx</strong><br><span class="file-path">Line 456</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(AutonomousModeContext)</code></td>
+                    <td><code>Create custom hook useAutonomousModeContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useAutonomousModeContext = () => {
+  const context = useContext(AutonomousModeContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>useContextManager.tsx</strong><br><span class="file-path">Line 457</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(ContextManagerContext)</code></td>
+                    <td><code>Create custom hook useContextManagerContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useContextManagerContext = () => {
+  const context = useContext(ContextManagerContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>useGemini.tsx</strong><br><span class="file-path">Line 529</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(GeminiContext)</code></td>
+                    <td><code>Create custom hook useGeminiContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useGeminiContext = () => {
+  const context = useContext(GeminiContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>useMcp.tsx</strong><br><span class="file-path">Line 681</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(McpContext)</code></td>
+                    <td><code>Create custom hook useMcpContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useMcpContext = () => {
+  const context = useContext(McpContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>useModelSelection.tsx</strong><br><span class="file-path">Line 417</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(ModelSelectionContext)</code></td>
+                    <td><code>Create custom hook useModelSelectionContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useModelSelectionContext = () => {
+  const context = useContext(ModelSelectionContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>useSpeechRecognition.tsx</strong><br><span class="file-path">Line 391</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(SpeechRecognitionContext)</code></td>
+                    <td><code>Create custom hook useSpeechRecognitionContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useSpeechRecognitionContext = () => {
+  const context = useContext(SpeechRecognitionContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr>
+                <tr>
+                    <td><strong>useVoiceCommands.tsx</strong><br><span class="file-path">Line 745</span></td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Direct useContext Usage</td>
+                    <td><code>useContext(VoiceCommandsContext)</code></td>
+                    <td><code>Create custom hook useVoiceCommandsContext()</code></td>
+                    <td><details><summary>Fix</summary><pre>// Create a custom hook:
+export const useVoiceCommandsContext = () => {
+  const context = useContext(VoiceCommandsContext);
+  if (!context) throw new Error('...');
+  return context;
+};</pre></details></td>
+                </tr></tbody>
+                </table>
+            </div>
+
+            <!-- Architectural Insights -->
+            <div class="section">
+                <h2 class="section-title">🏗️ Architectural Insights</h2>
+                
+                <div class="health-card">
+                    <h3>Ai Provider</h3>
+                    <div class="health-score" style="color:#dc2626;">40%</div>
+                    <ul><li class="strength">✓ 1 files with AI integration</li><li class="weakness">Missing custom hooks for AI providers</li><li class="weakness">Limited error handling in AI layer</li><li class="recommendation">Create useAI hooks for better component integration</li><li class="recommendation">Add comprehensive error handling for AI operations</li></ul>
+                </div>
+                <div class="health-card">
+                    <h3>Mcp Integration</h3>
+                    <div class="health-score" style="color:#10b981;">100%</div>
+                    <ul><li class="strength">✓ MCP integration found in 25 files</li><li class="strength">✓ MCP service layer implemented</li><li class="strength">✓ MCP hooks for React integration</li></ul>
+                </div>
+                <div class="health-card">
+                    <h3>Voice Command</h3>
+                    <div class="health-score" style="color:#10b981;">100%</div>
+                    <ul><li class="strength">✓ Voice integration in 8 files</li><li class="strength">✓ Voice hooks properly implemented</li></ul>
+                </div>
+                <div class="health-card">
+                    <h3>Context Pattern</h3>
+                    <div class="health-score" style="color:#10b981;">100%</div>
+                    <ul><li class="strength">✓ 11 context providers defined</li><li class="strength">✓ All contexts properly typed</li><li class="strength">✓ Balanced context usage</li></ul>
+                </div>
+                <div class="health-card">
+                    <h3>Hook Pattern</h3>
+                    <div class="health-score" style="color:#f59e0b;">60%</div>
+                    <ul><li class="strength">✓ All hooks follow naming convention</li><li class="strength">✓ All hooks in TypeScript</li></ul>
+                </div>
+                <div class="health-card">
+                    <h3>Context Pattern</h3>
+                    <div class="health-score" style="color:#dc2626;">35%</div>
+                    <ul><li class="weakness">13 files use raw useContext in components</li><li class="recommendation">Encapsulate context access in custom hooks</li></ul>
+                </div>
+                <div class="health-card">
+                    <h3>Ai Provider</h3>
+                    <div class="health-score" style="color:#f59e0b;">70%</div>
+                    <ul><li class="strength">Focused on one provider: Gemini</li><li class="recommendation">Consider adding fallback/secondary provider for resilience</li></ul>
+                </div>
+                <div class="health-card">
+                    <h3>Mcp Integration</h3>
+                    <div class="health-score" style="color:#dc2626;">5%</div>
+                    <ul><li class="weakness">Only 2/39 entry points have MCP</li><li class="recommendation">Initialize MCP in main application root</li></ul>
+                </div>
+                <div class="health-card">
+                    <h3>Hook Pattern</h3>
+                    <div class="health-score" style="color:#dc2626;">10%</div>
+                    <ul><li class="weakness">9 custom hooks violate naming convention</li><li class="recommendation">Rename hooks to start with 'use' (e.g., useMyHook)</li></ul>
+                </div>
+            </div>
+
+            <!-- Duplicate Clusters -->
+            
+            <div class="section">
+                <h2 class="section-title">📦 Duplicate Clusters (1)</h2>
+                <table>
+                    <thead><tr><th>Cluster</th><th>Similarity</th><th>Files</th><th>Base</th><th>Savings</th></tr></thead>
+                    <tbody>
+                <tr>
+                    <td><code>ast_edca9045</code></td>
+                    <td>100%</td>
+                    <td>312</td>
+                    <td><code>src\path.ts</code></td>
+                    <td>83262</td>
+                </tr></tbody>
+                </table>
+            </div>
+            
+
+            <!-- Archive Candidates -->
+            
+            <div class="section">
+                <h2 class="section-title">📦 Archive Candidates (312)</h2>
+                <table>
+                    <thead><tr><th>File</th><th>Confidence</th><th>Reasons</th><th>Blockers</th></tr></thead>
+                    <tbody>
+                <tr>
+                    <td><code>src\index.ts</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\main.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\monaco-editor.ts</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\react.ts</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\vite.ts</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\LoadingScreen.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\app\AppProvider.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\chat\ChatWelcome.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\editor\EditorBranding.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\features\DebuggingTools.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\features\EnhancedSettingsModal.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\features\IntegratedTerminal.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\layout\ProjectTree.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\layout\TitleBar.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\modals\ConfirmDialog.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\modals\PromptDialog.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\panels\CodeMetricsPanel.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\panels\EmptyFilePreview.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\panels\EnhancedErrorDisplay.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\panels\PerformanceMetrics.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\panels\SystemStatusDashboard.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\ribbon\AISettingsTab.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\ribbon\ribbonModals.ts</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\sidebar\file-tree\FileTreeTypes.ts</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\ui\accessibility.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\ui\AccessibilityChecker.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\ui\EventBus.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\ui\HelpSystem.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\ui\Icons.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr>
+                <tr>
+                    <td><code>src\components\ui\KeyboardShortcuts.tsx</code></td>
+                    <td>95%</td>
+                    <td>Duplicate of src\path.ts</td>
+                    <td>None</td>
+                </tr></tbody>
+                </table>
+            </div>
+            
+
+            <!-- Potentially Unused Files (advanced) -->
+            
+
+            <!-- Clone Groups -->
+            
+
+            <!-- Circular Dependencies -->
+            
+
+            <!-- Recommendations Summary -->
+            <div class="section">
+                <h2 class="section-title">💡 Recommendations Summary</h2>
+                <ul>
+                    <li><strong>Keep:</strong> 0 files</li>
+                    <li><strong>Refactor:</strong> 0 files</li>
+                    <li><strong>Archive:</strong> 1 files</li>
+                    <li><strong>Delete:</strong> 0 files</li>
+                    <li><strong>Review:</strong> 2 files</li>
+                    <li><strong>Merge:</strong> 311 files</li>
+                    <li><strong>Wire:</strong> 0 files</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer">
+            Generated by G-Studio Enterprise Code Intelligence v9.2.1<br>
+            Analysis took 6.32s · Cache hit rate 0.5%
+        </div>
+    </div>
+</body>
+</html>

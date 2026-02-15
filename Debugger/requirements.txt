@@ -1,0 +1,24 @@
+# G-Studio Advanced Code Intelligence Platform
+# Optional Dependencies for Full Functionality
+
+# Core Analysis (Highly Recommended)
+networkx>=2.6        # Dependency graph and cycle detection
+numpy>=1.20.0        # Numerical operations for feature vectors
+
+# Advanced Features
+scikit-learn>=0.24.0 # Clone detection with TF-IDF and cosine similarity
+tree-sitter>=0.20.0  # Accurate AST parsing
+
+# Language-Specific Parsers
+tree-sitter-typescript>=0.20.0
+tree-sitter-javascript>=0.20.0
+tree-sitter-python>=0.20.0
+
+# UI/UX Enhancements
+tqdm>=4.60.0         # Progress bars
+colorama>=0.4.4      # Cross-platform colored terminal output
+
+# Note: The tool works without these dependencies with reduced functionality
+# Install all: pip install -r requirements.txt
+# Install minimal: pip install networkx numpy (for core features)
+# Install none: Still works with regex parsing and basic analysis

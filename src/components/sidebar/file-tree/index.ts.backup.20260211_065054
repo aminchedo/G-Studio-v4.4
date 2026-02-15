@@ -1,0 +1,6 @@
+/**
+ * FileTree Module Exports
+ */
+
+export { default as FileTreeVirtualized } from './FileTreeVirtualized';
+export type { FileNode, FileTreeProps, FlatNode } from './FileTreeTypes';

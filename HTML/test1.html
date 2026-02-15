@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Gemini Studio · Chat Sidebar</title>
+    <!-- Feather Icons (pure SVG) -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <!-- Inter: crisp UI font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        /* ---------- DARK METALLIC · 3D MORPHEUS GLASS RIBBON + CHAT SIDEBAR ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0c10;
+            background: radial-gradient(circle at 30% 20%, #121a24, #080b0e);
+            color: #f0f8ff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.5;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: 96px 1fr;   /* ribbon | main content (no bottom bar) */
+            letter-spacing: 0.01em;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* hide scrollbars – pristine */
+        ::-webkit-scrollbar { display: none; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+
+        /* ---------- INTEGRATED RIBBON – DARK METALLIC, 2 ROWS, GLASS TABS & 3D ICONS (NO TEXT) ---------- */
+        .metallic-ribbon {
+            background: linear-gradient(165deg, #10161e 0%, #1a212b 100%);
+            border-bottom: 0.6px solid rgba(100, 180, 255, 0.2);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 28px -12px black;
+            display: flex;
+            flex-direction: column;
+            padding: 0 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ROW 1: LOGO + PRIMARY TABS (HOME, VIEW, INTELLIGENCE, MCP TOOLS) */
+        .ribbon-row1 {
+            display: flex;
+            align-items: center;
+            height: 52px;
+            gap: 32px;
+        }
+
+        .logo-block {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .glass-logo {
+            background: rgba(20, 35, 55, 0.6);
+            backdrop-filter: blur(8px);
+            border: 0.6px solid rgba(92, 192, 255, 0.3);
+            border-radius: 12px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .logo-text {
+            font-weight: 700;
+            font-size: 16px;
+            background: linear-gradient(to right, #ecf9ff, #cbebff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        /* primary tabs – text + subtle icon */
+        .primary-tabs {
+            display: flex;
+            gap: 24px;
+        }
+        .tab-3d {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.02);
+            border: 0.5px solid rgba(255,255,255,0.02);
+            color: #cde1f5;
+            font-weight: 500;
+            font-size: 14px;
+            transition: 0.18s;
+            cursor: default;
+            backdrop-filter: blur(4px);
+            box-shadow: inset 0 -2px 2px rgba(0,0,0,0.5);
+        }
+        .tab-3d.active {
+            background: rgba(62, 158, 255, 0.18);
+            border: 0.6px solid rgba(62, 158, 255, 0.5);
+            color: white;
+            box-shadow: 0 6px 14px rgba(0,120,255,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        /* ROW 2: ICON-ONLY TOOLBAR – 3D MORPHEUS GLASS, NO TEXT UNDERNEATH */
+        .ribbon-row2 {
+            display: flex;
+            align-items: center;
+            height: 44px;
+            gap: 12px;
+            border-top: 0.5px solid rgba(255,255,255,0.03);
+            padding: 4px 0;
+        }
+
+        .morph-icon {
+            background: rgba(18, 30, 45, 0.65);
+            backdrop-filter: blur(8px);
+            border: 0.8px solid rgba(130, 200, 255, 0.2);
+            border-radius: 14px;
+            padding: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px -6px rgba(0,0,0,0.6), inset 0 -2px 1px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.15);
+            transition: all 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+            color: #d4edff;
+            width: 36px;
+            height: 36px;
+        }
+        .morph-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+        /* unique glass tints */
+        .morph-icon:nth-child(1) { background: rgba(30, 80, 150, 0.35); border-color: rgba(70, 160, 255, 0.6); }
+        .morph-icon:nth-child(2) { background: rgba(120, 70, 200, 0.35); border-color: rgba(180, 140, 255, 0.6); }
+        .morph-icon:nth-child(3) { background: rgba(30, 150, 130, 0.35); border-color: rgba(50, 220, 190, 0.6); }
+        .morph-icon:nth-child(4) { background: rgba(200, 130, 50, 0.35); border-color: rgba(255, 180, 80, 0.6); }
+        .morph-icon:nth-child(5) { background: rgba(200, 70, 100, 0.35); border-color: rgba(255, 120, 140, 0.6); }
+        .morph-icon:nth-child(6) { background: rgba(40, 120, 160, 0.35); border-color: rgba(80, 200, 255, 0.6); }
+        .morph-icon:nth-child(7) { background: rgba(100, 80, 160, 0.35); border-color: rgba(170, 140, 255, 0.6); }
+        .morph-icon:nth-child(8) { background: rgba(80, 160, 80, 0.35); border-color: rgba(130, 255, 130, 0.6); }
+        .morph-icon:nth-child(9) { background: rgba(180, 130, 40, 0.35); border-color: rgba(255, 200, 80, 0.6); }
+        .morph-icon:nth-child(10) { background: rgba(150, 60, 120, 0.35); border-color: rgba(255, 120, 200, 0.6); }
+        .morph-icon:nth-child(11) { background: rgba(30, 100, 140, 0.35); border-color: rgba(90, 200, 255, 0.6); }
+        .morph-icon:nth-child(12) { background: rgba(70, 130, 180, 0.35); border-color: rgba(100, 210, 255, 0.6); }
+
+        .morph-icon:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: rgba(62, 158, 255, 0.4);
+            border-color: rgba(92, 192, 255, 0.9);
+            box-shadow: 0 14px 22px -10px rgba(0,160,255,0.5);
+        }
+
+        .search-glass {
+            display: flex;
+            align-items: center;
+            background: rgba(8, 16, 26, 0.8);
+            border: 0.6px solid rgba(255,255,255,0.1);
+            border-radius: 40px;
+            padding: 4px 12px;
+            margin-left: 8px;
+            backdrop-filter: blur(10px);
+            gap: 6px;
+            height: 36px;
+            color: #b0d0ff;
+        }
+        .search-glass input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 13px;
+            width: 160px;
+            outline: none;
+            padding: 8px 0;
+        }
+        .search-glass input::placeholder { color: #9cb1cc; }
+
+        .run-button-glass {
+            background: linear-gradient(145deg, rgba(46, 165, 90, 0.4), rgba(30, 120, 70, 0.5));
+            border: 0.8px solid rgba(80, 220, 140, 0.7);
+            border-radius: 30px;
+            padding: 8px 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #e6fff0;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 18px -6px black;
+        }
+
+        .flex-spacer { flex: 1; }
+
+        /* ---------- MAIN 3-COLUMN DASHBOARD – LEFT EXPLORER, CENTER, RIGHT CHAT SIDEBAR (REPLACES INSPECTOR) ---------- */
+        .main-dashboard {
+            display: grid;
+            grid-template-columns: 290px 1fr 340px;   /* right column now chat sidebar */
+            overflow: hidden;
+            background: #0b0f15;
+            gap: 1px;
+            border-top: 0.5px solid rgba(0,0,0,0.7);
+        }
+
+        /* LEFT PANEL – EXPLORER (unchanged) */
+        .explorer-panel {
+            background: linear-gradient(145deg, #141e28, #0f161f);
+            box-shadow: inset -4px 0 12px rgba(0,0,0,0.8);
+            padding: 20px 18px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .explorer-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #dbeaff;
+            text-transform: uppercase;
+            letter-spacing: 1.6px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.08);
+            padding-bottom: 14px;
+        }
+        .overview-tab {
+            background: rgba(62,158,255,0.18);
+            border-radius: 40px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: fit-content;
+            border: 0.5px solid rgba(62,158,255,0.3);
+            color: #c4e2ff;
+        }
+        .search-files {
+            background: rgba(0,0,0,0.45);
+            border: 0.5px solid rgba(255,255,255,0.06);
+            border-radius: 40px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 13px;
+            outline: none;
+            backdrop-filter: blur(4px);
+        }
+        .search-files::placeholder { color: #97adc9; }
+        .add-items-btn {
+            background: rgba(62,158,255,0.2);
+            border: 0.5px solid rgba(62,158,255,0.4);
+            border-radius: 40px;
+            padding: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            color: #d1e9ff;
+            transition: 0.2s;
+        }
+        .assistant-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .new-item-input {
+            background: rgba(0,0,0,0.5);
+            border: 0.5px solid rgba(255,255,255,0.06);
+            border-radius: 40px;
+            padding: 12px 20px;
+            color: white;
+        }
+        .add-item-btn {
+            background: rgba(120,200,120,0.2);
+            border: 0.5px solid rgba(80,220,140,0.4);
+            border-radius: 40px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #dcffdc;
+        }
+
+        /* CENTER PANEL – NO FILE OPEN (unchanged) */
+        .center-panel {
+            background: radial-gradient(circle at 30% 40%, #1d2833, #0e131b);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            text-align: center;
+        }
+        .center-icon {
+            background: rgba(30,50,75,0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            padding: 20px;
+            border: 0.5px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        .center-title { font-size: 26px; font-weight: 350; color: #edf5ff; }
+        .center-sub { color: #b0c8e0; font-size: 16px; margin: 6px 0; }
+        .center-desc { color: #8ea5c0; max-width: 280px; margin: 12px 0; }
+        .load-demo-btn {
+            background: rgba(62,158,255,0.25);
+            border: 0.5px solid rgba(62,158,255,0.6);
+            border-radius: 60px;
+            padding: 12px 36px;
+            font-weight: 600;
+            color: white;
+            backdrop-filter: blur(8px);
+        }
+
+        /* ---------- RIGHT PANEL – CHAT SIDEBAR (MOVED FROM BOTTOM) ---------- */
+        .chat-sidebar {
+            background: linear-gradient(225deg, #141e28, #0f161f);
+            box-shadow: inset 4px 0 12px rgba(0,0,0,0.8);
+            padding: 20px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            gap: 16px;
+        }
+
+        /* assistant header */
+        .chat-header {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.08);
+            padding-bottom: 16px;
+        }
+        .chat-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .assistant-identity {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .assistant-identity svg { stroke: #6eb5ff; }
+        .assistant-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: #e2f0ff;
+        }
+        .badge-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .badge-3d {
+            background: rgba(62,158,255,0.18);
+            border: 0.5px solid rgba(62,158,255,0.4);
+            border-radius: 60px;
+            padding: 4px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #d1eaff;
+            backdrop-filter: blur(4px);
+            font-size: 12px;
+        }
+        .badge-3d.monitor {
+            background: rgba(255,180,60,0.1);
+            border-color: rgba(255,200,100,0.4);
+        }
+
+        .overview-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+        .welcome-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #d0e6ff;
+        }
+        .overview-pill {
+            background: rgba(0,0,0,0.4);
+            border-radius: 40px;
+            padding: 5px 18px;
+            border: 0.5px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* chat messages area */
+        .chat-messages {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+            margin: 8px 0 16px;
+        }
+        .message-bubble {
+            background: rgba(32, 48, 70, 0.7);
+            backdrop-filter: blur(8px);
+            border: 0.5px solid rgba(255,255,255,0.06);
+            border-radius: 20px 20px 20px 6px;
+            padding: 14px 18px;
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: #e6f1ff;
+            box-shadow: 0 8px 18px -8px black;
+            align-self: flex-start;
+            max-width: 95%;
+        }
+        .message-bubble.user {
+            background: rgba(55, 90, 130, 0.6);
+            border-radius: 20px 20px 6px 20px;
+            align-self: flex-end;
+            border-color: rgba(92,192,255,0.3);
+        }
+        .typing-indicator {
+            display: flex;
+            gap: 6px;
+            padding: 12px 18px;
+            background: rgba(30,40,55,0.4);
+            border-radius: 40px;
+            align-self: flex-start;
+            backdrop-filter: blur(4px);
+        }
+        .typing-dot {
+            width: 6px; height: 6px; background: #aad0ff; border-radius: 50%;
+            animation: pulse-dot 1.4s infinite;
+        }
+
+        /* chat input area */
+        .chat-input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+            border-top: 0.5px solid rgba(255,255,255,0.08);
+            padding-top: 16px;
+        }
+        .clear-chat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #b4cde0;
+            transition: 0.15s;
+            font-size: 12.5px;
+            cursor: default;
+        }
+        .clear-chat:hover { color: white; }
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: rgba(10, 18, 28, 0.9);
+            border: 0.5px solid rgba(255,255,255,0.08);
+            border-radius: 60px;
+            padding: 4px 4px 4px 20px;
+            backdrop-filter: blur(12px);
+        }
+        .input-wrapper input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 13px;
+            outline: none;
+            padding: 12px 0;
+        }
+        .input-wrapper input::placeholder { color: #8fa6c2; }
+        .send-icon {
+            background: rgba(62,158,255,0.25);
+            border-radius: 50%;
+            padding: 10px;
+            margin-left: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 0.4; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .w-100 { width: 100%; }
+    </style>
+</head>
+<body>
+    <!-- 
+        ========== INTEGRATED METALLIC RIBBON – TABS + 3D MORPHEUS GLASS ICONS (NO TEXT) ========= 
+    -->
+    <div class="metallic-ribbon">
+        <!-- ROW 1: Logo & Primary Tabs -->
+        <div class="ribbon-row1">
+            <div class="logo-block">
+                <div class="glass-logo">
+                    <i data-feather="star" width="20" height="20" style="stroke: #6eb5ff;"></i>
+                    <span class="logo-text">GEMINI STUDIO</span>
+                </div>
+            </div>
+            <div class="primary-tabs">
+                <div class="tab-3d active"><i data-feather="home" width="16"></i> Home</div>
+                <div class="tab-3d"><i data-feather="eye" width="16"></i> View</div>
+                <div class="tab-3d"><i data-feather="cpu" width="16"></i> Intelligence</div>
+                <div class="tab-3d"><i data-feather="tool" width="16"></i> MCP Tools</div>
+            </div>
+            <div class="flex-spacer"></div>
+        </div>
+
+        <!-- ROW 2: 3D Morpheus Glass Icons – NO TEXT UNDERNEATH -->
+        <div class="ribbon-row2">
+            <span class="morph-icon"><i data-feather="file-text"></i></span>   <!-- FILE -->
+            <span class="morph-icon"><i data-feather="edit-3"></i></span>      <!-- EDIT -->
+            <span class="morph-icon"><i data-feather="type"></i></span>        <!-- FORMAT -->
+            <span class="morph-icon"><i data-feather="layout"></i></span>      <!-- VIEW -->
+            <span class="morph-icon"><i data-feather="play-circle"></i></span> <!-- RUN -->
+            <span class="morph-icon"><i data-feather="bar-chart-2"></i></span> <!-- ANALYTICS -->
+            <span class="morph-icon"><i data-feather="briefcase"></i></span>   <!-- PROJECT -->
+            
+            <div class="search-glass">
+                <i data-feather="search" width="16" style="stroke: #b0d0ff;"></i>
+                <input type="text" placeholder="Quick search...">
+            </div>
+            
+            <button class="run-button-glass">
+                <i data-feather="play" width="16"></i> Run Code
+            </button>
+            
+            <span class="morph-icon" style="background: rgba(100,130,200,0.35);"><i data-feather="grid"></i></span> <!-- menu -->
+        </div>
+    </div>
+
+    <!-- ========== MAIN 3-COLUMN DASHBOARD – EXPLORER | CENTER | CHAT SIDEBAR ========= -->
+    <div class="main-dashboard">
+        <!-- LEFT: EXPLORER (unchanged, full screenshot) -->
+        <div class="explorer-panel">
+            <div class="explorer-header">
+                <i data-feather="folder" width="16"></i> EXPLORER
+            </div>
+            <div class="overview-tab">
+                <i data-feather="layers" width="14"></i> OVERVIEW
+            </div>
+            <input type="text" class="search-files" placeholder="Search files...">
+            <button class="add-items-btn w-100">
+                <i data-feather="plus-circle"></i> ADD ITEMS
+            </button>
+            <div class="assistant-section">
+                <div style="display: flex; align-items: center; gap: 8px; color: #c4e0ff;">
+                    <i data-feather="message-circle" width="15"></i> ASSISTANT
+                </div>
+                <input type="text" class="new-item-input" placeholder="Enter new item name">
+                <button class="add-item-btn w-100">
+                    <i data-feather="plus"></i> Add Item
+                </button>
+            </div>
+        </div>
+
+        <!-- CENTER: NO FILE OPEN / NO FILES FOUND (unchanged) -->
+        <div class="center-panel">
+            <div class="center-icon">
+                <i data-feather="code" width="48" height="48" style="stroke: #9ac7ff;"></i>
+            </div>
+            <div class="center-title">No file open</div>
+            <div class="center-sub">No Files Found</div>
+            <div class="center-desc">Select a file from the Sidebar<br>Start by creating a file or loading a demo project.</div>
+            <button class="load-demo-btn">
+                <i data-feather="download-cloud" width="16"></i> Load Demo
+            </button>
+        </div>
+
+        <!-- RIGHT: CHAT SIDEBAR – replaces inspector, contains all assistant elements from bottom bar -->
+        <div class="chat-sidebar">
+            <!-- Assistant Header (GStudio Assistant, badges, 88 overview, welcome) -->
+            <div class="chat-header">
+                <div class="chat-title-row">
+                    <div class="assistant-identity">
+                        <i data-feather="star" width="20" style="stroke: #6eb5ff;"></i>
+                        <span class="assistant-name">GStudio Assistant</span>
+                    </div>
+                    <div style="display: flex; gap: 8px; color: #b4cde0;">
+                        <i data-feather="clock" width="15"></i>
+                        <i data-feather="bell" width="15"></i>
+                    </div>
+                </div>
+                <!-- badge row -->
+                <div class="badge-group">
+                    <span class="badge-3d"><i data-feather="shield" width="12"></i> professional Mode</span>
+                    <span class="badge-3d" style="background: rgba(20,120,220,0.2);">☁ CLOUD</span>
+                    <span class="badge-3d monitor"><i data-feather="activity" width="12"></i> MONITOR</span>
+                </div>
+                <!-- welcome + overview -->
+                <div class="overview-row">
+                    <div class="welcome-message">
+                        <i data-feather="smile" style="stroke: #9ad0ff;"></i>
+                        <span style="font-weight: 500;">Welcome to G Studio!</span>
+                    </div>
+                    <div class="overview-pill">
+                        <i data-feather="pie-chart" width="14"></i> 88 OVERVIEW
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages – example conversation -->
+            <div class="chat-messages">
+                <div class="message-bubble">
+                    <i data-feather="star" width="12" style="float: left; margin-right: 8px;"></i>
+                    Hello! I'm your assistant. How can I help with your project?
+                </div>
+                <div class="message-bubble user">
+                    Show me the project structure.
+                </div>
+                <div class="message-bubble">
+                    ✅ Running project overview – 214 files, 12 modules. No critical issues.
+                </div>
+                <div class="typing-indicator">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot" style="animation-delay: 0.2s;"></span>
+                    <span class="typing-dot" style="animation-delay: 0.4s;"></span>
+                </div>
+            </div>
+
+            <!-- Chat Input + Clear Chat -->
+            <div class="chat-input-area">
+                <div class="clear-chat">
+                    <i data-feather="trash-2" width="15"></i> Clear Chat History
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" placeholder="Ask Gemini to analyze code or run commands..">
+                    <span class="send-icon"><i data-feather="send" width="16"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feather icon replacement -->
+    <script>
+        feather.replace({ 
+            width: 16, 
+            height: 16,
+            'stroke-width': 1.7,
+            fill: 'none',
+            'class': 'feather-svg'
+        });
+
+        // subtle run button feedback
+        const runBtn = document.querySelector('.run-button-glass');
+        if (runBtn) {
+            runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                runBtn.style.transform = 'scale(0.97)';
+                setTimeout(() => runBtn.style.transform = '', 150);
+            });
+        }
+    </script>
+</body>
+</html>

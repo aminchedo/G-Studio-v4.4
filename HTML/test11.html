@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roche Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Hide scrollbars */
+        *::-webkit-scrollbar {
+            display: none;
+        }
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        :root {
+            /* Dark Metallic Background */
+            --bg-deepest: #06070a;
+            --bg-deep: #0a0c10;
+            --bg-primary: #0e1015;
+            --bg-secondary: #13151c;
+            --bg-tertiary: #181b24;
+            --bg-elevated: #1d2029;
+            --bg-panel: #22252f;
+            
+            /* Accent Colors - Vibrant */
+            --accent-cyan: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-violet: #7c3aed;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-emerald: #059669;
+            --accent-orange: #f59e0b;
+            --accent-amber: #fbbf24;
+            --accent-red: #ef4444;
+            
+            /* Text Colors */
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --text-muted: #64748b;
+            --text-dim: #475569;
+            
+            /* Borders & Glass */
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-soft: rgba(255, 255, 255, 0.08);
+            --border-medium: rgba(255, 255, 255, 0.12);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shine: rgba(255, 255, 255, 0.15);
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.6);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-deepest);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: 
+                radial-gradient(ellipse at top right, rgba(139, 92, 246, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at bottom left, rgba(16, 185, 129, 0.04) 0%, transparent 60%),
+                linear-gradient(180deg, var(--bg-deepest) 0%, var(--bg-deep) 50%, var(--bg-deepest) 100%);
+        }
+
+        /* ========================================
+           MINIMAL HEADER - ONLY LOGO + TITLE
+        ======================================== */
+        .header {
+            background: linear-gradient(180deg, 
+                rgba(19, 21, 28, 0.98) 0%, 
+                rgba(14, 16, 21, 0.99) 100%);
+            backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Minimal Brand Bar */
+        .brand-bar {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(10, 12, 16, 0.6);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(124, 58, 237, 0.15) 100%);
+            border-radius: 10px;
+            border: 1px solid rgba(139, 92, 246, 0.35);
+            box-shadow: 
+                0 4px 20px rgba(139, 92, 246, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            position: relative;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+            border-radius: 10px 10px 0 0;
+            pointer-events: none;
+        }
+
+        .logo svg {
+            width: 22px;
+            height: 22px;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 2px 6px rgba(139, 92, 246, 0.6));
+        }
+
+        .app-name {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+            background: linear-gradient(135deg, #f8fafc 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        /* ========================================
+           ENHANCED GLASSY RIBBON BAR
+        ======================================== */
+        .ribbon {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            gap: 40px;
+            background: linear-gradient(180deg, 
+                rgba(24, 27, 36, 0.85) 0%, 
+                rgba(19, 21, 28, 0.9) 100%);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .ribbon-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ribbon-label {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .ribbon-icons {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* PREMIUM 3D GLASSY BUTTONS - ENHANCED */
+        .ribbon-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.12) 0%, 
+                rgba(255, 255, 255, 0.04) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 6px 24px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(16px) saturate(180%);
+        }
+
+        /* Glass shine effect */
+        .ribbon-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.25) 0%, 
+                transparent 100%);
+            border-radius: 12px 12px 0 0;
+            pointer-events: none;
+        }
+
+        /* Shadow effect on hover */
+        .ribbon-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 15%;
+            right: 15%;
+            height: 8px;
+            background: transparent;
+            border-radius: 50%;
+            filter: blur(8px);
+            transition: all 0.35s;
+        }
+
+        .ribbon-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 
+                0 12px 36px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        .ribbon-btn:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .ribbon-btn svg {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Color Variants - Enhanced Glassy */
+        .ribbon-btn.cyan {
+            background: linear-gradient(145deg, 
+                rgba(6, 182, 212, 0.35) 0%, 
+                rgba(6, 182, 212, 0.15) 100%);
+            border-color: rgba(6, 182, 212, 0.45);
+        }
+        .ribbon-btn.cyan:hover {
+            box-shadow: 
+                0 12px 40px rgba(6, 182, 212, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(6, 182, 212, 0.65);
+        }
+        .ribbon-btn.cyan:hover::after {
+            background: rgba(6, 182, 212, 0.5);
+        }
+        .ribbon-btn.cyan svg {
+            stroke: #22d3ee;
+            opacity: 0.95;
+        }
+
+        .ribbon-btn.blue {
+            background: linear-gradient(145deg, 
+                rgba(59, 130, 246, 0.35) 0%, 
+                rgba(59, 130, 246, 0.15) 100%);
+            border-color: rgba(59, 130, 246, 0.45);
+        }
+        .ribbon-btn.blue:hover {
+            box-shadow: 
+                0 12px 40px rgba(59, 130, 246, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(59, 130, 246, 0.65);
+        }
+        .ribbon-btn.blue:hover::after {
+            background: rgba(59, 130, 246, 0.5);
+        }
+        .ribbon-btn.blue svg {
+            stroke: #60a5fa;
+            opacity: 0.95;
+        }
+
+        .ribbon-btn.purple {
+            background: linear-gradient(145deg, 
+                rgba(139, 92, 246, 0.35) 0%, 
+                rgba(139, 92, 246, 0.15) 100%);
+            border-color: rgba(139, 92, 246, 0.45);
+        }
+        .ribbon-btn.purple:hover {
+            box-shadow: 
+                0 12px 40px rgba(139, 92, 246, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(139, 92, 246, 0.65);
+        }
+        .ribbon-btn.purple:hover::after {
+            background: rgba(139, 92, 246, 0.5);
+        }
+        .ribbon-btn.purple svg {
+            stroke: #a78bfa;
+            opacity: 0.95;
+        }
+
+        .ribbon-btn.green {
+            background: linear-gradient(145deg, 
+                rgba(16, 185, 129, 0.4) 0%, 
+                rgba(16, 185, 129, 0.18) 100%);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+        .ribbon-btn.green:hover {
+            box-shadow: 
+                0 12px 40px rgba(16, 185, 129, 0.65),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(16, 185, 129, 0.7);
+        }
+        .ribbon-btn.green:hover::after {
+            background: rgba(16, 185, 129, 0.55);
+        }
+        .ribbon-btn.green svg {
+            stroke: #34d399;
+            opacity: 0.95;
+        }
+
+        .ribbon-btn.orange {
+            background: linear-gradient(145deg, 
+                rgba(245, 158, 11, 0.35) 0%, 
+                rgba(245, 158, 11, 0.15) 100%);
+            border-color: rgba(245, 158, 11, 0.45);
+        }
+        .ribbon-btn.orange:hover {
+            box-shadow: 
+                0 12px 40px rgba(245, 158, 11, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(245, 158, 11, 0.65);
+        }
+        .ribbon-btn.orange:hover::after {
+            background: rgba(245, 158, 11, 0.5);
+        }
+        .ribbon-btn.orange svg {
+            stroke: #fbbf24;
+            opacity: 0.95;
+        }
+
+        /* Run Code Special Button - Enhanced */
+        .run-code-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 26px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(145deg, 
+                rgba(16, 185, 129, 0.45) 0%, 
+                rgba(16, 185, 129, 0.22) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.6);
+            color: #34d399;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.35s ease;
+            box-shadow: 
+                0 6px 24px rgba(16, 185, 129, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+            position: relative;
+            letter-spacing: -0.3px;
+        }
+
+        .run-code-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.25) 0%, 
+                transparent 100%);
+            border-radius: 12px 12px 0 0;
+            pointer-events: none;
+        }
+
+        .run-code-btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 
+                0 12px 40px rgba(16, 185, 129, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            background: linear-gradient(145deg, 
+                rgba(16, 185, 129, 0.55) 0%, 
+                rgba(16, 185, 129, 0.28) 100%);
+            color: #6ee7b7;
+        }
+
+        .run-code-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            filter: drop-shadow(0 3px 6px rgba(16, 185, 129, 0.5));
+        }
+
+        /* ========================================
+           MAIN LAYOUT
+        ======================================== */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ========================================
+           LEFT ACTIVITY BAR
+        ======================================== */
+        .left-activity-bar {
+            width: 52px;
+            background: linear-gradient(180deg, 
+                rgba(14, 16, 21, 0.95) 0%, 
+                rgba(10, 12, 16, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            gap: 8px;
+            box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-dim);
+            position: relative;
+        }
+
+        .activity-icon:hover {
+            background: rgba(139, 92, 246, 0.12);
+            color: var(--accent-purple);
+            transform: scale(1.05);
+        }
+
+        .activity-icon.active {
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.25) 0%, 
+                rgba(124, 58, 237, 0.15) 100%);
+            color: #a78bfa;
+            box-shadow: 
+                0 0 24px rgba(139, 92, 246, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-icon.active::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            width: 3px;
+            height: 24px;
+            background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
+            border-radius: 0 3px 3px 0;
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
+        }
+
+        .activity-icon svg {
+            width: 21px;
+            height: 21px;
+        }
+
+        .activity-spacer {
+            flex: 1;
+        }
+
+        /* ========================================
+           EXPLORER PANEL
+        ======================================== */
+        .explorer-panel {
+            width: 280px;
+            background: linear-gradient(180deg, 
+                rgba(19, 21, 28, 0.8) 0%, 
+                rgba(14, 16, 21, 0.85) 100%);
+            backdrop-filter: blur(24px) saturate(150%);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .panel-header {
+            padding: 15px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(10, 12, 16, 0.5);
+        }
+
+        .panel-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .panel-action {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-dim);
+        }
+
+        .panel-action:hover {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .panel-action svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .search-box {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
+            color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
+            background: rgba(10, 12, 16, 0.9);
+            border: 1px solid var(--border-soft);
+            border-radius: 9px;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.25s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+            background: rgba(10, 12, 16, 1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .explorer-content {
+            flex: 1;
+            padding: 20px 18px;
+            overflow-y: auto;
+        }
+
+        .empty-state {
+            background: linear-gradient(180deg, 
+                rgba(29, 32, 41, 0.7) 0%, 
+                rgba(24, 27, 36, 0.5) 100%);
+            border: 1px solid var(--border-soft);
+            border-radius: 14px;
+            padding: 36px 24px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.15) 0%, 
+                rgba(124, 58, 237, 0.08) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
+        }
+
+        .empty-icon svg {
+            width: 36px;
+            height: 36px;
+        }
+
+        .empty-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .empty-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .load-demo-btn {
+            padding: 11px 24px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border: none;
+            border-radius: 9px;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+            letter-spacing: -0.2px;
+        }
+
+        .load-demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(139, 92, 246, 0.5);
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+        }
+
+        /* ========================================
+           EDITOR AREA
+        ======================================== */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-deepest);
+            position: relative;
+        }
+
+        .editor-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .placeholder-icon {
+            color: var(--text-dim);
+            opacity: 0.25;
+        }
+
+        .placeholder-icon svg {
+            width: 96px;
+            height: 96px;
+            stroke-width: 1;
+        }
+
+        .placeholder-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-tertiary);
+            letter-spacing: -0.5px;
+        }
+
+        .placeholder-subtext {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* ========================================
+           RIGHT PANEL - CHAT ONLY
+        ======================================== */
+        .right-panel {
+            width: 380px;
+            background: linear-gradient(180deg, 
+                rgba(19, 21, 28, 0.95) 0%, 
+                rgba(14, 16, 21, 0.98) 100%);
+            backdrop-filter: blur(24px) saturate(150%);
+            border-left: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Assistant Header */
+        .assistant-header {
+            padding: 18px 24px;
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.18) 0%, 
+                rgba(124, 58, 237, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 2px 16px rgba(139, 92, 246, 0.15);
+        }
+
+        .assistant-avatar {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 6px 20px rgba(139, 92, 246, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(167, 139, 250, 0.35);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .assistant-avatar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .assistant-avatar svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+            position: relative;
+            z-index: 1;
+        }
+
+        .assistant-info {
+            flex: 1;
+        }
+
+        .assistant-name {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            letter-spacing: -0.4px;
+        }
+
+        .assistant-status {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .cloud-badge {
+            padding: 4px 9px;
+            background: rgba(6, 182, 212, 0.22);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 900;
+            color: #22d3ee;
+            letter-spacing: 0.8px;
+            box-shadow: 0 2px 8px rgba(6, 182, 212, 0.25);
+        }
+
+        .usage-badge {
+            padding: 6px 12px;
+            background: rgba(29, 32, 41, 0.9);
+            border: 1px solid var(--border-soft);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-tertiary);
+            letter-spacing: 0.3px;
+        }
+
+        /* Chat Messages Area */
+        .chat-messages {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            background: linear-gradient(180deg, 
+                rgba(10, 11, 16, 0.3) 0%, 
+                rgba(13, 14, 20, 0.5) 100%);
+        }
+
+        /* Message Bubble */
+        .message-bubble {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            animation: messageSlideIn 0.35s ease-out;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .message-avatar svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        .message-content {
+            flex: 1;
+            padding: 14px 18px;
+            background: linear-gradient(145deg, 
+                rgba(30, 33, 48, 0.8) 0%, 
+                rgba(24, 27, 37, 0.9) 100%);
+            border: 1px solid var(--border-soft);
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .message-content strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* Chat Input Area */
+        .chat-input-area {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, 
+                rgba(18, 20, 28, 0.95) 0%, 
+                rgba(13, 14, 20, 0.98) 100%);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-action-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid var(--border-soft);
+            flex-shrink: 0;
+            background: rgba(29, 32, 41, 0.7);
+            position: relative;
+        }
+
+        .input-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            border-radius: 11px 11px 0 0;
+            pointer-events: none;
+        }
+
+        .input-action-btn.orange {
+            background: linear-gradient(135deg, 
+                rgba(245, 158, 11, 0.25) 0%, 
+                rgba(245, 158, 11, 0.1) 100%);
+            border-color: rgba(245, 158, 11, 0.35);
+            color: var(--accent-amber);
+        }
+
+        .input-action-btn.orange:hover {
+            background: rgba(245, 158, 11, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4);
+        }
+
+        .input-action-btn.pink {
+            background: linear-gradient(135deg, 
+                rgba(236, 72, 153, 0.25) 0%, 
+                rgba(236, 72, 153, 0.1) 100%);
+            border-color: rgba(236, 72, 153, 0.35);
+            color: var(--accent-pink);
+        }
+
+        .input-action-btn.pink:hover {
+            background: rgba(236, 72, 153, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(236, 72, 153, 0.4);
+        }
+
+        .input-action-btn svg {
+            width: 20px;
+            height: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chat-input-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-textarea {
+            width: 100%;
+            min-height: 44px;
+            max-height: 140px;
+            padding: 12px 16px;
+            background: rgba(6, 7, 10, 0.95);
+            border: 1px solid var(--border-soft);
+            border-radius: 11px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.25s;
+            resize: none;
+            overflow-y: auto;
+            line-height: 1.5;
+        }
+
+        .chat-textarea:focus {
+            outline: none;
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+            background: rgba(6, 7, 10, 1);
+        }
+
+        .chat-textarea::placeholder {
+            color: var(--text-dim);
+        }
+
+        .chat-send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            box-shadow: 
+                0 4px 16px rgba(16, 185, 129, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .chat-send-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+            border-radius: 11px 11px 0 0;
+            pointer-events: none;
+        }
+
+        .chat-send-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
+        }
+
+        .chat-send-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            fill: none;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ========================================
+             MINIMAL HEADER - ONLY LOGO + TITLE
+        ======================================== -->
+        <header class="header">
+            <!-- Minimal Brand Bar -->
+            <div class="brand-bar">
+                <div class="brand">
+                    <div class="logo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                            <polyline points="2 17 12 22 22 17"/>
+                            <polyline points="2 12 12 17 22 12"/>
+                        </svg>
+                    </div>
+                    <span class="app-name">Roche</span>
+                </div>
+            </div>
+
+            <!-- Enhanced Glassy Ribbon -->
+            <div class="ribbon">
+                <!-- HOME GROUP -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">HOME</span>
+                    <div class="ribbon-icons">
+                        <button class="ribbon-btn cyan" title="New File">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="12" y1="18" x2="12" y2="12"/>
+                                <line x1="9" y1="15" x2="15" y2="15"/>
+                            </svg>
+                        </button>
+                        <button class="ribbon-btn cyan" title="Open Folder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </button>
+                        <button class="ribbon-btn cyan" title="Save">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                <polyline points="7 3 7 8 15 8"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- VIEW GROUP -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">VIEW</span>
+                    <div class="ribbon-icons">
+                        <button class="ribbon-btn blue" title="Search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                        </button>
+                        <button class="ribbon-btn blue" title="Preview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                        <button class="ribbon-btn blue" title="Code">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16 18 22 12 16 6"/>
+                                <polyline points="8 6 2 12 8 18"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- INTELLIGENCE GROUP -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">INTELLIGENCE</span>
+                    <div class="ribbon-icons">
+                        <button class="ribbon-btn purple" title="AI Assist">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                            </svg>
+                        </button>
+                        <button class="ribbon-btn purple" title="Analyze">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MCP TOOLS GROUP -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">MCP TOOLS</span>
+                    <div class="ribbon-icons">
+                        <button class="ribbon-btn orange" title="Terminal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="4 17 10 11 4 5"/>
+                                <line x1="12" y1="19" x2="20" y2="19"/>
+                            </svg>
+                        </button>
+                        <button class="ribbon-btn orange" title="Debug">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m8 2 1.88 1.88"/>
+                                <path d="M14.12 3.88 16 2"/>
+                                <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/>
+                                <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/>
+                                <path d="M12 20v-9"/>
+                                <path d="M6.53 9C4.6 8.8 3 7.1 3 5"/>
+                                <path d="M6 13H2"/>
+                                <path d="M3 21c0-2.1 1.7-3.9 3.8-4"/>
+                                <path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/>
+                                <path d="M22 13h-4"/>
+                                <path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RUN GROUP -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">RUN</span>
+                    <div class="ribbon-icons">
+                        <button class="run-code-btn">
+                            <svg viewBox="0 0 24 24">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                            Run Code
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ========================================
+             MAIN LAYOUT
+        ======================================== -->
+        <div class="main-layout">
+            <!-- Left Activity Bar -->
+            <aside class="left-activity-bar">
+                <div class="activity-icon active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </div>
+                <div class="activity-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                <div class="activity-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </div>
+                <div class="activity-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                </div>
+                <div class="activity-spacer"></div>
+                <div class="activity-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </div>
+            </aside>
+
+            <!-- Explorer Panel -->
+            <aside class="explorer-panel">
+                <div class="panel-header">
+                    <span class="panel-title">EXPLORER</span>
+                    <div class="panel-actions">
+                        <div class="panel-action">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </div>
+                        <div class="panel-action">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        <div class="panel-action">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <div class="search-wrapper">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input type="text" class="search-input" placeholder="Search files...">
+                    </div>
+                </div>
+
+                <div class="explorer-content">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                                <line x1="12" y1="22.08" x2="12" y2="12"/>
+                            </svg>
+                        </div>
+                        <div class="empty-title">No Files Found</div>
+                        <div class="empty-desc">Start by creating a file or loading a demo project to begin your work.</div>
+                        <button class="load-demo-btn">Load Demo Project</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Editor Area -->
+            <main class="editor-area">
+                <div class="editor-placeholder">
+                    <div class="placeholder-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"/>
+                            <polyline points="8 6 2 12 8 18"/>
+                        </svg>
+                    </div>
+                    <div class="placeholder-text">No file open</div>
+                    <div class="placeholder-subtext">Select a file from the Sidebar</div>
+                </div>
+            </main>
+
+            <!-- Right Panel - CHAT ONLY -->
+            <aside class="right-panel">
+                <!-- Assistant Header -->
+                <div class="assistant-header">
+                    <div class="assistant-avatar">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                        </svg>
+                    </div>
+                    <div class="assistant-info">
+                        <div class="assistant-name">Roche Assistant</div>
+                        <div class="assistant-status">
+                            Professional Mode
+                            <span class="cloud-badge">CLOUD</span>
+                        </div>
+                    </div>
+                    <div class="usage-badge">5,951</div>
+                </div>
+
+                <!-- Chat Messages Area -->
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message-bubble">
+                        <div class="message-avatar">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            </svg>
+                        </div>
+                        <div class="message-content">
+                            🎉 <strong>Welcome to Roche Studio!</strong><br><br>
+                            To analyze the project structure, I first need to see the file listing. I will use the project_overview tool to get a full list of all files in the project.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="chat-input-area">
+                    <div class="chat-input-wrapper">
+                        <button class="input-action-btn orange" title="Attach File">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                            </svg>
+                        </button>
+                        <button class="input-action-btn pink" title="Voice Input">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                                <line x1="12" y1="19" x2="12" y2="23"/>
+                                <line x1="8" y1="23" x2="16" y2="23"/>
+                            </svg>
+                        </button>
+                        <div class="chat-input-container">
+                            <textarea 
+                                class="chat-textarea" 
+                                id="chatInput"
+                                placeholder="Ask Roche to analyze code or run commands..."
+                                rows="1"
+                            ></textarea>
+                        </div>
+                        <button class="chat-send-btn" id="sendBtn" title="Send Message">
+                            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // Activity icon interactions
+        const activityIcons = document.querySelectorAll('.activity-icon');
+        activityIcons.forEach(icon => {
+            icon.addEventListener('click', function() {
+                activityIcons.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Chat functionality
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatMessages = document.getElementById('chatMessages');
+
+        // Auto-resize textarea
+        chatInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 140) + 'px';
+        });
+
+        // Send message function
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                // Create user message bubble
+                const userBubble = document.createElement('div');
+                userBubble.className = 'message-bubble';
+                userBubble.innerHTML = `
+                    <div class="message-avatar" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                        <svg viewBox="0 0 24 24" fill="white">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">${message}</div>
+                `;
+                chatMessages.appendChild(userBubble);
+                
+                // Clear input
+                chatInput.value = '';
+                chatInput.style.height = 'auto';
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Simulate AI response after 1 second
+                setTimeout(() => {
+                    const aiBubble = document.createElement('div');
+                    aiBubble.className = 'message-bubble';
+                    aiBubble.innerHTML = `
+                        <div class="message-avatar">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            </svg>
+                        </div>
+                        <div class="message-content">I'm analyzing your request: <strong>"${message}"</strong><br><br>Let me process this for you...</div>
+                    `;
+                    chatMessages.appendChild(aiBubble);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            }
+        }
+
+        // Send on button click
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Send on Enter (Shift+Enter for new line)
+        chatInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        console.log('🚀 Roche Studio initialized successfully!');
+    </script>
+</body>
+</html>

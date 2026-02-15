@@ -1,0 +1,151 @@
+﻿/**
+ * G Studio v2.3.0 - MCP Service Module
+ * 
+ * Modular MCP tool execution service with:
+ * - File operations (create, read, write, edit, move, delete)
+ * - Code analysis tools
+ * - Code generation tools
+ * - Refactoring tools
+ * - Utility tools
+ */
+
+// ============================================================================
+// TYPE EXPORTS
+// ============================================================================
+
+export * from "@/types/types";
+
+// ============================================================================
+// MODULE EXPORTS
+// ============================================================================
+
+// File Operations
+export * from './fileOperations';
+
+// ============================================================================
+// TOOL REGISTRY
+// ============================================================================
+
+import { FileData } from "@/types/types";
+import { McpToolResult, McpToolCallbacks, ToolCategory } from "@/types/types";
+import * as FileOps from './fileOperations';
+
+/**
+ * Tool registry mapping tool names to their handlers
+ */
+const TOOL_REGISTRY: Record<string, {
+  category: ToolCategory;
+  handler: (args: any, files: Record<string, FileData>, callbacks: McpToolCallbacks) => Promise<McpToolResult>;
+}> = {
+  // File Operations
+  'create_file': { category: 'FILE_OPERATIONS', handler: FileOps.createFile },
+  'read_file': { category: 'FILE_OPERATIONS', handler: FileOps.readFile },
+  'write_code': { category: 'FILE_OPERATIONS', handler: FileOps.writeCode },
+  'edit_file': { category: 'FILE_OPERATIONS', handler: FileOps.editFile },
+  'move_file': { category: 'FILE_OPERATIONS', handler: FileOps.moveFile },
+  'delete_file': { category: 'FILE_OPERATIONS', handler: FileOps.deleteFile },
+  'search_files': { category: 'FILE_OPERATIONS', handler: FileOps.searchFiles },
+  'open_file': { category: 'FILE_OPERATIONS', handler: FileOps.openFile },
+  'get_file_info': { category: 'FILE_OPERATIONS', handler: FileOps.getFileInfo },
+};
+
+/**
+ * Execute a tool by name
+ */
+export async function executeTool(
+  tool: string,
+  args: Record<string, any>,
+  files: Record<string, FileData>,
+  callbacks: McpToolCallbacks
+): Promise<McpToolResult> {
+  const startTime = Date.now();
+
+  // Look up tool in registry
+  const toolEntry = TOOL_REGISTRY[tool];
+  
+  if (toolEntry) {
+    try {
+      const result = await toolEntry.handler(args, files, callbacks);
+      return {
+        ...result,
+        executionTime: Date.now() - startTime
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: `Tool execution failed: ${error.message}`,
+        error: error.code || 'EXECUTION_ERROR',
+        executionTime: Date.now() - startTime
+      };
+    }
+  }
+
+  // Unknown tool
+  return {
+    success: false,
+    message: `Unknown tool: ${tool}`,
+    error: 'UNKNOWN_TOOL',
+    executionTime: Date.now() - startTime
+  };
+}
+
+/**
+ * Get list of available tools
+ */
+export function getAvailableTools(): Array<{ name: string; category: ToolCategory }> {
+  return Object.entries(TOOL_REGISTRY).map(([name, entry]) => ({
+    name,
+    category: entry.category
+  }));
+}
+
+/**
+ * Get tools by category
+ */
+export function getToolsByCategory(category: ToolCategory): string[] {
+  return Object.entries(TOOL_REGISTRY)
+    .filter(([, entry]) => entry.category === category)
+    .map(([name]) => name);
+}
+
+/**
+ * Check if a tool exists
+ */
+export function hasToolHandler(tool: string): boolean {
+  return tool in TOOL_REGISTRY;
+}
+
+// ============================================================================
+// CONVENIENCE EXPORTS
+// ============================================================================
+
+export {
+  FileOps
+};
+
+// ============================================================================
+// USAGE EXAMPLE
+// ============================================================================
+
+/**
+ * @example
+ * ```typescript
+ * import { executeTool, getAvailableTools } from './mcp';
+ * 
+ * // Execute a tool
+ * const result = await executeTool('create_file', {
+ *   path: 'src/example.ts',
+ *   content: 'export const hello = "world";'
+ * }, files, callbacks);
+ * 
+ * if (result.success) {
+ *   console.log('File created:', result.data.path);
+ * }
+ * 
+ * // List available tools
+ * const tools = getAvailableTools();
+ * console.log('Available tools:', tools.map(t => t.name));
+ * ```
+ */
+
+

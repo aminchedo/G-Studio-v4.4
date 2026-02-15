@@ -1,0 +1,13 @@
+node_modules
+dist
+release
+*.cjs
+*.config.js
+vite.config.ts
+tailwind.config.js
+postcss.config.js
+jest.config.js
+jest.setup.js
+electron/
+scripts/
+public/

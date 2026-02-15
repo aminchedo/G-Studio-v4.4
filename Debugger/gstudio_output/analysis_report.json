@@ -1,0 +1,1259 @@
+{
+  "summary": {
+    "total_files": 894,
+    "total_lines": 432739,
+    "framework": "vite",
+    "entry_points": [],
+    "duration": "15.75s",
+    "cache_hit_rate": "0.0%"
+  },
+  "valuable_unused": [],
+  "dead_code": [],
+  "clones": [
+    {
+      "files": [
+        "tools\\main-fixer-4.py",
+        "g_studio_intelligence_v7.2.1.py",
+        "tools\\fix_imports.py",
+        "tools\\6.py",
+        "tools\\main-fixer-8.py",
+        "tools\\main-fixer-0.py",
+        "tools\\main-fixer-9.v3.py",
+        "tools\\Analiz-fixer-1.py",
+        "tools\\main-fixer-9.v2.py",
+        "tools\\Analiz-fixer-2.py",
+        "main-fixer-9.py",
+        "test7.py",
+        "tools\\project_architect.py",
+        "tools\\fixer.py",
+        "tools\\project_optimizer.py",
+        "tools\\main-fixer-3.py",
+        "g_studio_intelligence_v9.py",
+        "tools\\main-fixer-2.py",
+        "tools\\main-fixer-5.py",
+        "tools\\fixer3.py",
+        "tools\\Analiz-fixer.py",
+        "tools\\deepseek_python_20260211_addb22.py",
+        "test5.py",
+        "test4.py",
+        "tools\\main-fixer-9.v3.work.py",
+        "tools\\fixer2.py",
+        "g_studio_intelligence_v8.py",
+        "tools\\9.py",
+        "g_studio_intelligence_v7.3.1.py",
+        "test2.py",
+        "Debugger\\gstudio_analyzer.py",
+        "tools\\fix_all2.py",
+        "tools\\main-fixer-7.py",
+        "python g_studio_analyzer_v6.py",
+        "g_studio_intelligence_v7.py",
+        "tools\\Analiz-fixer-4.py",
+        "g_studio_intelligence_v6.2.3.py",
+        "g_studio_intelligence_v7.3.2.py",
+        "g_studio_intelligence_v6.2.2.py",
+        "test1.py",
+        "g_studio_intelligence_v6.2.1.py",
+        "tools\\main-fixer-9.v2.backup.20260211_063715.py",
+        "tools\\react_project_analyzer_enhanced.py",
+        "tools\\main-fixer-9.v3.backup.20260211_064615.py",
+        "tools\\main-fixer-6.py",
+        "test3.py",
+        "tools\\fixing.py",
+        "g_studio_intelligence_v10.py",
+        "test0.py"
+      ],
+      "similarity": "92.5%",
+      "lines": 130115,
+      "keep": "tools\\main-fixer-4.py"
+    },
+    {
+      "files": [
+        "tools\\7.py",
+        "tools\\3 - Copy.py"
+      ],
+      "similarity": "100.0%",
+      "lines": 4112,
+      "keep": "tools\\7.py"
+    },
+    {
+      "files": [
+        "tools\\Analiz-fixer-3.py",
+        "tools\\8.py"
+      ],
+      "similarity": "91.2%",
+      "lines": 2492,
+      "keep": "tools\\Analiz-fixer-3.py"
+    },
+    {
+      "files": [
+        "tools\\comprehensive_ts_fixer.py",
+        "tools\\phase2_fixer.py"
+      ],
+      "similarity": "89.2%",
+      "lines": 227,
+      "keep": "tools\\comprehensive_ts_fixer.py"
+    },
+    {
+      "files": [
+        "tools\\dashboard_generator.py",
+        "tools\\generate_dashboard.py"
+      ],
+      "similarity": "90.9%",
+      "lines": 2021,
+      "keep": "tools\\dashboard_generator.py"
+    },
+    {
+      "files": [
+        "tools\\fix_barrels_v2.py",
+        "tools\\fix_barrels.py"
+      ],
+      "similarity": "88.1%",
+      "lines": 294,
+      "keep": "tools\\fix_barrels_v2.py"
+    },
+    {
+      "files": [
+        "tools\\fix_rovodev_ssl.py",
+        "tools\\patch_rovodev.py"
+      ],
+      "similarity": "90.2%",
+      "lines": 942,
+      "keep": "tools\\fix_rovodev_ssl.py"
+    },
+    {
+      "files": [
+        "tools\\g_studio_typescript_fixer.py",
+        "tools\\typescript_error_fixer.py"
+      ],
+      "similarity": "92.1%",
+      "lines": 611,
+      "keep": "tools\\g_studio_typescript_fixer.py"
+    },
+    {
+      "files": [
+        "tools\\inject_medium_section.py",
+        "tools\\inject_activation_section.py"
+      ],
+      "similarity": "97.0%",
+      "lines": 102,
+      "keep": "tools\\inject_medium_section.py"
+    },
+    {
+      "files": [
+        "reports\\20260211_073443\\finalization_summary.py",
+        "tools\\run_optimizer.py",
+        "reports\\20260211_081350\\next_stage_report.py",
+        "reports\\20260211_073443\\print_summary.py",
+        "tools\\run_analysis.py"
+      ],
+      "similarity": "89.9%",
+      "lines": 340,
+      "keep": "reports\\20260211_073443\\finalization_summary.py"
+    },
+    {
+      "files": [
+        "public\\run-ui-test.js",
+        "public\\interact-with-ui.js"
+      ],
+      "similarity": "85.3%",
+      "lines": 569,
+      "keep": "public\\run-ui-test.js"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\demo.ts",
+        "temp_archive\\src\\mcp\\demo.ts",
+        "scripts\\debug-speech.js",
+        "scripts\\update-dependencies.js"
+      ],
+      "similarity": "89.3%",
+      "lines": 733,
+      "keep": ".enterprise_snapshots\\20260212_131036\\src\\mcp\\demo.ts"
+    },
+    {
+      "files": [
+        "src\\components\\ErrorBoundary.tsx",
+        "src\\components\\ui\\ErrorBoundary.tsx"
+      ],
+      "similarity": "91.1%",
+      "lines": 276,
+      "keep": "src\\components\\ErrorBoundary.tsx"
+    },
+    {
+      "files": [
+        "src\\services\\storage\\databaseService.tsx",
+        "src\\contexts\\DatabaseContext.tsx"
+      ],
+      "similarity": "95.5%",
+      "lines": 1306,
+      "keep": "src\\services\\storage\\databaseService.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\contexts\\LMStudioProvider.tsx",
+        "src\\contexts\\LMStudioProvider.tsx"
+      ],
+      "similarity": "99.8%",
+      "lines": 319,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\contexts\\LMStudioProvider.tsx"
+    },
+    {
+      "files": [
+        "src\\google\\generative-ai.tsx",
+        "src\\monaco-editor\\react.tsx"
+      ],
+      "similarity": "95.2%",
+      "lines": 60,
+      "keep": "src\\google\\generative-ai.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\useButtonFeedback.tsx",
+        "src\\hooks\\useButtonFeedback.tsx",
+        "src\\hooks\\useButtonFeedback.ts"
+      ],
+      "similarity": "99.4%",
+      "lines": 641,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\useButtonFeedback.tsx"
+    },
+    {
+      "files": [
+        "src\\services\\errorHandler.tsx",
+        ".enterprise_snapshots\\20260212_122354\\src\\services\\errorHandler.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 884,
+      "keep": "src\\services\\errorHandler.tsx"
+    },
+    {
+      "files": [
+        "src\\services\\gemini\\GeminiClient.tsx",
+        "src\\services\\GeminiClient.tsx"
+      ],
+      "similarity": "99.6%",
+      "lines": 670,
+      "keep": "src\\services\\gemini\\GeminiClient.tsx"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\create_file\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_124514\\src\\services\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\services\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\read_file\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcpService.tsx",
+        "src\\services\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcpService.tsx",
+        ".enterprise_snapshots\\20260212_131036\\src\\services\\mcpService.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 69178,
+      "keep": "src\\services\\mcpService.tsx"
+    },
+    {
+      "files": [
+        "src\\stores\\codeIntelligenceStore.tsx",
+        "src\\stores\\settingsStore.tsx",
+        "src\\stores\\appStore.tsx"
+      ],
+      "similarity": "86.0%",
+      "lines": 1072,
+      "keep": "src\\stores\\settingsStore.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\theme\\themeSystem.ts",
+        "src\\theme\\themeSystem.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 2066,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\theme\\themeSystem.ts"
+    },
+    {
+      "files": [
+        "src\\types\\additional.tsx",
+        "src\\services\\gemini\\types.ts",
+        "src\\types\\conversation.ts",
+        "src\\services\\gemini\\types.tsx",
+        ".enterprise_snapshots\\20260212_115710\\src\\types\\codeIntelligence.ts",
+        "src\\types\\ai.tsx",
+        "archives\\enterprise\\20260212_115710\\types\\codeIntelligence.ts",
+        "src\\types\\codeIntelligence.ts",
+        ".enterprise_snapshots\\20260212_115710\\types\\codeIntelligence.ts",
+        "src\\services\\aiProviders\\types.ts",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterTypes.tsx"
+      ],
+      "similarity": "92.6%",
+      "lines": 2304,
+      "keep": "src\\services\\gemini\\types.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_123605\\types\\common.ts",
+        "archives\\enterprise\\20260212_123605\\types\\common.ts",
+        "src\\types\\common.tsx"
+      ],
+      "similarity": "99.9%",
+      "lines": 852,
+      "keep": ".enterprise_snapshots\\20260212_123605\\types\\common.ts"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\utils\\apiClient.ts",
+        "src\\utils\\apiClient.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 784,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\utils\\apiClient.ts"
+    },
+    {
+      "files": [
+        "src\\components\\ui\\errorHandler.tsx",
+        ".enterprise_snapshots\\20260212_123420\\src\\components\\ui\\errorHandler.tsx",
+        "src\\utils\\errorHandler.tsx"
+      ],
+      "similarity": "99.1%",
+      "lines": 511,
+      "keep": "src\\utils\\errorHandler.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\utils\\logger.ts",
+        "src\\utils\\logger.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 690,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\utils\\logger.ts"
+    },
+    {
+      "files": [
+        "src\\services\\aiProviders\\custom.tsx",
+        "src\\services\\aiProviders\\openai.tsx"
+      ],
+      "similarity": "93.1%",
+      "lines": 440,
+      "keep": "src\\services\\aiProviders\\custom.tsx"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_131036\\src\\services\\code\\filesystemAdapter.tsx",
+        "src\\services\\code\\filesystemAdapter.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 1135,
+      "keep": ".enterprise_snapshots\\20260212_131036\\src\\services\\code\\filesystemAdapter.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\services\\gemini\\apiClient.ts",
+        "src\\services\\gemini\\apiClient.tsx"
+      ],
+      "similarity": "94.5%",
+      "lines": 612,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\services\\gemini\\apiClient.ts"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\services\\gemini\\streamProcessor.ts",
+        "src\\services\\gemini\\streamProcessor.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 770,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\services\\gemini\\streamProcessor.ts"
+    },
+    {
+      "files": [
+        "src\\services\\ai\\gemini\\GeminiClient.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\services\\ai\\gemini\\GeminiClient.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 528,
+      "keep": "src\\services\\ai\\gemini\\GeminiClient.tsx"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\executor.tsx",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\executor.tsx",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\executor.tsx",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\read_file\\executor.tsx",
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\runtime\\executor.tsx",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\executor.tsx",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\create_file\\executor.tsx",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\executor.tsx",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\executor.tsx",
+        "src\\mcp\\runtime\\executor.tsx",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\executor.tsx",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\executor.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 1944,
+      "keep": ".enterprise_snapshots\\20260212_131036\\src\\mcp\\runtime\\executor.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\ai\\useAIProvider.ts",
+        "src\\hooks\\ai\\useAIProvider.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 932,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\ai\\useAIProvider.ts"
+    },
+    {
+      "files": [
+        "src\\hooks\\ai\\useLMStudio.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\ai\\useLMStudio.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 836,
+      "keep": "src\\hooks\\ai\\useLMStudio.tsx"
+    },
+    {
+      "files": [
+        "src\\hooks\\ai\\useLocalAI.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\ai\\useLocalAI.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 1082,
+      "keep": "src\\hooks\\ai\\useLocalAI.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\ai\\useMultiAgent.ts",
+        "src\\hooks\\ai\\useMultiAgent.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 930,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\ai\\useMultiAgent.ts"
+    },
+    {
+      "files": [
+        "src\\hooks\\code\\useCodeIntelligence.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\code\\useCodeIntelligence.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 1486,
+      "keep": "src\\hooks\\code\\useCodeIntelligence.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\code\\useSandbox.ts",
+        "src\\hooks\\code\\useSandbox.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 926,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\code\\useSandbox.ts"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useAgentOrchestrator.tsx",
+        "src\\hooks\\core\\useAgentOrchestrator.tsx"
+      ],
+      "similarity": "99.9%",
+      "lines": 1082,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useAgentOrchestrator.tsx"
+    },
+    {
+      "files": [
+        "src\\hooks\\core\\useAutonomousMode.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useAutonomousMode.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 932,
+      "keep": "src\\hooks\\core\\useAutonomousMode.tsx"
+    },
+    {
+      "files": [
+        "src\\hooks\\core\\useContextManager.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useContextManager.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 919,
+      "keep": "src\\hooks\\core\\useContextManager.tsx"
+    },
+    {
+      "files": [
+        "src\\hooks\\core\\useGemini.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useGemini.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 1074,
+      "keep": "src\\hooks\\core\\useGemini.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useMcp.tsx",
+        "src\\hooks\\core\\useMcp.tsx"
+      ],
+      "similarity": "99.9%",
+      "lines": 1446,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useMcp.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useModelSelection.tsx",
+        "src\\hooks\\core\\useModelSelection.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 854,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useModelSelection.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useSecureStorage.ts",
+        "src\\hooks\\core\\useSecureStorage.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 864,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useSecureStorage.ts"
+    },
+    {
+      "files": [
+        "src\\hooks\\core\\useStateTransaction.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\core\\useStateTransaction.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 718,
+      "keep": "src\\hooks\\core\\useStateTransaction.tsx"
+    },
+    {
+      "files": [
+        "src\\hooks\\utils\\useCache.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\utils\\useCache.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 732,
+      "keep": "src\\hooks\\utils\\useCache.tsx"
+    },
+    {
+      "files": [
+        "src\\hooks\\utils\\useNetworkReliability.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\utils\\useNetworkReliability.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 795,
+      "keep": "src\\hooks\\utils\\useNetworkReliability.tsx"
+    },
+    {
+      "files": [
+        "src\\hooks\\utils\\useRuntimeGuardrails.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\utils\\useRuntimeGuardrails.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 850,
+      "keep": "src\\hooks\\utils\\useRuntimeGuardrails.tsx"
+    },
+    {
+      "files": [
+        "src\\hooks\\utils\\useTelemetry.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\utils\\useTelemetry.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 744,
+      "keep": "src\\hooks\\utils\\useTelemetry.tsx"
+    },
+    {
+      "files": [
+        "src\\hooks\\voice\\useSpeechRecognition.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\voice\\useSpeechRecognition.tsx"
+      ],
+      "similarity": "99.5%",
+      "lines": 788,
+      "keep": "src\\hooks\\voice\\useSpeechRecognition.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\voice\\useVoiceCommands.tsx",
+        "src\\hooks\\voice\\useVoiceCommands.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 1510,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\hooks\\voice\\useVoiceCommands.tsx"
+    },
+    {
+      "files": [
+        "src\\components\\modals\\PromptDialog.tsx",
+        "src\\features\\ai\\AISettingsHub\\LocalAITab.tsx",
+        "src\\features\\ai\\AISettingsHub\\ConnectionTab.tsx",
+        "src\\components\\panels\\MonitorPanel.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\chat\\VirtualizedMessageList.tsx",
+        "src\\components\\panels\\RuntimeUIVerificationPanel.tsx",
+        "src\\features\\ai\\AISettingsHub\\ModelsTab.tsx",
+        "src\\components\\panels\\SystemStatusDashboard.tsx",
+        "src\\features\\ai\\AISettingsHub\\VoiceInputTab.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\features\\ai\\AISettingsHub.tsx",
+        "src\\components\\welcome\\ComponentShowcase.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\layout\\ChatLayout.tsx",
+        "src\\components\\ui\\ErrorDisplay.tsx",
+        "src\\components\\chat\\EnhancedInputArea.tsx",
+        "src\\components\\modals\\ConfirmDialog.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\ribbon\\AISettingsTab.tsx",
+        "src\\features\\ai\\AISettingsHub\\BehaviorTab.tsx",
+        "src\\components\\ribbon\\CodeMetricsModal.tsx",
+        "src\\components\\panels\\ErrorHistoryPanel.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterConfigPanel.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\chat\\EnhancedInputArea.tsx",
+        "src\\components\\ribbon\\ProjectStructureModal.tsx",
+        "src\\components\\layout\\RightActivityBar.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterResults.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\panels\\SystemStatusPanel.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\modals\\VoiceChatModal.tsx",
+        ".enterprise_snapshots\\20260212_124514\\src\\features\\ai\\AISettingsHub.tsx",
+        "src\\components\\panels\\SystemStatusPanel.tsx",
+        "src\\features\\ai\\AISettingsHub\\APITestTab.tsx",
+        "src\\components\\ui\\HelpSystem.tsx",
+        "src\\components\\ribbon\\ToolManagerModal.tsx",
+        "src\\components\\ribbon\\ToolChainsModal.tsx",
+        "src\\components\\modals\\AgentModal.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\panels\\SystemStatusDashboard.tsx",
+        "src\\features\\code-intelligence\\RefactoringSuggestions.tsx",
+        "src\\components\\layout\\BottomPanel.tsx",
+        "src\\features\\help\\HelpSystem.tsx",
+        "src\\features\\ai\\AISettingsHub\\VoiceOutputTab.tsx",
+        "src\\components\\ribbon\\AISettingsTab.tsx",
+        "src\\features\\ai\\McpConnectionStatus.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterUI.tsx",
+        "src\\features\\collaboration\\CollaborationIndicator.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterControls.tsx",
+        "src\\components\\conversation\\ContextViewer.tsx",
+        "src\\components\\panels\\LocalAITestPanel.tsx",
+        "src\\features\\code-intelligence\\CodeIntelligenceSettings.tsx",
+        "src\\components\\ui\\ProgressIndicators.tsx",
+        "src\\components\\modals\\CommandPalette.tsx",
+        "src\\components\\chat\\ChatWelcome.tsx",
+        "src\\features\\ai\\EnhancedSettingsPanel.tsx",
+        "src\\features\\ai\\AISettingsHub\\ProvidersTab.tsx",
+        "src\\components\\layout\\UserOnboarding.tsx",
+        "src\\components\\chat\\VirtualizedMessageList.tsx",
+        "src\\components\\editor\\DiffViewer.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\features\\ai\\EnhancedSettingsPanel.tsx",
+        "src\\components\\ribbon\\ToolUsageAnalyticsModal.tsx",
+        "src\\components\\layout\\EditorLayout.tsx",
+        "src\\features\\ai\\AgentCollaboration.tsx",
+        "src\\features\\ai\\SpeechTest.tsx",
+        "src\\features\\ai\\AISettingsHub.tsx",
+        "src\\components\\conversation\\ConversationSidebar.tsx",
+        ".enterprise_snapshots\\20260212_124514\\src\\components\\layout\\Sidebar.tsx",
+        "src\\components\\chat\\ConversationBranching.tsx",
+        "src\\features\\ai\\AgentSelector.tsx",
+        "src\\components\\panels\\ExplainabilityPanel.tsx",
+        "src\\components\\layout\\ChatLayout.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\chat\\ConversationBranching.tsx",
+        "src\\components\\welcome\\WelcomeScreen.tsx",
+        "src\\components\\layout\\Sidebar.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\editor\\CSSLiveEditor.tsx",
+        "src\\components\\modals\\VoiceChatModal.tsx",
+        "src\\features\\code-intelligence\\CodeIntelligenceDashboard.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\features\\collaboration\\CollaborationIndicator.tsx",
+        "src\\features\\ai\\AutonomousModeControl.tsx",
+        "src\\features\\ai\\AgentReasoning.tsx",
+        "src\\components\\editor\\CSSLiveEditor.tsx",
+        "src\\components\\ribbon\\ToolExecutionHistoryModal.tsx"
+      ],
+      "similarity": "88.1%",
+      "lines": 30102,
+      "keep": "src\\components\\conversation\\ConversationSidebar.tsx"
+    },
+    {
+      "files": [
+        "src\\features\\ai\\AISuggestions.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\features\\ai\\AISuggestions.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 890,
+      "keep": "src\\features\\ai\\AISuggestions.tsx"
+    },
+    {
+      "files": [
+        "src\\features\\code-intelligence\\CodeIntelligenceImpactMap.tsx",
+        "src\\features\\code-intelligence\\DependencyGraph.tsx"
+      ],
+      "similarity": "90.5%",
+      "lines": 576,
+      "keep": "src\\features\\code-intelligence\\CodeIntelligenceImpactMap.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\features\\keyboard\\keyboardShortcuts.ts",
+        "src\\features\\keyboard\\keyboardShortcuts.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 810,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\features\\keyboard\\keyboardShortcuts.ts"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\features\\onboarding\\OnboardingSystem.tsx",
+        "src\\features\\onboarding\\OnboardingSystem.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 1150,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\features\\onboarding\\OnboardingSystem.tsx"
+    },
+    {
+      "files": [
+        "src\\features\\ai\\gemini-tester\\index.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\features\\ai\\gemini-tester\\index.tsx"
+      ],
+      "similarity": "99.8%",
+      "lines": 377,
+      "keep": "src\\features\\ai\\gemini-tester\\index.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\app\\AppProvider.tsx",
+        "src\\components\\app\\AppProvider.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 846,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\app\\AppProvider.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\editor\\CodeEditor.tsx",
+        "src\\components\\editor\\CodeEditor.tsx"
+      ],
+      "similarity": "98.7%",
+      "lines": 328,
+      "keep": "src\\components\\editor\\CodeEditor.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\features\\DebuggingTools.tsx",
+        "src\\components\\features\\DebuggingTools.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 1428,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\features\\DebuggingTools.tsx"
+    },
+    {
+      "files": [
+        "src\\components\\features\\IntegratedTerminal.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\features\\IntegratedTerminal.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 1376,
+      "keep": "src\\components\\features\\IntegratedTerminal.tsx"
+    },
+    {
+      "files": [
+        "src\\components\\sidebar\\file-tree\\FileTreeVirtualized - Copy.tsx",
+        "src\\components\\layout\\FileTree.tsx",
+        "src\\components\\sidebar\\EnhancedFileTree.tsx",
+        "src\\components\\sidebar\\file-tree\\FileTreeVirtualized.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\sidebar\\file-tree\\FileTreeVirtualized.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\sidebar\\EnhancedFileTree.tsx"
+      ],
+      "similarity": "93.8%",
+      "lines": 3574,
+      "keep": "src\\components\\sidebar\\file-tree\\FileTreeVirtualized - Copy.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\layout\\MainLayout.tsx",
+        "src\\components\\layout\\MainLayout.tsx",
+        ".enterprise_snapshots\\20260212_124514\\src\\components\\layout\\MainLayout.tsx"
+      ],
+      "similarity": "96.4%",
+      "lines": 969,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\layout\\MainLayout.tsx"
+    },
+    {
+      "files": [
+        "src\\components\\layout\\ModalManager.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\layout\\ModalManager.tsx"
+      ],
+      "similarity": "86.1%",
+      "lines": 978,
+      "keep": "src\\components\\layout\\ModalManager.tsx"
+    },
+    {
+      "files": [
+        "src\\components\\panels\\PerformanceMetrics.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\panels\\PerformanceMetrics.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 578,
+      "keep": "src\\components\\panels\\PerformanceMetrics.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\preview\\LiveCodeEditor.tsx",
+        "src\\components\\preview\\LiveCodeEditor.tsx"
+      ],
+      "similarity": "97.6%",
+      "lines": 292,
+      "keep": ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\preview\\LiveCodeEditor.tsx"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_123215\\src\\components\\preview\\splitView.tsx",
+        "src\\components\\preview\\splitView.tsx"
+      ],
+      "similarity": "99.9%",
+      "lines": 290,
+      "keep": ".enterprise_snapshots\\20260212_123215\\src\\components\\preview\\splitView.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\ribbon\\RibbonHomeTab.tsx",
+        "src\\components\\ribbon\\RibbonHomeTab.tsx"
+      ],
+      "similarity": "99.8%",
+      "lines": 997,
+      "keep": "src\\components\\ribbon\\RibbonHomeTab.tsx"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\ribbon\\RibbonIntelligenceTab.tsx",
+        "src\\components\\ribbon\\RibbonIntelligenceTab.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 480,
+      "keep": "src\\components\\ribbon\\RibbonIntelligenceTab.tsx"
+    },
+    {
+      "files": [
+        "src\\components\\ribbon\\RibbonMcpTab.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\ribbon\\RibbonMcpTab.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 1108,
+      "keep": "src\\components\\ribbon\\RibbonMcpTab.tsx"
+    },
+    {
+      "files": [
+        "src\\components\\ribbon\\RibbonViewTab.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\ribbon\\RibbonViewTab.tsx"
+      ],
+      "similarity": "99.8%",
+      "lines": 788,
+      "keep": "src\\components\\ribbon\\RibbonViewTab.tsx"
+    },
+    {
+      "files": [
+        "src\\components\\ui\\AccessibilityChecker.tsx",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\components\\ui\\AccessibilityChecker.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 846,
+      "keep": "src\\components\\ui\\AccessibilityChecker.tsx"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_122354\\src\\runtime\\EventBus.tsx",
+        ".enterprise_snapshots\\20260212_122354\\src\\components\\ui\\EventBus.tsx",
+        "archives\\enterprise\\20260212_122354\\src\\runtime\\EventBus.tsx",
+        "src\\components\\ui\\EventBus.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 684,
+      "keep": "src\\components\\ui\\EventBus.tsx"
+    },
+    {
+      "files": [
+        "archives\\enterprise\\20260212_123215\\src\\components\\sidebar\\ConversationSidebar.tsx",
+        ".enterprise_snapshots\\20260212_123215\\src\\components\\sidebar\\ConversationSidebar.tsx"
+      ],
+      "similarity": "100.0%",
+      "lines": 248,
+      "keep": ".enterprise_snapshots\\20260212_123215\\src\\components\\sidebar\\ConversationSidebar.tsx"
+    },
+    {
+      "files": [
+        "vitest.config.ts",
+        ".codefixer_backups\\2026-02-10_21-22-50\\vitest.config.ts"
+      ],
+      "similarity": "99.9%",
+      "lines": 89,
+      "keep": "vitest.config.ts"
+    },
+    {
+      "files": [
+        "scripts\\file-optimizer.ts",
+        "scripts\\src-directory-analyzer.ts",
+        "scripts\\project-file-comparison.ts"
+      ],
+      "similarity": "87.0%",
+      "lines": 3811,
+      "keep": "scripts\\file-optimizer.ts"
+    },
+    {
+      "files": [
+        "scripts\\mcp_smoke_test.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\scripts\\mcp_smoke_test.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 252,
+      "keep": "scripts\\mcp_smoke_test.ts"
+    },
+    {
+      "files": [
+        "temp_archive\\src\\mcp\\verify.ts",
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\verify.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 420,
+      "keep": "temp_archive\\src\\mcp\\verify.ts"
+    },
+    {
+      "files": [
+        "temp_archive\\src\\services\\ai\\geminiService - Copy.ts",
+        "src\\services\\geminiService.ts",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\services\\geminiService.ts",
+        "src\\services\\ai\\geminiService.ts",
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\services\\ai\\geminiService.ts",
+        ".enterprise_snapshots\\20260212_124514\\src\\services\\geminiService.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 20432,
+      "keep": "src\\services\\ai\\geminiService.ts"
+    },
+    {
+      "files": [
+        "src\\stores\\index.ts",
+        "src\\features\\index.ts",
+        "src\\hooks\\index.ts",
+        "src\\contexts\\index.ts",
+        "src\\components\\ui\\index.ts",
+        "src\\components\\layout\\index.ts"
+      ],
+      "similarity": "87.9%",
+      "lines": 609,
+      "keep": "src\\hooks\\index.ts"
+    },
+    {
+      "files": [
+        "src\\mcp\\index.ts",
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\index.ts"
+      ],
+      "similarity": "97.6%",
+      "lines": 115,
+      "keep": "src\\mcp\\index.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_131036\\src\\services\\agentOrchestrator.ts",
+        ".enterprise_snapshots\\20260212_124514\\src\\services\\agentOrchestrator.ts",
+        "src\\services\\agentOrchestrator.ts"
+      ],
+      "similarity": "99.9%",
+      "lines": 6784,
+      "keep": ".enterprise_snapshots\\20260212_131036\\src\\services\\agentOrchestrator.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_123420\\src\\components\\ui\\errors.ts",
+        "src\\utils\\errors.ts",
+        "archives\\enterprise\\20260212_123420\\src\\components\\ui\\errors.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 642,
+      "keep": ".enterprise_snapshots\\20260212_123420\\src\\components\\ui\\errors.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\services\\mcp\\executorAdapter.ts",
+        "src\\services\\mcp\\executorAdapter.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 160,
+      "keep": "src\\services\\mcp\\executorAdapter.ts"
+    },
+    {
+      "files": [
+        ".codefixer_backups\\2026-02-10_21-22-50\\src\\services\\security\\aiBehaviorValidation.ts",
+        "src\\services\\security\\aiBehaviorValidation.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 2747,
+      "keep": "src\\services\\security\\aiBehaviorValidation.ts"
+    },
+    {
+      "files": [
+        "src\\mcp\\policy\\enforcement.ts",
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\policy\\enforcement.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 334,
+      "keep": ".enterprise_snapshots\\20260212_131036\\src\\mcp\\policy\\enforcement.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\runtime\\context.ts",
+        "src\\mcp\\runtime\\context.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 222,
+      "keep": ".enterprise_snapshots\\20260212_131036\\src\\mcp\\runtime\\context.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\read_file\\mcp\\tools\\analysis.ts",
+        "src\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\create_file\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\analysis.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\analysis.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 1066,
+      "keep": ".enterprise_snapshots\\20260212_131036\\src\\mcp\\tools\\analysis.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\calculate.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\base64_decode.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\calculate.ts",
+        "src\\mcp\\tools\\format_json.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\calculate.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\base64_decode.ts",
+        "src\\mcp\\tools\\hash_text.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\get_current_time.ts",
+        "src\\mcp\\tools\\base64_encode.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\format_json.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\format_json.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\calculate.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\generate_uuid.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\base64_encode.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\base64_encode.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\text_transform.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\get_current_time.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\calculate.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\generate_uuid.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\generate_uuid.ts",
+        "src\\mcp\\tools\\text_transform.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\get_current_time.ts",
+        "src\\mcp\\tools\\get_current_time.ts",
+        "src\\mcp\\tools\\base64_decode.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\base64_decode.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\format_json.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\base64_encode.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\get_current_time.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\base64_encode.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\base64_encode.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\get_current_time.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\calculate.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\get_current_time.ts",
+        "src\\mcp\\tools\\generate_uuid.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\calculate.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\base64_decode.ts",
+        "src\\mcp\\tools\\calculate.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\generate_uuid.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\generate_uuid.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\hash_text.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcp\\tools\\calculate.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\generate_uuid.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\get_current_time.ts"
+      ],
+      "similarity": "92.6%",
+      "lines": 1356,
+      "keep": ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\calculate.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\create_file\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\create_file\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\code-generation.ts",
+        "src\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\read_file\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\read_file\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\code-generation.ts",
+        "src\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\validators.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\code-generation.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\validators.ts"
+      ],
+      "similarity": "93.0%",
+      "lines": 5727,
+      "keep": ".enterprise_snapshots\\20260212_131036\\src\\mcp\\tools\\validators.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\create_file.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcp\\tools\\create_file.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\read_file\\mcp\\tools\\create_file.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\create_file.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\create_file.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\create_file.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\create_file.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\create_file.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\create_file.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\mcp\\tools\\create_file.ts",
+        "src\\mcp\\tools\\create_file.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 1100,
+      "keep": ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\create_file.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\read_file\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\create_file\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\execution.ts",
+        "src\\mcp\\tools\\execution.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcp\\tools\\execution.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 858,
+      "keep": ".enterprise_snapshots\\20260212_131036\\src\\mcp\\tools\\execution.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\forwardingRegistry.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\forwardingRegistry.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\forwardingRegistry.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\create_file\\mcp\\tools\\forwardingRegistry.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\forwardingRegistry.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcp\\tools\\forwardingRegistry.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\mcp\\tools\\forwardingRegistry.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\forwardingRegistry.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\forwardingRegistry.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\read_file\\mcp\\tools\\forwardingRegistry.ts",
+        "src\\mcp\\tools\\forwardingRegistry.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\forwardingRegistry.ts"
+      ],
+      "similarity": "99.9%",
+      "lines": 2276,
+      "keep": ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\forwardingRegistry.ts"
+    },
+    {
+      "files": [
+        "src\\mcp\\tools\\migratedTools.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\migratedTools.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\read_file\\mcp\\tools\\migratedTools.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\mcp\\tools\\migratedTools.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\migratedTools.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\migratedTools.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\migratedTools.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\migratedTools.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\migratedTools.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcp\\tools\\migratedTools.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\migratedTools.ts"
+      ],
+      "similarity": "96.6%",
+      "lines": 536,
+      "keep": "src\\mcp\\tools\\migratedTools.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\read_file.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\mcp\\tools\\read_file.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\read_file.ts",
+        "src\\mcp\\tools\\read_file.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\read_file.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\read_file.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\read_file.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\read_file.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\read_file.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcp\\tools\\read_file.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 560,
+      "keep": ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\read_file.ts"
+    },
+    {
+      "files": [
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\read_file\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\generate_uuid\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\create_file\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_encode\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_134456_batch_before\\src\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\get_current_time\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\format_json\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_131904\\tools-migration\\calculate\\mcp\\tools\\registry.ts",
+        "src\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_131036\\src\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\base64_decode\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\text_transform\\mcp\\tools\\registry.ts",
+        ".enterprise_snapshots\\20260212_132547\\tools-migration\\hash_text\\mcp\\tools\\registry.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 1157,
+      "keep": "src\\mcp\\tools\\registry.ts"
+    },
+    {
+      "files": [
+        "src\\components\\sidebar\\file-tree\\FileTreeTypes.ts",
+        ".enterprise_snapshots\\20260212_115214\\src\\components\\sidebar\\file-tree\\FileTreeTypes.ts",
+        "archives\\enterprise\\20260212_115214\\src\\components\\sidebar\\FileTreeTypes.ts",
+        ".enterprise_snapshots\\20260212_115214\\src\\components\\sidebar\\FileTreeTypes.ts"
+      ],
+      "similarity": "100.0%",
+      "lines": 120,
+      "keep": "src\\components\\sidebar\\file-tree\\FileTreeTypes.ts"
+    }
+  ],
+  "circular_dependencies": [
+    {
+      "cycle": [
+        "src\\llm\\providers\\geminiGateway.tsx",
+        "src\\llm\\gateway.tsx"
+      ],
+      "severity": "medium",
+      "length": 2
+    },
+    {
+      "cycle": [
+        "src\\services\\mcpService.tsx",
+        "src\\services\\mcp\\executorAdapter.ts",
+        "src\\services\\code\\filesystemAdapter.tsx"
+      ],
+      "severity": "medium",
+      "length": 3
+    },
+    {
+      "cycle": [
+        "src\\services\\planningFeedback.tsx",
+        "src\\services\\taskDecompositionEngine.tsx"
+      ],
+      "severity": "medium",
+      "length": 2
+    },
+    {
+      "cycle": [
+        ".enterprise_snapshots\\20260212_131036\\src\\services\\code\\filesystemAdapter.tsx",
+        ".enterprise_snapshots\\20260212_131036\\src\\services\\mcpService.tsx"
+      ],
+      "severity": "medium",
+      "length": 2
+    }
+  ],
+  "layer_stats": {
+    "unknown": 894
+  }
+}

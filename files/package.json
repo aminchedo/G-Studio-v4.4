@@ -1,0 +1,75 @@
+{
+  "name": "g-studio-conversational-ide",
+  "version": "1.0.0",
+  "description": "Complete conversational IDE with Gemini AI, voice input/output, and full MCP tools integration",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
+    "dev:vite": "vite",
+    "dev:electron": "wait-on http://localhost:3000 && electron .",
+    "build": "tsc && vite build",
+    "build:electron": "tsc -p electron/tsconfig.json",
+    "setup:mcp": "cd mcp-servers && chmod +x install.sh && ./install.sh",
+    "setup:mcp:win": "cd mcp-servers && install.bat",
+    "package": "electron-builder",
+    "lint": "eslint src --ext ts,tsx",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "ide",
+    "conversational-ai",
+    "gemini",
+    "mcp",
+    "voice-control",
+    "code-generation",
+    "electron"
+  ],
+  "author": "G-Studio Team",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.263.1",
+    "electron-store": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.16",
+    "concurrently": "^8.2.2",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "eslint": "^8.55.0",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.7",
+    "vite-plugin-electron": "^0.28.0",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.gstudio.conversational-ide",
+    "productName": "G-Studio",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "mcp-servers/**/*",
+      "config/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": ["dmg", "zip"]
+    },
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "linux": {
+      "target": ["AppImage", "deb"]
+    }
+  }
+}

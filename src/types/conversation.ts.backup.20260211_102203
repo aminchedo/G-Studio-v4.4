@@ -1,0 +1,141 @@
+export type MessageRole = 'user' | 'assistant' | 'system' | 'model' | 'function';
+
+export type MessageStatus = 'pending' | 'sending' | 'sent' | 'error';
+
+export interface Message {
+  id: string;
+  role: MessageRole;
+  content: string;
+  timestamp: Date | number;
+  status?: MessageStatus;
+  metadata?: MessageMetadata;
+  toolCalls?: ToolCall[];
+  toolResults?: ToolResult[];
+  /** Inline loading state for streaming */
+  isLoading?: boolean;
+  /** Inline error state */
+  isError?: boolean;
+  /** Optional image attachment */
+  image?: string | { url: string; alt?: string };
+}
+
+export interface MessageMetadata {
+  model?: string;
+  tokens?: {
+    prompt: number;
+    completion: number;
+    total: number;
+  };
+  cost?: number;
+  latency?: number;
+  error?: string;
+}
+
+export interface ToolCall {
+  id: string;
+  name: string;
+  arguments: Record<string, unknown>;
+  /** Alias for arguments (backward compatibility) */
+  args?: Record<string, unknown>;
+}
+
+export interface ToolResult {
+  toolCallId: string;
+  result: unknown;
+  error?: string;
+  /** Tool name (for display purposes) */
+  name?: string;
+  /** Result ID (optional, for tracking) */
+  id?: string;
+}
+
+export interface Conversation {
+  id: string;
+  title: string;
+  created: Date;
+  updated: Date;
+  messages: Message[];
+  context: ConversationContext;
+  tags: string[];
+  archived: boolean;
+  pinned?: boolean;
+  /** Last message preview (computed or cached) */
+  lastMessage?: string;
+  /** Message count (computed or cached) */
+  messageCount?: number;
+}
+
+export interface RecentChange {
+  path: string;
+  type: 'created' | 'modified' | 'deleted';
+  description?: string;
+  timestamp?: Date | number;
+}
+
+export interface OpenQuestion {
+  question: string;
+  answer?: string;
+  reasoning?: string;
+  priority?: 'low' | 'medium' | 'high';
+}
+
+export interface ConversationContext {
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+  systemPrompt?: string;
+  tools?: string[];
+  metadata?: Record<string, unknown>;
+  /** Extended context for ContextViewer / code intelligence */
+  currentTask?: string;
+  projectGoals?: string[];
+  recentChanges?: RecentChange[] | string[];
+  openQuestions?: OpenQuestion[] | string[];
+  decisions?: string[];
+}
+
+export interface ConversationSummary {
+  id: string;
+  title: string;
+  lastMessage?: string;
+  messageCount: number;
+  updated: Date;
+  pinned: boolean;
+}
+
+export interface ConversationFilter {
+  archived?: boolean;
+  tags?: string[];
+  searchQuery?: string;
+  dateRange?: {
+    start: Date;
+    end: Date;
+  };
+}
+
+// ==================== CONTEXT BUILDING ====================
+
+export interface ContextBuildOptions {
+  maxTokens?: number;
+  includeSystemPrompt?: boolean;
+  includePreviousMessages?: number;
+  includeToolCalls?: boolean;
+  includeMetadata?: boolean;
+  prioritizeRecent?: boolean;
+}
+
+export interface ContextSummary {
+  totalMessages: number;
+  totalTokens: number;
+  includedMessages: number;
+  truncated: boolean;
+  summary?: string;
+  /** IDs or indices of selected messages */
+  selectedMessages?: string[] | number[];
+}
+
+export interface MessageRelevance {
+  messageId: string;
+  score: number;
+  reason: string;
+}

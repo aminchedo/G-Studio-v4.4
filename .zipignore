@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.vscode/
+.git/
+*.zip
+_git__*.zip
+should merge with main oriject/
+project-structure.txt
+jest-output.json
+jest-results.json
+src-directory-analysis-report.md
+*.log
+.DS_Store
+coverage/
+.env
+.env.local

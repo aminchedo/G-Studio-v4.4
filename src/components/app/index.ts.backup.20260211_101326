@@ -1,0 +1,16 @@
+/**
+ * App Components - Main application entry points
+ *
+ * Centralized exports for all app-level components
+ */
+export { default as App } from "./App";
+export { default as AppNew } from "./AppNew";
+export {
+  default as AppProvider,
+  withAppProvider,
+  useFeatureFlag,
+  defaultAppConfig,
+} from "./AppProvider";
+export type { AppProviderConfig } from "./AppProvider";
+export { DevAppProvider } from "@/providers/DevAppProvider";
+export { MinimalAppProvider } from "@/providers/MinimalAppProvider";

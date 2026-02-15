@@ -1,0 +1,334 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://system.local/schemas/tool-execution.schema.json",
+  "title": "Tool Execution Schema",
+  "description": "Schema for tool execution declarations and results",
+  "type": "object",
+  "definitions": {
+    "ToolDeclaration": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "name",
+        "description",
+        "inputSchema",
+        "outputSchema",
+        "requiredCapabilities",
+        "resourceLimits",
+        "deterministic",
+        "idempotent"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*\\.[a-z][a-z0-9-]*$",
+          "description": "Unique tool identifier in format: namespace.name"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semantic version"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Human-readable tool name"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Tool purpose and functionality"
+        },
+        "inputSchema": {
+          "$ref": "#/definitions/JSONSchema",
+          "description": "JSON Schema for input validation"
+        },
+        "outputSchema": {
+          "$ref": "#/definitions/JSONSchema",
+          "description": "JSON Schema for output validation"
+        },
+        "requiredCapabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)*$"
+          },
+          "uniqueItems": true,
+          "description": "List of required capability IDs"
+        },
+        "resourceLimits": {
+          "$ref": "#/definitions/ResourceLimits"
+        },
+        "deterministic": {
+          "type": "boolean",
+          "description": "Whether execution is deterministic"
+        },
+        "idempotent": {
+          "type": "boolean",
+          "description": "Whether execution is idempotent"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResourceLimits": {
+      "type": "object",
+      "required": [
+        "maxExecutionTime",
+        "maxMemory"
+      ],
+      "properties": {
+        "maxExecutionTime": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300000,
+          "description": "Maximum execution time in milliseconds"
+        },
+        "maxMemory": {
+          "type": "integer",
+          "minimum": 1048576,
+          "maximum": 1073741824,
+          "description": "Maximum memory usage in bytes"
+        },
+        "maxFileSize": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum file size in bytes"
+        },
+        "maxFileDescriptors": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1024,
+          "description": "Maximum open file descriptors"
+        },
+        "maxProcesses": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum concurrent processes"
+        }
+      },
+      "additionalProperties": false
+    },
+    "JSONSchema": {
+      "type": "object",
+      "required": ["$schema", "type"],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["object", "array", "string", "number", "integer", "boolean", "null"]
+        }
+      }
+    },
+    "ExecutionContext": {
+      "type": "object",
+      "required": [
+        "executionId",
+        "toolId",
+        "timestamp",
+        "state"
+      ],
+      "properties": {
+        "executionId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique execution identifier"
+        },
+        "toolId": {
+          "type": "string",
+          "description": "Tool identifier"
+        },
+        "userId": {
+          "type": "string",
+          "description": "User identifier"
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Execution start timestamp (Unix ms)"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "DECLARED",
+            "VALIDATED",
+            "AUTHORIZED",
+            "EXECUTING",
+            "COMPLETED",
+            "FAILED",
+            "DENIED",
+            "ABORTED",
+            "ROLLED_BACK"
+          ],
+          "description": "Current execution state"
+        },
+        "action": {
+          "type": "string",
+          "description": "Action being performed"
+        },
+        "resource": {
+          "type": "string",
+          "description": "Resource being accessed"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ToolResult": {
+      "type": "object",
+      "required": [
+        "success",
+        "executionId",
+        "timestamp"
+      ],
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether execution succeeded"
+        },
+        "executionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Execution duration in milliseconds"
+        },
+        "output": {
+          "description": "Tool output (if successful)"
+        },
+        "error": {
+          "$ref": "#/definitions/ErrorDetails",
+          "description": "Error details (if failed)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ErrorDetails": {
+      "type": "object",
+      "required": [
+        "code",
+        "message",
+        "type"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "ValidationError",
+            "AuthorizationError",
+            "ResourceError",
+            "ExecutionError",
+            "TimeoutError",
+            "StateError"
+          ]
+        },
+        "stack": {
+          "type": "string",
+          "description": "Stack trace"
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Additional error context"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AuditEvent": {
+      "type": "object",
+      "required": [
+        "eventId",
+        "timestamp",
+        "toolId",
+        "toolVersion",
+        "executionId",
+        "state",
+        "inputHash"
+      ],
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toolId": {
+          "type": "string"
+        },
+        "toolVersion": {
+          "type": "string"
+        },
+        "executionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "DECLARED",
+            "VALIDATED",
+            "AUTHORIZED",
+            "EXECUTING",
+            "COMPLETED",
+            "FAILED",
+            "DENIED",
+            "ABORTED",
+            "ROLLED_BACK"
+          ]
+        },
+        "userId": {
+          "type": "string"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "error": {
+          "$ref": "#/definitions/ErrorDetails"
+        },
+        "inputHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of input"
+        },
+        "outputHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of output"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

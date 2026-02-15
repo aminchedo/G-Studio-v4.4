@@ -1,0 +1,66 @@
+/**
+ * Utils Index
+ * 
+ * Exports all utility functions and factories
+ */
+
+export { eventBus } from './EventBus';
+export type { EventMap } from './EventBus';
+
+export * from './errors';
+
+export {
+  errorHandler,
+  withErrorHandling,
+  withErrorHandlingSync,
+} from './errorHandler';
+
+export {
+  createLogger,
+  useLogger,
+  getLogger,
+  setGlobalLogger,
+  createServiceLogger,
+  // Logger, // REMOVED: Not exported from logger.ts (use LoggerApi instead)
+} from './logger';
+export type {
+  LogLevel,
+  LogEntry,
+  LoggerOptions,
+  UseLoggerOptions,
+} from './logger';
+
+export {
+  createAPIClient,
+  useAPIClient,
+} from './apiClient';
+export type {
+  APIClientConfig,
+  RequestOptions,
+  APIResponse,
+  APIClientStats,
+  APIClient,
+  UseAPIClientOptions,
+  UseAPIClientReturn,
+} from './apiClient';
+
+
+export {
+  useStreamingMonitor,
+  useMemoryMonitor,
+  usePerformanceMonitor,
+  createStreamingMonitor,
+  createMemoryMonitor,
+  StreamingMonitor,
+  MemoryPressureMonitor,
+} from './monitoring';
+export type {
+  StreamingMetrics,
+  UseStreamingMonitorReturn,
+  MemoryMetrics,
+  MemoryThresholds,
+  UseMemoryMonitorOptions,
+  UseMemoryMonitorReturn,
+  PerformanceMetrics,
+  UsePerformanceMonitorReturn,
+} from './monitoring';

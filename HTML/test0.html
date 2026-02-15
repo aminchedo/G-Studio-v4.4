@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Studio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --metallic-dark: #1c1c28;
+            --metallic-medium: #252535;
+            --metallic-light: #2d2d3d;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Hide scrollbars */
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header with Tab-Ribbon Integration */
+        .header {
+            background: linear-gradient(180deg, 
+                rgba(28, 28, 40, 0.98) 0%, 
+                rgba(26, 26, 38, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        .title-bar {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            background: linear-gradient(90deg, 
+                rgba(168, 85, 247, 0.1) 0%, 
+                transparent 30%);
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-right: auto;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));
+        }
+
+        .app-name {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-tabs {
+            display: flex;
+            gap: 4px;
+            margin-right: 20px;
+        }
+
+        .main-tab {
+            padding: 8px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .main-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .main-tab.active {
+            color: var(--text-primary);
+            background: linear-gradient(180deg, 
+                rgba(168, 85, 247, 0.2) 0%, 
+                rgba(168, 85, 247, 0.05) 100%);
+        }
+
+        .main-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+            box-shadow: 0 0 12px var(--accent-purple);
+        }
+
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(180deg);
+        }
+
+        /* Integrated Ribbon */
+        .ribbon {
+            display: flex;
+            padding: 12px 20px;
+            background: linear-gradient(180deg, 
+                rgba(22, 22, 34, 0.95) 0%, 
+                rgba(18, 18, 28, 0.98) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 24px;
+        }
+
+        .ribbon-group {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            align-items: center;
+        }
+
+        .ribbon-group:last-child {
+            border-right: none;
+        }
+
+        .ribbon-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-right: 8px;
+        }
+
+        /* 3D Glass Morphism Icon Buttons */
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .icon-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.15) 0%, 
+                transparent 50%);
+            border-radius: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .icon-btn:hover::before {
+            opacity: 1;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.4),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .icon-btn:active {
+            transform: translateY(0);
+        }
+
+        .icon-btn.purple { border-color: rgba(168, 85, 247, 0.4); }
+        .icon-btn.purple:hover {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(168, 85, 247, 0.1));
+            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4);
+        }
+
+        .icon-btn.blue { border-color: rgba(59, 130, 246, 0.4); }
+        .icon-btn.blue:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.1));
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+        }
+
+        .icon-btn.green { border-color: rgba(16, 185, 129, 0.4); }
+        .icon-btn.green:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.1));
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+        }
+
+        .icon-btn.orange { border-color: rgba(245, 158, 11, 0.4); }
+        .icon-btn.orange:hover {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(245, 158, 11, 0.1));
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+        }
+
+        .icon-btn.pink { border-color: rgba(236, 72, 153, 0.4); }
+        .icon-btn.pink:hover {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(236, 72, 153, 0.1));
+            box-shadow: 0 8px 24px rgba(236, 72, 153, 0.4);
+        }
+
+        .icon-btn.cyan { border-color: rgba(6, 182, 212, 0.4); }
+        .icon-btn.cyan:hover {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(6, 182, 212, 0.1));
+            box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
+        }
+
+        .icon-btn svg {
+            width: 22px;
+            height: 22px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Run Code Button - Special */
+        .run-btn {
+            padding: 0 20px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, 
+                rgba(16, 185, 129, 0.3) 0%, 
+                rgba(16, 185, 129, 0.15) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 12px rgba(16, 185, 129, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .run-btn:hover {
+            background: linear-gradient(135deg, 
+                rgba(16, 185, 129, 0.4) 0%, 
+                rgba(16, 185, 129, 0.2) 100%);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar */
+        .left-sidebar {
+            width: 64px;
+            background: linear-gradient(180deg, 
+                var(--metallic-dark) 0%, 
+                var(--bg-secondary) 100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            gap: 12px;
+        }
+
+        .sidebar-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sidebar-icon:hover {
+            background: rgba(168, 85, 247, 0.2);
+            border-color: rgba(168, 85, 247, 0.4);
+            transform: scale(1.05);
+        }
+
+        .sidebar-icon.active {
+            background: linear-gradient(135deg, 
+                rgba(168, 85, 247, 0.3), 
+                rgba(168, 85, 247, 0.15));
+            border-color: rgba(168, 85, 247, 0.5);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+
+        .sidebar-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Explorer Panel */
+        .explorer-panel {
+            width: 320px;
+            background: linear-gradient(180deg, 
+                var(--metallic-dark) 0%, 
+                var(--bg-secondary) 100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .explorer-header {
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .explorer-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .explorer-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .explorer-action-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .explorer-action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .search-box {
+            margin: 16px 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .load-demo-btn {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, 
+                var(--accent-purple) 0%, 
+                var(--accent-pink) 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4);
+        }
+
+        .load-demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.6);
+        }
+
+        /* Editor Area */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+        }
+
+        .editor-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .placeholder-icon {
+            width: 120px;
+            height: 120px;
+            opacity: 0.2;
+        }
+
+        .placeholder-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .placeholder-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Right Sidebar */
+        .right-sidebar {
+            width: 380px;
+            background: linear-gradient(180deg, 
+                var(--metallic-dark) 0%, 
+                var(--bg-secondary) 100%);
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .overview-header {
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .overview-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .add-items-section {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .add-items-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .add-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 12px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .add-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, 
+                var(--accent-green) 0%, 
+                rgba(16, 185, 129, 0.8) 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+        }
+
+        .items-list {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .no-items {
+            text-align: center;
+        }
+
+        .no-items-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            opacity: 0.3;
+        }
+
+        .no-items-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Assistant Footer */
+        .assistant-footer {
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .assistant-header-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .assistant-icon {
+            width: 32px;
+            height: 32px;
+            filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));
+        }
+
+        .assistant-info {
+            flex: 1;
+        }
+
+        .assistant-name {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .assistant-mode {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cloud-badge {
+            padding: 4px 10px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .assistant-message {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .chat-input-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input-btn.green {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .chat-input-btn.orange {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .chat-input-btn.green:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .chat-input-btn.orange:hover {
+            background: rgba(245, 158, 11, 0.3);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-purple);
+        }
+
+        .clear-chat-btn {
+            width: 100%;
+            padding: 8px;
+            background: transparent;
+            border: 1px solid rgba(255, 69, 58, 0.3);
+            border-radius: 6px;
+            color: #ff453a;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .clear-chat-btn:hover {
+            background: rgba(255, 69, 58, 0.1);
+            border-color: rgba(255, 69, 58, 0.5);
+        }
+
+        /* Right Activity Bar */
+        .right-activity-bar {
+            width: 48px;
+            background: linear-gradient(180deg, 
+                var(--metallic-dark) 0%, 
+                var(--bg-secondary) 100%);
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            gap: 16px;
+        }
+
+        .activity-item {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 12px 0;
+        }
+
+        .activity-item:hover {
+            color: var(--accent-purple);
+        }
+
+        .activity-item.active {
+            color: var(--accent-cyan);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header with Integrated Tab-Ribbon -->
+        <header class="header">
+            <!-- Title Bar -->
+            <div class="title-bar">
+                <div class="app-logo">
+                    <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#a855f7"/>
+                                <stop offset="100%" style="stop-color:#ec4899"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M16 4L6 9L16 14L26 9L16 4Z" fill="url(#logoGrad)"/>
+                        <path d="M6 23L16 28L26 23" stroke="url(#logoGrad)" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M6 16L16 21L26 16" stroke="url(#logoGrad)" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    <span class="app-name">Gemini Studio</span>
+                </div>
+
+                <div class="main-tabs">
+                    <button class="main-tab active">Home</button>
+                    <button class="main-tab">View</button>
+                    <button class="main-tab">Intelligence</button>
+                    <button class="main-tab">MCP Tools</button>
+                </div>
+
+                <div class="theme-toggle">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Integrated Ribbon -->
+            <div class="ribbon">
+                <!-- FILE Group -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">FILE</span>
+                    <button class="icon-btn purple" title="New File">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="newFile" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#a855f7"/>
+                                    <stop offset="100%" style="stop-color:#ec4899"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="14 2 14 8 20 8" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="12" y1="11" x2="12" y2="17" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="9" y1="14" x2="15" y2="14" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn purple" title="Open Folder">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M22 19C22 19.5304 21.7893 20.0391 21.4142 20.4142C21.0391 20.7893 20.5304 21 20 21H4C3.46957 21 2.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.96086 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H9L11 6H20C20.5304 6 21.0391 6.21071 21.4142 6.58579C21.7893 6.96086 22 7.46957 22 8V19Z" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn purple" title="Download">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V15" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="7 10 12 15 17 10" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="12" y1="15" x2="12" y2="3" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn purple" title="Save">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M19 21H5C4.46957 21 3.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.46957 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H16L20 7V19C20 19.5304 19.7893 20.0391 19.4142 20.4142C19.0391 20.7893 18.5304 21 18 21Z" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="17 21 17 13 7 13 7 21" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="7 3 7 8 15 8" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- EDIT Group -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">EDIT</span>
+                    <button class="icon-btn blue" title="Undo">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#3b82f6"/>
+                                    <stop offset="100%" style="stop-color:#06b6d4"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M3 7V13H9" stroke="url(#blueGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 17C21 15.1435 20.2625 13.363 18.9497 12.0503C17.637 10.7375 15.8565 10 14 10H3.5" stroke="url(#blueGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn blue" title="Redo">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M21 7V13H15" stroke="url(#blueGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 17C3 15.1435 3.7375 13.363 5.05025 12.0503C6.36301 10.7375 8.14348 10 10 10H20.5" stroke="url(#blueGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn blue" title="Find">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <circle cx="11" cy="11" r="8" stroke="url(#blueGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 21L16.65 16.65" stroke="url(#blueGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn blue" title="Replace">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="url(#blueGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="url(#blueGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- FORMAT Group -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">FORMAT</span>
+                    <button class="icon-btn pink" title="Format Document">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="pinkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ec4899"/>
+                                    <stop offset="100%" style="stop-color:#f43f5e"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M4 7H20M4 12H20M4 17H12" stroke="url(#pinkGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn pink" title="Beautify Code">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="url(#pinkGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- VIEW Group -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">VIEW</span>
+                    <button class="icon-btn cyan" title="Code View">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#06b6d4"/>
+                                    <stop offset="100%" style="stop-color:#0ea5e9"/>
+                                </linearGradient>
+                            </defs>
+                            <polyline points="16 18 22 12 16 6" stroke="url(#cyanGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="8 6 2 12 8 18" stroke="url(#cyanGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn cyan" title="Preview">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M1 12S5 4 12 4C19 4 23 12 23 12S19 20 12 20C5 20 1 12 1 12Z" stroke="url(#cyanGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="12" r="3" stroke="url(#cyanGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- RUN Group -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">RUN</span>
+                    <button class="run-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#10b981"/>
+                                    <stop offset="100%" style="stop-color:#34d399"/>
+                                </linearGradient>
+                            </defs>
+                            <polygon points="5 3 19 12 5 21 5 3" fill="url(#greenGrad)"/>
+                        </svg>
+                        Run Code
+                    </button>
+                </div>
+
+                <!-- ANALYTICS Group -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">ANALYTICS</span>
+                    <button class="icon-btn orange" title="Statistics">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#f59e0b"/>
+                                    <stop offset="100%" style="stop-color:#fb923c"/>
+                                </linearGradient>
+                            </defs>
+                            <line x1="18" y1="20" x2="18" y2="10" stroke="url(#orangeGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="12" y1="20" x2="12" y2="4" stroke="url(#orangeGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="6" y1="20" x2="6" y2="14" stroke="url(#orangeGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- PROJECT Group -->
+                <div class="ribbon-group">
+                    <span class="ribbon-label">PROJECT</span>
+                    <button class="icon-btn purple" title="Open Project">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 2.58579 21.4142C2.21071 21.0391 2 20.5304 2 20V9H3Z" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="9 22 9 12 15 12 15 22" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn purple" title="Upload">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V15" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="17 8 12 3 7 8" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="12" y1="3" x2="12" y2="15" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn purple" title="Download Project">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V15" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="7 10 12 15 17 10" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="12" y1="15" x2="12" y2="3" stroke="url(#newFile)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Sidebar Icons -->
+            <aside class="left-sidebar">
+                <div class="sidebar-icon active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 2.58579 21.4142C2.21071 21.0391 2 20.5304 2 20V9H3Z"/>
+                    </svg>
+                </div>
+                <div class="sidebar-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 19C22 19.5304 21.7893 20.0391 21.4142 20.4142C21.0391 20.7893 20.5304 21 20 21H4C3.46957 21 2.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.96086 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H9L11 6H20C20.5304 6 21.0391 6.21071 21.4142 6.58579C21.7893 6.96086 22 7.46957 22 8V19Z"/>
+                    </svg>
+                </div>
+                <div class="sidebar-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                    </svg>
+                </div>
+            </aside>
+
+            <!-- Explorer Panel -->
+            <aside class="explorer-panel">
+                <div class="explorer-header">
+                    <span class="explorer-title">Explorer</span>
+                    <div class="explorer-actions">
+                        <button class="explorer-action-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19C22 19.5304 21.7893 20.0391 21.4142 20.4142C21.0391 20.7893 20.5304 21 20 21H4C3.46957 21 2.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.96086 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H20C20.5304 3 21.0391 3.21071 21.4142 3.58579C21.7893 3.96086 22 4.46957 22 5V19Z"/>
+                            </svg>
+                        </button>
+                        <button class="explorer-action-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </button>
+                        <button class="explorer-action-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="search-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21L16.65 16.65"/>
+                    </svg>
+                    <input type="text" class="search-input" placeholder="Search files...">
+                </div>
+
+                <div class="empty-state">
+                    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8C20.9996 7.64927 20.9071 7.30481 20.7315 7.00116C20.556 6.69751 20.3037 6.44536 20 6.27L13 2.27C12.696 2.09446 12.3511 2.00205 12 2.00205C11.6489 2.00205 11.304 2.09446 11 2.27L4 6.27C3.69626 6.44536 3.44398 6.69751 3.26846 7.00116C3.09294 7.30481 3.00036 7.64927 3 8V16C3.00036 16.3507 3.09294 16.6952 3.26846 16.9988C3.44398 17.3025 3.69626 17.5546 4 17.73L11 21.73C11.304 21.9055 11.6489 21.9979 12 21.9979C12.3511 21.9979 12.696 21.9055 13 21.73L20 17.73C20.3037 17.5546 20.556 17.3025 20.7315 16.9988C20.9071 16.6952 20.9996 16.3507 21 16Z"/>
+                        <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
+                        <polyline points="7.5 19.79 7.5 14.6 3 12"/>
+                        <polyline points="21 12 16.5 14.6 16.5 19.79"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                    <div class="empty-title">No Files Found</div>
+                    <div class="empty-text">Start by creating a file or loading a demo project.</div>
+                    <button class="load-demo-btn">Load Demo</button>
+                </div>
+            </aside>
+
+            <!-- Editor Area -->
+            <main class="editor-area">
+                <div class="editor-placeholder">
+                    <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                    </svg>
+                    <div class="placeholder-title">No file open</div>
+                    <div class="placeholder-subtitle">Select a file from the Sidebar</div>
+                </div>
+            </main>
+
+            <!-- Right Sidebar -->
+            <aside class="right-sidebar">
+                <div class="overview-header">
+                    <div class="overview-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        OVERVIEW
+                    </div>
+                    <button class="close-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="add-items-section">
+                    <div class="add-items-title">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        ADD ITEMS
+                    </div>
+                    <input type="text" class="add-input" placeholder="Enter new item name">
+                    <button class="add-btn">Add Item</button>
+                </div>
+
+                <div class="items-list">
+                    <div class="no-items">
+                        <svg class="no-items-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                        </svg>
+                        <div class="no-items-text">No items yet</div>
+                    </div>
+                </div>
+
+                <div class="assistant-footer">
+                    <div class="assistant-header-bar">
+                        <svg class="assistant-icon" viewBox="0 0 32 32" fill="none">
+                            <defs>
+                                <linearGradient id="assistGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#a855f7"/>
+                                    <stop offset="50%" style="stop-color:#ec4899"/>
+                                    <stop offset="100%" style="stop-color:#f43f5e"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="16" cy="16" r="14" stroke="url(#assistGrad)" stroke-width="2"/>
+                            <path d="M12 12C12 10.3431 13.3431 9 15 9C16.6569 9 18 10.3431 18 12C18 13.6569 16.6569 15 15 15H12V18" stroke="url(#assistGrad)" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="12" cy="21" r="1" fill="url(#assistGrad)"/>
+                        </svg>
+                        <div class="assistant-info">
+                            <div class="assistant-name">★ G Studio Assistant</div>
+                            <div class="assistant-mode">professional Mode ~ </div>
+                        </div>
+                        <div class="cloud-badge">CLOUD</div>
+                    </div>
+
+                    <div class="assistant-message">
+                        🎉 Welcome to G Studio!
+                    </div>
+
+                    <div class="chat-input-container">
+                        <button class="chat-input-btn green">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 11.5C21.0034 12.8199 20.6951 14.1219 20.1 15.3C19.3944 16.7118 18.3098 17.8992 16.9674 18.7293C15.6251 19.5594 14.0782 19.9994 12.5 20C11.1801 20.0035 9.87812 19.6951 8.7 19.1L3 21L4.9 15.3C4.30493 14.1219 3.99656 12.8199 4 11.5C4.00061 9.92179 4.44061 8.37488 5.27072 7.03258C6.10083 5.69028 7.28825 4.6056 8.7 3.90003C9.87812 3.30496 11.1801 2.99659 12.5 3.00003H13C15.0843 3.11502 17.053 3.99479 18.5291 5.47089C20.0052 6.94699 20.885 8.91568 21 11V11.5Z"/>
+                            </svg>
+                        </button>
+                        <button class="chat-input-btn orange">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21.44 11.05L12.25 20.24C11.1242 21.3658 9.59723 21.9983 8.005 21.9983C6.41277 21.9983 4.88583 21.3658 3.76 20.24C2.63417 19.1142 2.00166 17.5872 2.00166 15.995C2.00166 14.4028 2.63417 12.8758 3.76 11.75L12.33 3.18C13.0806 2.42944 14.0987 2.00671 15.16 2.00671C16.2213 2.00671 17.2394 2.42944 17.99 3.18C18.7406 3.93056 19.1633 4.94866 19.1633 6.01C19.1633 7.07134 18.7406 8.08944 17.99 8.84L9.41 17.41C9.03472 17.7853 8.52573 17.9966 7.995 17.9966C7.46427 17.9966 6.95528 17.7853 6.58 17.41C6.20472 17.0347 5.99342 16.5257 5.99342 15.995C5.99342 15.4643 6.20472 14.9553 6.58 14.58L15.07 6.1"/>
+                            </svg>
+                        </button>
+                        <input type="text" class="chat-input" placeholder="Ask Gemini to analyze code or run commands...">
+                    </div>
+
+                    <button class="clear-chat-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6"/>
+                        </svg>
+                        Clear Chat History
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Right Activity Bar -->
+            <aside class="right-activity-bar">
+                <div class="activity-item">SUMMARY</div>
+                <div class="activity-item active">PREVIEW</div>
+                <div class="activity-item">INSPECTOR</div>
+                <div class="activity-item">MONITOR</div>
+                <div class="activity-item">OVERVIEW</div>
+            </aside>
+        </div>
+    </div>
+</body>
+</html>

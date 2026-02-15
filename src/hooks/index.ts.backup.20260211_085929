@@ -1,0 +1,273 @@
+/**
+ * G Studio v2.0.0 - Hooks Index
+ * 
+ * Central export for all custom hooks - functional pattern replacements
+ * for the old class-based services
+ */
+
+// ===== Core Hooks =====
+export {
+  useSecureStorage,
+  useSecureStorageManager,
+  SecureStorage,
+  secureStorageOperations,
+} from './core/useSecureStorage';
+export type {
+  SecureStorageOptions,
+  StorageInfo,
+  UseSecureStorageReturn,
+} from './core/useSecureStorage';
+
+export {
+  useStateTransaction,
+  createTransactionManager,
+} from './core/useStateTransaction';
+export type {
+  TransactionState,
+  TransactionOptions,
+  UseStateTransactionReturn,
+} from './core/useStateTransaction';
+
+export {
+  useContextManager,
+  useContextManagerContext,
+  ContextManagerProvider,
+  ContextManager,
+  createContextManager,
+} from './core/useContextManager';
+export type {
+  Message,
+  ContextWindow,
+  ContextStats,
+  UseContextManagerOptions,
+  UseContextManagerReturn,
+} from './core/useContextManager';
+
+// ===== AI Hooks =====
+export {
+  useGemini,
+  useGeminiContext,
+  GeminiProvider,
+  createAPIClient as createGeminiAPIClient,
+  categorizeError as categorizeGeminiError,
+} from './core/useGemini';
+export type {
+  GeminiConfig,
+  GeminiMessage,
+  GeminiResponse,
+  StreamingOptions,
+  ErrorInfo as GeminiErrorInfo,
+  UseGeminiOptions,
+  UseGeminiReturn,
+} from './core/useGemini';
+
+export type {
+  LMStudioConfig,
+  LMStudioModel,
+  ChatMessage,
+  ChatOptions,
+  ChatResponse,
+  UseLMStudioReturn,
+} from './ai/useLMStudio';
+
+export type {
+  AIProvider,
+  AIMessage,
+  AIOptions,
+  AIResponse,
+  ProviderStatus,
+  UseAIProviderReturn,
+} from './ai/useAIProvider';
+
+export type {
+  LocalModel,
+  DownloadProgress,
+  InferenceOptions,
+  InferenceResult,
+  UseLocalAIReturn,
+} from './ai/useLocalAI';
+
+export type {
+  AgentType,
+  Agent,
+  Task,
+  ComplexTask,
+  CollaborationEvent,
+  UseMultiAgentReturn,
+} from './ai/useMultiAgent';
+
+export {
+  useMcp,
+  useMcpContext,
+  McpProvider,
+  McpService,
+  createMcpOperations,
+} from './core/useMcp';
+export type {
+  FileData,
+  McpToolResult,
+  McpConnection,
+  McpToolCallbacks,
+  McpState,
+  UseMcpReturn,
+} from './core/useMcp';
+
+export {
+  useModelSelection,
+  useModelSelectionContext,
+  ModelSelectionProvider,
+} from './core/useModelSelection';
+export type {
+  ModelInfo,
+  ModelCapability,
+  ModelFilter,
+  ModelSelectionState,
+  UseModelSelectionReturn,
+} from './core/useModelSelection';
+
+export {
+  useAutonomousMode,
+  useAutonomousModeContext,
+  AutonomousModeProvider,
+} from './core/useAutonomousMode';
+export type {
+  TaskPermissionLevel,
+  AutonomousTask,
+  AutonomousConfig,
+  AutonomousStats,
+  UseAutonomousModeReturn,
+} from './core/useAutonomousMode';
+
+export {
+  useAgentOrchestrator,
+  useAgentOrchestratorContext,
+  AgentOrchestratorProvider,
+  AgentOrchestrator,
+} from './core/useAgentOrchestrator';
+export type {
+  ProjectState,
+  AgentAction,
+  AgentContext,
+  ExecutionMode,
+  ProcessingResult,
+  UseAgentOrchestratorReturn,
+} from './core/useAgentOrchestrator';
+
+// ===== Voice Hooks =====
+export { 
+  useSpeechRecognition,
+  useSpeechRecognitionContext,
+  SpeechRecognitionProvider
+} from './voice/useSpeechRecognition';
+export type {
+  SpeechLanguage,
+  SpeechRecognitionOptions,
+  SpeechRecognitionState,
+  UseSpeechRecognitionReturn,
+  SpeechContext,
+} from './voice/useSpeechRecognition';
+
+export { 
+  useVoiceCommands, 
+  VoiceCommandsProvider, 
+  useVoiceCommandsContext 
+} from './voice/useVoiceCommands';
+export type {
+  CommandLanguage,
+  CommandCategory,
+  VoiceCommand,
+  CommandContext,
+  CommandResult,
+  CommandHistoryEntry,
+  UseVoiceCommandsReturn,
+} from './voice/useVoiceCommands';
+
+// ===== Code Intelligence Hooks =====
+export type {
+  CodeMetrics,
+  CodeSmell,
+  CodeIssue,
+  AnalysisResult,
+  ImportInfo,
+  FunctionInfo,
+  ClassInfo,
+  DependencyNode,
+  DependencyEdge,
+  DependencyGraph,
+  ChangeAnalysis,
+  BreakingChange,
+  UseCodeIntelligenceReturn,
+} from './code/useCodeIntelligence';
+
+export type {
+  SandboxPolicy,
+  SandboxOptions,
+  ExecutionResult,
+  LogEntry,
+  Execution,
+  ValidationResult,
+  UseSandboxReturn,
+} from './code/useSandbox';
+
+// ===== Utility Hooks =====
+export type {
+  RetryConfig,
+  ConnectionQuality,
+  NetworkStats,
+  UseNetworkReliabilityReturn,
+} from './utils/useNetworkReliability';
+
+export type {
+  TelemetryEvent,
+  PerformanceMetric,
+  ErrorMetric,
+  TelemetryMetrics,
+  TelemetryConfig,
+  UseTelemetryReturn,
+} from './utils/useTelemetry';
+
+export type {
+  GuardrailType,
+  GuardrailAction,
+  ViolationSeverity,
+  Guardrail,
+  GuardrailContext,
+  Violation,
+  GuardrailResult,
+  ResourceLimits,
+  UseRuntimeGuardrailsReturn,
+} from './utils/useRuntimeGuardrails';
+
+export type {
+  CacheEntry,
+  CacheStats,
+  CacheOptions,
+  SetOptions,
+  UseCacheReturn,
+} from './utils/useCache';
+
+// ===== Legacy Hooks (existing) =====
+export { useAIProvider } from './ai/useAIProvider'
+export { useLMStudio } from './ai/useLMStudio'
+export { useLocalAI } from './ai/useLocalAI'
+export { useMultiAgent } from './ai/useMultiAgent'
+export { useCodeIntelligence } from './code/useCodeIntelligence'
+export { useSandbox } from './code/useSandbox'
+export { useAgentConfig } from './useAgentConfig'
+export { useButtonFeedback, EnhancedButton, FeedbackBadge } from './useButtonFeedback'
+export type { FeedbackType } from './useButtonFeedback'
+export { useChatState } from './useChatState'
+export { useEditorCommands, useCodeEditor } from './useCodeEditor'
+export { useConversationList, useConversation } from './useConversation'
+export { useEditorHandlers } from './useEditorHandlers'
+export { useEditorState } from './useEditorState'
+export { useEditorShortcuts, COMMON_SHORTCUTS } from './useKeyboardShortcuts'
+export type { KeyboardShortcut } from './useKeyboardShortcuts'
+export { useNetworkQuality, useNetworkStatus } from './useNetworkStatus'
+export { usePreviewErrors, usePreview } from './usePreview'
+export { useUIPanelState } from './useUIPanelState'
+export { useVisibilityAwareInterval, useThrottle, useDebounce } from './useVisibilityAwareInterval'
+export { useCache } from './utils/useCache'
+export { useNetworkReliability } from './utils/useNetworkReliability'
+export { useRuntimeGuardrails } from './utils/useRuntimeGuardrails'
+export { useTelemetry } from './utils/useTelemetry'

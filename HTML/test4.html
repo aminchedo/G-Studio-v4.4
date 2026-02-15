@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gemini Studio · Tall ribbon, minimal icons</title>
+    <!-- Feather Icons (pure SVG) -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <!-- Inter: respected UI font – crisp, large, elegant -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        /* ---------- ULTRA DARK METALLIC · TALL RIBBON · MINIMAL GLASS ICONS ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #010101;
+            background: radial-gradient(circle at 30% 20%, #0b0f14, #000000);
+            color: #ecf3fc;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: 128px 1fr;   /* significantly taller ribbon – 128px */
+            letter-spacing: 0.012em;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* hide scrollbars – pristine */
+        ::-webkit-scrollbar { display: none; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+
+        /* ---------- TALL DARK METALLIC RIBBON – 2 ROWS, SPACIOUS ---------- */
+        .dark-ribbon {
+            background: #080c11;
+            background: linear-gradient(165deg, #0e141c 0%, #030609 100%);
+            border-bottom: 0.5px solid rgba(110, 170, 250, 0.15);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.02), 0 16px 32px -14px black;
+            display: flex;
+            flex-direction: column;
+            padding: 0 32px;
+            backdrop-filter: blur(8px);
+        }
+
+        /* ROW 1: LOGO + PRIMARY GROUP TITLES – RESPECTED, LARGER FONT */
+        .ribbon-row1 {
+            display: flex;
+            align-items: center;
+            height: 64px;          /* taller row */
+            gap: 48px;
+        }
+
+        .logo-minimal {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.85;
+            transition: 0.2s;
+        }
+        .logo-minimal:hover { opacity: 1; }
+        .logo-minimal svg {
+            stroke: #b4d2ff;
+            stroke-width: 1.8;
+            width: 22px;
+            height: 22px;
+        }
+        .logo-minimal span {
+            font-weight: 600;
+            font-size: 16px;
+            color: #d6e6ff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .group-titles {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+        .group-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #b0c8e5;
+            padding: 8px 0;
+            cursor: default;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border 0.15s;
+        }
+        .group-title.active {
+            color: white;
+            border-bottom: 2px solid #6a9ec0;
+            text-shadow: 0 0 8px rgba(90,170,240,0.2);
+        }
+        .group-title:hover { color: #f0f8ff; }
+
+        .ribbon-actions {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-left: auto;
+        }
+        .search-dark {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.6);
+            border: 0.5px solid rgba(130,190,255,0.15);
+            border-radius: 40px;
+            padding: 8px 16px;
+            backdrop-filter: blur(8px);
+            gap: 8px;
+        }
+        .search-dark svg {
+            stroke: #aac2e6;
+            width: 16px;
+            height: 16px;
+        }
+        .search-dark input {
+            background: transparent;
+            border: none;
+            color: #f0f8ff;
+            font-size: 14px;
+            width: 160px;
+            outline: none;
+            padding: 6px 0;
+            font-weight: 400;
+        }
+        .search-dark input::placeholder { color: #8aa0c0; font-weight: 400; }
+
+        /* ---------- ROW 2: MINIMAL, ATTRACTIVE GLASS ICONS – CLEAN, NO TEXT ---------- */
+        .ribbon-row2 {
+            display: flex;
+            align-items: center;
+            height: 64px;          /* taller row */
+            gap: 18px;
+            border-top: 0.5px solid rgba(255,255,255,0.03);
+            padding: 8px 0;
+        }
+
+        /* ----- MINIMAL GLASS ICONS – REFINED, SUBTLE, ELEGANT ----- */
+        .minimal-icon {
+            background: rgba(20, 35, 55, 0.5);
+            backdrop-filter: blur(8px);
+            border: 0.5px solid rgba(140, 200, 255, 0.2);
+            border-radius: 14px;
+            padding: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 12px -6px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06);
+            transition: all 0.18s ease;
+            color: #d6ecff;
+            width: 46px;
+            height: 46px;
+        }
+
+        .minimal-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* subtle, uniform colors – minimal and attractive */
+        .minimal-icon:nth-child(1) { background: rgba(40, 80, 140, 0.4); border-color: rgba(80, 160, 240, 0.3); }
+        .minimal-icon:nth-child(2) { background: rgba(90, 70, 160, 0.4); border-color: rgba(150, 130, 240, 0.3); }
+        .minimal-icon:nth-child(3) { background: rgba(30, 120, 110, 0.4); border-color: rgba(70, 200, 180, 0.3); }
+        .minimal-icon:nth-child(4) { background: rgba(150, 110, 50, 0.4); border-color: rgba(230, 180, 70, 0.3); }
+        .minimal-icon:nth-child(5) { background: rgba(150, 70, 90, 0.4); border-color: rgba(240, 120, 140, 0.3); }
+        .minimal-icon:nth-child(6) { background: rgba(50, 110, 160, 0.4); border-color: rgba(90, 190, 240, 0.3); }
+        .minimal-icon:nth-child(7) { background: rgba(90, 80, 150, 0.4); border-color: rgba(160, 140, 240, 0.3); }
+
+        .minimal-icon:hover {
+            transform: translateY(-4px);
+            background: rgba(70, 150, 230, 0.45);
+            border-color: rgba(120, 200, 255, 0.7);
+            box-shadow: 0 14px 22px -12px rgba(0,140,210,0.3);
+            color: white;
+        }
+
+        /* run button – clean, minimal glass */
+        .run-button-minimal {
+            background: rgba(50, 140, 100, 0.4);
+            border: 0.5px solid rgba(80, 210, 150, 0.4);
+            border-radius: 40px;
+            padding: 9px 26px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #e2ffee;
+            font-weight: 600;
+            font-size: 14px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 16px -8px black, inset 0 1px 0 rgba(255,255,255,0.08);
+            transition: 0.18s;
+            margin-left: 8px;
+        }
+        .run-button-minimal:hover {
+            background: rgba(70, 190, 130, 0.5);
+            border-color: rgba(120, 255, 180, 0.6);
+            transform: scale(1.02) translateY(-2px);
+        }
+        .run-button-minimal svg { stroke: #e2fff0; stroke-width: 1.8; }
+
+        /* ---------- MAIN 3-COLUMN DASHBOARD – DARKER, UNIFIED ---------- */
+        .main-dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr 340px;
+            overflow: hidden;
+            background: #010203;
+            gap: 1px;
+            border-top: 0.5px solid rgba(0,0,0,0.9);
+        }
+
+        /* LEFT PANEL – EXPLORER, DEEP METALLIC */
+        .explorer-panel {
+            background: #0a0e13;
+            background: linear-gradient(145deg, #0c1119, #070a0f);
+            box-shadow: inset -4px 0 15px rgba(0,0,0,0.9);
+            padding: 24px 18px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .explorer-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #b6cde5;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.05);
+            padding-bottom: 16px;
+        }
+        .overview-tab {
+            background: rgba(70,140,220,0.12);
+            border-radius: 40px;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+            border: 0.5px solid rgba(80,160,255,0.2);
+            color: #c8e0ff;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .search-files {
+            background: rgba(0,0,0,0.6);
+            border: 0.5px solid rgba(255,255,255,0.06);
+            border-radius: 40px;
+            padding: 14px 20px;
+            color: #f0f8ff;
+            font-size: 14px;
+            outline: none;
+            backdrop-filter: blur(4px);
+        }
+        .search-files::placeholder { color: #8ca2bd; }
+        .add-items-btn {
+            background: rgba(70,140,220,0.12);
+            border: 0.5px solid rgba(80,160,255,0.22);
+            border-radius: 40px;
+            padding: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            color: #cae0ff;
+            font-size: 13px;
+        }
+        .assistant-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        .new-item-input {
+            background: rgba(0,0,0,0.6);
+            border: 0.5px solid rgba(255,255,255,0.06);
+            border-radius: 40px;
+            padding: 14px 20px;
+            color: white;
+            font-size: 14px;
+        }
+        .add-item-btn {
+            background: rgba(90,170,90,0.15);
+            border: 0.5px solid rgba(100,200,120,0.25);
+            border-radius: 40px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #d8f0d8;
+            font-weight: 500;
+        }
+
+        /* CENTER PANEL – DARK, MINIMAL GLOW */
+        .center-panel {
+            background: radial-gradient(circle at 30% 40%, #0f161e, #030608);
+            box-shadow: inset 0 0 70px rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
+        .center-icon {
+            background: rgba(30,60,90,0.4);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            padding: 24px;
+            border: 0.5px solid rgba(255,255,255,0.06);
+            margin-bottom: 24px;
+        }
+        .center-title { font-size: 28px; font-weight: 350; color: #eaf2ff; letter-spacing: -0.3px; }
+        .center-sub { color: #adc4de; font-size: 17px; margin: 8px 0; }
+        .center-desc { color: #89a0ba; max-width: 280px; margin: 16px 0; font-size: 14px; }
+        .load-demo-btn {
+            background: rgba(70,140,220,0.16);
+            border: 0.5px solid rgba(80,160,255,0.3);
+            border-radius: 60px;
+            padding: 14px 40px;
+            font-weight: 600;
+            color: #daeaff;
+            backdrop-filter: blur(8px);
+            font-size: 14px;
+        }
+
+        /* RIGHT PANEL – CHAT SIDEBAR, DEEP UNIFIED */
+        .chat-sidebar {
+            background: #0a0e13;
+            background: linear-gradient(225deg, #0c1119, #070a0f);
+            box-shadow: inset 4px 0 15px rgba(0,0,0,0.9);
+            padding: 24px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            gap: 18px;
+        }
+        .chat-header {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.05);
+            padding-bottom: 20px;
+        }
+        .chat-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .assistant-identity {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .assistant-identity svg { stroke: #b2d2ff; width: 20px; height: 20px; }
+        .assistant-name { font-weight: 700; font-size: 16px; color: #deecff; }
+        .badge-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .badge-3d {
+            background: rgba(70,130,210,0.12);
+            border: 0.5px solid rgba(100,160,240,0.2);
+            border-radius: 60px;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ccdeff;
+            backdrop-filter: blur(4px);
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .badge-3d.monitor { background: rgba(200,150,50,0.1); border-color: rgba(230,180,70,0.2); }
+        .overview-row {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .welcome-message {
+            display: flex; align-items: center; gap: 12px; color: #d0e4ff; font-size: 14px;
+        }
+        .overview-pill {
+            background: rgba(0,0,0,0.6);
+            border-radius: 40px;
+            padding: 6px 20px;
+            border: 0.5px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 8px;
+            color: #c0d6f0;
+            font-size: 13px;
+        }
+        .chat-messages {
+            flex: 1; display: flex; flex-direction: column; gap: 18px;
+            overflow-y: auto; margin: 12px 0 18px;
+        }
+        .message-bubble {
+            background: rgba(30,55,80,0.6);
+            backdrop-filter: blur(8px);
+            border: 0.5px solid rgba(255,255,255,0.06);
+            border-radius: 20px 20px 20px 6px;
+            padding: 16px 20px;
+            font-size: 13.5px;
+            color: #e6f2ff;
+            align-self: flex-start;
+            max-width: 95%;
+            line-height: 1.6;
+        }
+        .message-bubble.user {
+            background: rgba(45,95,140,0.5);
+            border-radius: 20px 20px 6px 20px;
+            align-self: flex-end;
+            border-color: rgba(100,170,240,0.25);
+        }
+        .typing-indicator {
+            display: flex; gap: 6px; padding: 14px 20px;
+            background: rgba(30,60,80,0.4); border-radius: 40px;
+            align-self: flex-start; backdrop-filter: blur(4px);
+        }
+        .typing-dot { width: 8px; height: 8px; background: #b8d6ff; border-radius: 50%; animation: pulse-dot 1.4s infinite; }
+        .chat-input-area {
+            display: flex; flex-direction: column; gap: 14px;
+            border-top: 0.5px solid rgba(255,255,255,0.05); padding-top: 18px;
+        }
+        .clear-chat {
+            display: flex; align-items: center; gap: 10px; color: #b0c8e0; transition: 0.15s; font-size: 13px;
+        }
+        .input-wrapper {
+            display: flex; align-items: center;
+            background: rgba(8,20,32,0.9); border: 0.5px solid rgba(255,255,255,0.07);
+            border-radius: 60px; padding: 6px 6px 6px 22px; backdrop-filter: blur(12px);
+        }
+        .input-wrapper input {
+            flex: 1; background: transparent; border: none; color: white; font-size: 14px; outline: none; padding: 12px 0;
+        }
+        .input-wrapper input::placeholder { color: #8da5c0; font-weight: 400; }
+        .send-icon {
+            background: rgba(70,140,220,0.25); border-radius: 50%; padding: 12px; display: flex;
+        }
+
+        @keyframes pulse-dot { 0%,100%{opacity:0.4;transform:scale(0.9)}50%{opacity:1;transform:scale(1.2)} }
+        .w-100 { width: 100%; }
+    </style>
+</head>
+<body>
+    <!-- 
+        ========== TALL DARK METALLIC RIBBON – MINIMAL, ATTRACTIVE GLASS ICONS ========= 
+        - Row 1: Logo + GROUP TITLES (HOME, VIEW, INTELLIGENCE, MCP TOOLS) – larger font, respected
+        - Row 2: FILE, EDIT, FORMAT, VIEW, RUN, ANALYTICS, PROJECT as PURE ICONS – minimal glass, no text
+        - Run Code button integrated
+    -->
+    <div class="dark-ribbon">
+        <!-- ROW 1 – TITLES ONLY, TALLER, CLEAN -->
+        <div class="ribbon-row1">
+            <div class="logo-minimal">
+                <i data-feather="star"></i>
+                <span>STUDIO</span>
+            </div>
+            <div class="group-titles">
+                <span class="group-title active">HOME</span>
+                <span class="group-title">VIEW</span>
+                <span class="group-title">INTELLIGENCE</span>
+                <span class="group-title">MCP TOOLS</span>
+            </div>
+            <div class="ribbon-actions">
+                <div class="search-dark">
+                    <i data-feather="search"></i>
+                    <input type="text" placeholder="Quick search...">
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 2 – MINIMAL GLASS ICONS (NO TEXT) + RUN BUTTON -->
+        <div class="ribbon-row2">
+            <!-- FILE -->
+            <span class="minimal-icon" title="FILE"><i data-feather="file-text"></i></span>
+            <!-- EDIT -->
+            <span class="minimal-icon" title="EDIT"><i data-feather="edit-3"></i></span>
+            <!-- FORMAT -->
+            <span class="minimal-icon" title="FORMAT"><i data-feather="type"></i></span>
+            <!-- VIEW -->
+            <span class="minimal-icon" title="VIEW"><i data-feather="layout"></i></span>
+            <!-- RUN -->
+            <span class="minimal-icon" title="RUN"><i data-feather="play-circle"></i></span>
+            <!-- ANALYTICS -->
+            <span class="minimal-icon" title="ANALYTICS"><i data-feather="bar-chart-2"></i></span>
+            <!-- PROJECT -->
+            <span class="minimal-icon" title="PROJECT"><i data-feather="briefcase"></i></span>
+
+            <!-- Run Code button – clean glass -->
+            <button class="run-button-minimal">
+                <i data-feather="play" width="16"></i> Run Code
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== MAIN 3-COLUMN DASHBOARD – EXPLORER | CENTER | CHAT SIDEBAR ========= -->
+    <div class="main-dashboard">
+        <!-- LEFT: EXPLORER (full screenshot layout) -->
+        <div class="explorer-panel">
+            <div class="explorer-header">
+                <i data-feather="folder" width="16"></i> EXPLORER
+            </div>
+            <div class="overview-tab">
+                <i data-feather="layers" width="14"></i> OVERVIEW
+            </div>
+            <input type="text" class="search-files" placeholder="Search files...">
+            <button class="add-items-btn w-100">
+                <i data-feather="plus-circle"></i> ADD ITEMS
+            </button>
+            <div class="assistant-section">
+                <div style="display: flex; align-items: center; gap: 10px; color: #cae0fc; font-weight: 500;">
+                    <i data-feather="message-circle" width="16"></i> ASSISTANT
+                </div>
+                <input type="text" class="new-item-input" placeholder="Enter new item name">
+                <button class="add-item-btn w-100">
+                    <i data-feather="plus"></i> Add Item
+                </button>
+            </div>
+        </div>
+
+        <!-- CENTER: NO FILE OPEN / NO FILES FOUND -->
+        <div class="center-panel">
+            <div class="center-icon">
+                <i data-feather="code" width="52" height="52" style="stroke: #aac6f0;"></i>
+            </div>
+            <div class="center-title">No file open</div>
+            <div class="center-sub">No Files Found</div>
+            <div class="center-desc">Select a file from the Sidebar<br>Start by creating a file or loading a demo project.</div>
+            <button class="load-demo-btn">
+                <i data-feather="download-cloud" width="16"></i> Load Demo
+            </button>
+        </div>
+
+        <!-- RIGHT: CHAT SIDEBAR – full assistant experience -->
+        <div class="chat-sidebar">
+            <div class="chat-header">
+                <div class="chat-title-row">
+                    <div class="assistant-identity">
+                        <i data-feather="star"></i>
+                        <span class="assistant-name">GStudio Assistant</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; color: #b2cce5;">
+                        <i data-feather="clock" width="16"></i>
+                        <i data-feather="bell" width="16"></i>
+                    </div>
+                </div>
+                <div class="badge-group">
+                    <span class="badge-3d"><i data-feather="shield" width="13"></i> professional Mode</span>
+                    <span class="badge-3d" style="background: rgba(30,120,210,0.1);">☁ CLOUD</span>
+                    <span class="badge-3d monitor"><i data-feather="activity" width="13"></i> MONITOR</span>
+                </div>
+                <div class="overview-row">
+                    <div class="welcome-message">
+                        <i data-feather="smile"></i>
+                        <span style="font-weight: 600;">Welcome to G Studio!</span>
+                    </div>
+                    <div class="overview-pill">
+                        <i data-feather="pie-chart" width="14"></i> 88 OVERVIEW
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-messages">
+                <div class="message-bubble">
+                    <i data-feather="star" width="12" style="float: left; margin-right: 10px;"></i>
+                    Hello! I'm your assistant. How can I help?
+                </div>
+                <div class="message-bubble user">
+                    Show me project structure.
+                </div>
+                <div class="message-bubble">
+                    ✅ Project scan: 214 files, 12 modules. No critical issues.
+                </div>
+                <div class="typing-indicator">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot" style="animation-delay: 0.2s;"></span>
+                    <span class="typing-dot" style="animation-delay: 0.4s;"></span>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="clear-chat">
+                    <i data-feather="trash-2" width="15"></i> Clear Chat History
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" placeholder="Ask Gemini to analyze code or run commands..">
+                    <span class="send-icon"><i data-feather="send" width="16"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feather icon replacement -->
+    <script>
+        feather.replace({ 
+            width: 18, 
+            height: 18,
+            'stroke-width': 1.7,
+            fill: 'none',
+            'class': 'feather-svg'
+        });
+        // subtle run button feedback
+        const runBtn = document.querySelector('.run-button-minimal');
+        if (runBtn) {
+            runBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                runBtn.style.transform = 'scale(0.97)';
+                setTimeout(() => runBtn.style.transform = '', 150);
+            });
+        }
+    </script>
+</body>
+</html>

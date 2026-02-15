@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Theme Preview</title>
+<style>
+  body { font-family: 'Inter', sans-serif; display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; background: #111; color: #eee; }
+  .theme-card { width: 300px; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .panel { padding: 12px; border-radius: 12px; }
+  .bubble { padding: 10px 14px; border-radius: 18px; max-width: 90%; }
+  .input { padding: 8px 12px; border-radius: 12px; border: 1px solid #666; width: 100%; }
+  .button { padding: 8px 14px; border-radius: 12px; cursor: pointer; border: none; }
+  .badge { padding: 4px 8px; border-radius: 999px; font-size: 11px; display: inline-block; }
+
+  /* Dark Indigo AI */
+  .indigo { background: #0E1116; color: #E6EDF3; }
+  .indigo .panel { background: #151A21; border: 1px solid rgba(255,255,255,0.06); }
+  .indigo .bubble.user { background: rgba(99,102,241,0.12); color: #E6EDF3; }
+  .indigo .bubble.ai { background: #1B222C; border: 1px solid rgba(255,255,255,0.06); }
+  .indigo .button { background: #6366F1; color: #fff; }
+  .indigo .input { border-color: rgba(255,255,255,0.06); }
+  .indigo .badge { background: linear-gradient(90deg,#6366F1,#8B5CF6); color: #fff; }
+
+  /* Dark Teal AI */
+  .teal { background: #0E1116; color: #E6EDF3; }
+  .teal .panel { background: #151A21; border: 1px solid rgba(255,255,255,0.06); }
+  .teal .bubble.user { background: rgba(20,184,166,0.12); color: #E6EDF3; }
+  .teal .bubble.ai { background: #1B222C; border: 1px solid rgba(255,255,255,0.06); }
+  .teal .button { background: #14B8A6; color: #fff; }
+  .teal .input { border-color: rgba(255,255,255,0.06); }
+  .teal .badge { background: linear-gradient(90deg,#14B8A6,#0D9488); color: #fff; }
+
+  /* Neutral Graphite */
+  .graphite { background: #1C1C1E; color: #E6EDF3; }
+  .graphite .panel { background: #2C2C2E; border: 1px solid rgba(255,255,255,0.08); }
+  .graphite .bubble.user { background: rgba(200,200,200,0.12); color: #E6EDF3; }
+  .graphite .bubble.ai { background: #2C2C2E; border: 1px solid rgba(255,255,255,0.08); }
+  .graphite .button { background: #999; color: #fff; }
+  .graphite .input { border-color: rgba(255,255,255,0.08); }
+  .graphite .badge { background: #555; color: #fff; }
+
+  /* Glass subtle */
+  .glass { background: rgba(20,20,30,0.85); color: #E6EDF3; backdrop-filter: blur(6px); }
+  .glass .panel { background: rgba(25,25,35,0.7); border: 1px solid rgba(255,255,255,0.08); }
+  .glass .bubble.user { background: rgba(255,255,255,0.08); color: #E6EDF3; }
+  .glass .bubble.ai { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); }
+  .glass .button { background: #6366F1; color: #fff; }
+  .glass .input { border-color: rgba(255,255,255,0.12); }
+  .glass .badge { background: rgba(255,255,255,0.12); color: #fff; }
+
+  /* Custom Brand */
+  .custom { background: #101010; color: #E6EDF3; }
+  .custom .panel { background: #1A1A1A; border: 1px solid rgba(255,255,255,0.06); }
+  .custom .bubble.user { background: rgba(255,0,100,0.12); color: #fff; }
+  .custom .bubble.ai { background: #222; border: 1px solid rgba(255,255,255,0.06); }
+  .custom .button { background: #FF0064; color: #fff; }
+  .custom .input { border-color: rgba(255,255,255,0.06); }
+  .custom .badge { background: linear-gradient(90deg,#FF0064,#FF4080); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="theme-card indigo">
+  <h3>Dark Indigo AI</h3>
+  <div class="panel">Panel / Card</div>
+  <div class="bubble user">User Message Bubble</div>
+  <div class="bubble ai">AI Message Bubble</div>
+  <input class="input" placeholder="Input area">
+  <button class="button">Send</button>
+  <div class="badge">● Gemini 2.0 Flash</div>
+</div>
+
+<div class="theme-card teal">
+  <h3>Dark Teal AI</h3>
+  <div class="panel">Panel / Card</div>
+  <div class="bubble user">User Message Bubble</div>
+  <div class="bubble ai">AI Message Bubble</div>
+  <input class="input" placeholder="Input area">
+  <button class="button">Send</button>
+  <div class="badge">● Gemini 2.0 Flash</div>
+</div>
+
+<div class="theme-card graphite">
+  <h3>Neutral Graphite</h3>
+  <div class="panel">Panel / Card</div>
+  <div class="bubble user">User Message Bubble</div>
+  <div class="bubble ai">AI Message Bubble</div>
+  <input class="input" placeholder="Input area">
+  <button class="button">Send</button>
+  <div class="badge">● Gemini 2.0 Flash</div>
+</div>
+
+<div class="theme-card glass">
+  <h3>Glass Subtle</h3>
+  <div class="panel">Panel / Card</div>
+  <div class="bubble user">User Message Bubble</div>
+  <div class="bubble ai">AI Message Bubble</div>
+  <input class="input" placeholder="Input area">
+  <button class="button">Send</button>
+  <div class="badge">● Gemini 2.0 Flash</div>
+</div>
+
+<div class="theme-card custom">
+  <h3>Custom Brand</h3>
+  <div class="panel">Panel / Card</div>
+  <div class="bubble user">User Message Bubble</div>
+  <div class="bubble ai">AI Message Bubble</div>
+  <input class="input" placeholder="Input area">
+  <button class="button">Send</button>
+  <div class="badge">● Gemini 2.0 Flash</div>
+</div>
+
+</body>
+</html>

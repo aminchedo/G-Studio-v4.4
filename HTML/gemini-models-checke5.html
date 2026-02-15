@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Models Checker — Production Ready</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-app: #08090c;
+            --bg-surface: #0e1118;
+            --bg-card: #141921;
+            --bg-card-hover: #1a222f;
+            --bg-input: #0a0d12;
+            --bg-code: #0d1117;
+            --border: #1e2936;
+            --border-focus: #4285f4;
+            --text: #e8ecf2;
+            --text-secondary: #8b95b0;
+            --text-muted: #4a5468;
+            --blue: #4285f4;
+            --blue-bg: rgba(66,133,244,0.1);
+            --green: #34d399;
+            --green-bg: rgba(52,211,153,0.1);
+            --red: #ef4444;
+            --red-bg: rgba(239,68,68,0.1);
+            --yellow: #fbbf24;
+            --yellow-bg: rgba(251,191,36,0.1);
+            --purple: #a78bfa;
+            --purple-bg: rgba(167,139,250,0.1);
+            --cyan: #22d3ee;
+            --cyan-bg: rgba(34,211,238,0.1);
+            --orange: #fb923c;
+            --shadow: 0 4px 24px rgba(0,0,0,0.3);
+            --radius: 12px;
+            --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, system-ui, sans-serif;
+            background: var(--bg-app);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 800px 600px at 20% 15%, rgba(66,133,244,0.06), transparent 70%),
+                radial-gradient(ellipse 700px 500px at 80% 80%, rgba(167,139,250,0.05), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .tab.active {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--blue-bg), var(--purple-bg));
+            border: 1px solid rgba(66,133,244,0.15);
+            border-radius: 18px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4285f4, #a78bfa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .input-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: color var(--transition);
+        }
+
+        .input-wrap input {
+            width: 100%;
+            height: 48px;
+            padding: 0 48px 0 44px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: 'Consolas', 'Fira Code', monospace;
+            outline: none;
+            transition: all var(--transition);
+        }
+
+        .input-wrap input::placeholder {
+            color: var(--text-muted);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .input-wrap input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(66,133,244,0.12);
+        }
+
+        .input-wrap input:focus ~ .input-icon {
+            color: var(--blue);
+        }
+
+        .btn-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            display: flex;
+            transition: all var(--transition);
+        }
+
+        .btn-toggle:hover {
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .btn-primary {
+            height: 48px;
+            padding: 0 28px;
+            background: linear-gradient(135deg, #4285f4, #5a9cf6);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all var(--transition);
+            box-shadow: 0 4px 16px rgba(66,133,244,0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(66,133,244,0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .config-item label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .config-item input {
+            height: 40px;
+            padding: 0 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.88rem;
+            outline: none;
+            transition: all var(--transition);
+        }
+
+        .config-item input:focus {
+            border-color: var(--blue);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .checkbox-label input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--blue);
+            cursor: pointer;
+        }
+
+        .status {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status.info    { display: flex; background: var(--blue-bg);   border: 1px solid rgba(66,133,244,0.2);  color: var(--blue); }
+        .status.success { display: flex; background: var(--green-bg);  border: 1px solid rgba(52,211,153,0.2);  color: var(--green); }
+        .status.error   { display: flex; background: var(--red-bg);    border: 1px solid rgba(239,68,68,0.2);   color: var(--red); }
+        .status.warning { display: flex; background: var(--yellow-bg); border: 1px solid rgba(251,191,36,0.2);  color: var(--yellow); }
+
+        .progress-wrap {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .progress-wrap.visible { display: block; }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4285f4, #34d399);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .limiter-display {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .limiter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .limiter-stat {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .limiter-stat .label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .limiter-stat .value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .limiter-stat .bar {
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .limiter-stat .bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .limiter-stat.rpm .bar-fill { background: var(--blue); }
+        .limiter-stat.tpm .bar-fill { background: var(--green); }
+        .limiter-stat.queue .bar-fill { background: var(--purple); }
+
+        .info-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 6px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .info-box li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .code-inline {
+            background: var(--bg-input);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85em;
+            color: var(--cyan);
+        }
+
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-lang {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-copy {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all var(--transition);
+        }
+
+        .btn-copy:hover {
+            color: var(--blue);
+            background: var(--blue-bg);
+        }
+
+        .btn-copy.copied {
+            color: var(--green);
+        }
+
+        .code-body {
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            font-family: 'Consolas', 'Fira Code', 'JetBrains Mono', monospace;
+        }
+
+        .code-body .kw  { color: #c792ea; }
+        .code-body .fn  { color: #82aaff; }
+        .code-body .str { color: #c3e88d; }
+        .code-body .cm  { color: #546e7a; }
+        .code-body .num { color: #f78c6c; }
+        .code-body .op  { color: #89ddff; }
+        .code-body .var { color: #ffcb6b; }
+        .code-body .typ { color: #c792ea; }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .model-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .model-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .model-card.working {
+            border-left: 3px solid var(--green);
+        }
+
+        .model-card.failed {
+            border-left: 3px solid var(--red);
+        }
+
+        .model-card.untested {
+            border-left: 3px solid var(--text-muted);
+        }
+
+        .model-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .model-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .model-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .model-badge.status-working {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+
+        .model-badge.status-failed {
+            background: var(--red-bg);
+            color: var(--red);
+        }
+
+        .model-badge.status-untested {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+        }
+
+        .model-badge.type {
+            background: var(--blue-bg);
+            color: var(--blue);
+        }
+
+        .model-latency {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .model-error {
+            font-size: 0.75rem;
+            color: var(--red);
+            margin-top: 6px;
+            padding: 6px;
+            background: var(--red-bg);
+            border-radius: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .filter-btn.active {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: #fff;
+        }
+
+        .export-section {
+            margin-top: 24px;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-export {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition);
+        }
+
+        .btn-export:hover {
+            border-color: var(--blue);
+            background: var(--blue-bg);
+            color: var(--blue);
+        }
+
+        @media (max-width: 768px) {
+            .app { padding: 16px 12px 40px; }
+            .input-group { flex-direction: column; }
+            .config-grid { grid-template-columns: 1fr; }
+            .limiter-grid { grid-template-columns: 1fr; }
+            .model-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+
+    <div class="header">
+        <div class="header-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#4285f4"/>
+                        <stop offset="50%" style="stop-color:#a78bfa"/>
+                        <stop offset="100%" style="stop-color:#34d399"/>
+                    </linearGradient>
+                </defs>
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+            </svg>
+        </div>
+        <h1>Gemini Models Checker</h1>
+        <p>Production-ready tool with intelligent rate limiting, VPN detection, retry logic, and complete TypeScript/JavaScript examples to avoid 429 errors.</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" data-tab="checker">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Model Checker
+        </button>
+        <button class="tab" data-tab="guide">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Implementation Guide
+        </button>
+        <button class="tab" data-tab="vpn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            VPN Impact
+        </button>
+    </div>
+
+    <div class="tab-content active" data-tab="checker">
+        
+        <div class="panel">
+            <div class="panel-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                API Configuration
+            </div>
+            <div class="input-group">
+                <div class="input-wrap">
+                    <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                    <input type="password" id="apiKey" placeholder="Paste your Gemini API key (AIza...)" autocomplete="off" spellcheck="false" />
+                    <button class="btn-toggle" id="btnToggle">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="eyeIcon">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                </div>
+                <button class="btn-primary" id="btnRun">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                    <span>Test All Models</span>
+                </button>
+            </div>
+
+            <div class="panel-header" style="margin-top: 16px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Rate Limiting Configuration
+            </div>
+            <div class="config-grid">
+                <div class="config-item">
+                    <label>Requests Per Minute (RPM)</label>
+                    <input type="number" id="cfgRPM" value="15" min="1" max="60" />
+                </div>
+                <div class="config-item">
+                    <label>Tokens Per Minute (TPM)</label>
+                    <input type="number" id="cfgTPM" value="1000000" min="1000" max="10000000" />
+                </div>
+                <div class="config-item">
+                    <label>Concurrent Requests</label>
+                    <input type="number" id="cfgConcurrent" value="2" min="1" max="5" />
+                </div>
+                <div class="config-item">
+                    <label>Retry Attempts</label>
+                    <input type="number" id="cfgRetry" value="3" min="0" max="10" />
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chkTest" checked />
+                    Perform real API tests
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chkRetry" checked />
+                    Enable exponential backoff retry
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chkVPN" />
+                    VPN is active (adjust timeouts)
+                </label>
+            </div>
+        </div>
+
+        <div class="limiter-display" id="limiterDisplay" style="display:none;">
+            <div class="panel-header" style="margin-bottom: 16px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Live Rate Limiter Status
+            </div>
+            <div class="limiter-grid">
+                <div class="limiter-stat rpm">
+                    <div class="label">Requests This Minute</div>
+                    <div class="value" id="rpmValue">0 / 15</div>
+                    <div class="bar"><div class="bar-fill" id="rpmBar" style="width:0%"></div></div>
+                </div>
+                <div class="limiter-stat tpm">
+                    <div class="label">Tokens This Minute</div>
+                    <div class="value" id="tpmValue">0 / 1M</div>
+                    <div class="bar"><div class="bar-fill" id="tpmBar" style="width:0%"></div></div>
+                </div>
+                <div class="limiter-stat queue">
+                    <div class="label">Queue Size</div>
+                    <div class="value" id="queueValue">0</div>
+                    <div class="bar"><div class="bar-fill" id="queueBar" style="width:0%"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status" id="status"></div>
+
+        <div class="progress-wrap" id="progress">
+            <div class="progress-info">
+                <span id="progressLabel">Testing models...</span>
+                <span id="progressCount">0/0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div id="statsContainer"></div>
+
+        <div id="filterContainer"></div>
+
+        <div id="results"></div>
+
+        <div class="export-section" id="exportSection" style="display:none;">
+            <div class="panel-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export Results
+            </div>
+            <div class="export-buttons">
+                <button class="btn-export" id="btnExportJSON">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Export as JSON
+                </button>
+                <button class="btn-export" id="btnExportCSV">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Export as CSV
+                </button>
+                <button class="btn-export" id="btnCopyWorking">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copy Working Models
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" data-tab="guide">
+        
+        <div class="info-box">
+            <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                How to Avoid 429 Errors
+            </h3>
+            <p>The <code class="code-inline">429 Too Many Requests</code> error occurs when you exceed API rate limits. Here's how to prevent it:</p>
+            <ul>
+                <li>Implement a <strong>rate limiter</strong> to track requests per minute (RPM) and tokens per minute (TPM)</li>
+                <li>Use a <strong>queue system</strong> to manage concurrent requests</li>
+                <li>Add <strong>exponential backoff</strong> retry logic with jitter</li>
+                <li>Monitor <code class="code-inline">Retry-After</code> headers in responses</li>
+                <li>Respect the <code class="code-inline">x-ratelimit-*</code> headers returned by the API</li>
+            </ul>
+        </div>
+
+        <h3 style="margin: 24px 0 16px; color: var(--text-secondary);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            TypeScript Implementation
+        </h3>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">TypeScript — Rate Limiter Class</span>
+                <button class="btn-copy" onclick="copyCode(this, 'ts-limiter')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <div class="code-body" id="ts-limiter"><span class="kw">interface</span> <span class="typ">RateLimiterConfig</span> {
+  <span class="var">requestsPerMinute</span>: <span class="typ">number</span>;
+  <span class="var">tokensPerMinute</span>: <span class="typ">number</span>;
+  <span class="var">maxConcurrent</span>: <span class="typ">number</span>;
+  <span class="var">retryAttempts</span>: <span class="typ">number</span>;
+  <span class="var">enableBackoff</span>: <span class="typ">boolean</span>;
+}
+
+<span class="kw">interface</span> <span class="typ">QueuedRequest</span> {
+  <span class="var">fn</span>: <span class="op">()</span> <span class="op">=&gt;</span> <span class="typ">Promise</span><span class="op">&lt;</span><span class="kw">any</span><span class="op">&gt;</span>;
+  <span class="var">resolve</span>: <span class="op">(</span><span class="var">value</span>: <span class="kw">any</span><span class="op">)</span> <span class="op">=&gt;</span> <span class="kw">void</span>;
+  <span class="var">reject</span>: <span class="op">(</span><span class="var">error</span>: <span class="kw">any</span><span class="op">)</span> <span class="op">=&gt;</span> <span class="kw">void</span>;
+  <span class="var">estimatedTokens</span>: <span class="typ">number</span>;
+}
+
+<span class="kw">class</span> <span class="typ">GeminiRateLimiter</span> {
+  <span class="kw">private</span> <span class="var">config</span>: <span class="typ">RateLimiterConfig</span>;
+  <span class="kw">private</span> <span class="var">requestsThisMinute</span>: <span class="typ">number</span> <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">private</span> <span class="var">tokensThisMinute</span>: <span class="typ">number</span> <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">private</span> <span class="var">currentConcurrent</span>: <span class="typ">number</span> <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">private</span> <span class="var">queue</span>: <span class="typ">QueuedRequest</span><span class="op">[]</span> <span class="op">=</span> <span class="op">[]</span>;
+  <span class="kw">private</span> <span class="var">minuteResetTimer</span>: <span class="typ">NodeJS</span><span class="op">.</span><span class="typ">Timeout</span> <span class="op">|</span> <span class="kw">null</span> <span class="op">=</span> <span class="kw">null</span>;
+
+  <span class="kw">constructor</span><span class="op">(</span><span class="var">config</span>: <span class="typ">RateLimiterConfig</span><span class="op">)</span> {
+    <span class="kw">this</span><span class="op">.</span><span class="var">config</span> <span class="op">=</span> <span class="var">config</span>;
+    <span class="kw">this</span><span class="op">.</span><span class="fn">startMinuteReset</span><span class="op">()</span>;
+  }
+
+  <span class="kw">private</span> <span class="fn">startMinuteReset</span><span class="op">()</span>: <span class="kw">void</span> {
+    <span class="kw">this</span><span class="op">.</span><span class="var">minuteResetTimer</span> <span class="op">=</span> <span class="fn">setInterval</span><span class="op">(()</span> <span class="op">=&gt;</span> {
+      <span class="kw">this</span><span class="op">.</span><span class="var">requestsThisMinute</span> <span class="op">=</span> <span class="num">0</span>;
+      <span class="kw">this</span><span class="op">.</span><span class="var">tokensThisMinute</span> <span class="op">=</span> <span class="num">0</span>;
+      <span class="kw">this</span><span class="op">.</span><span class="fn">processQueue</span><span class="op">()</span>;
+    <span class="op">}</span>, <span class="num">60000</span><span class="op">)</span>;
+  }
+
+  <span class="kw">async</span> <span class="fn">execute</span><span class="op">&lt;</span><span class="typ">T</span><span class="op">&gt;(</span>
+    <span class="var">fn</span>: <span class="op">()</span> <span class="op">=&gt;</span> <span class="typ">Promise</span><span class="op">&lt;</span><span class="typ">T</span><span class="op">&gt;</span>,
+    <span class="var">estimatedTokens</span>: <span class="typ">number</span> <span class="op">=</span> <span class="num">100</span>
+  <span class="op">)</span>: <span class="typ">Promise</span><span class="op">&lt;</span><span class="typ">T</span><span class="op">&gt;</span> {
+    <span class="kw">return</span> <span class="kw">new</span> <span class="typ">Promise</span><span class="op">((</span><span class="var">resolve</span>, <span class="var">reject</span><span class="op">)</span> <span class="op">=&gt;</span> {
+      <span class="kw">this</span><span class="op">.</span><span class="var">queue</span><span class="op">.</span><span class="fn">push</span><span class="op">({</span> <span class="var">fn</span>, <span class="var">resolve</span>, <span class="var">reject</span>, <span class="var">estimatedTokens</span> <span class="op">}</span>);
+      <span class="kw">this</span><span class="op">.</span><span class="fn">processQueue</span><span class="op">()</span>;
+    <span class="op">}</span>);
+  }
+
+  <span class="kw">private async</span> <span class="fn">processQueue</span><span class="op">()</span>: <span class="typ">Promise</span><span class="op">&lt;</span><span class="kw">void</span><span class="op">&gt;</span> {
+    <span class="kw">while</span> <span class="op">(</span>
+      <span class="kw">this</span><span class="op">.</span><span class="var">queue</span><span class="op">.</span><span class="var">length</span> <span class="op">&gt;</span> <span class="num">0</span> <span class="op">&amp;&amp;</span>
+      <span class="kw">this</span><span class="op">.</span><span class="var">currentConcurrent</span> <span class="op">&lt;</span> <span class="kw">this</span><span class="op">.</span><span class="var">config</span><span class="op">.</span><span class="var">maxConcurrent</span>
+    <span class="op">)</span> {
+      <span class="kw">const</span> <span class="var">item</span> <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="var">queue</span><span class="op">[</span><span class="num">0</span><span class="op">]</span>;
+
+      <span class="kw">if</span> <span class="op">(</span>
+        <span class="kw">this</span><span class="op">.</span><span class="var">requestsThisMinute</span> <span class="op">&gt;=</span> <span class="kw">this</span><span class="op">.</span><span class="var">config</span><span class="op">.</span><span class="var">requestsPerMinute</span> <span class="op">||</span>
+        <span class="kw">this</span><span class="op">.</span><span class="var">tokensThisMinute</span> <span class="op">+</span> <span class="var">item</span><span class="op">.</span><span class="var">estimatedTokens</span> <span class="op">&gt;</span> <span class="kw">this</span><span class="op">.</span><span class="var">config</span><span class="op">.</span><span class="var">tokensPerMinute</span>
+      <span class="op">)</span> {
+        <span class="kw">break</span>;
+      }
+
+      <span class="kw">this</span><span class="op">.</span><span class="var">queue</span><span class="op">.</span><span class="fn">shift</span><span class="op">()</span>;
+      <span class="kw">this</span><span class="op">.</span><span class="var">currentConcurrent</span><span class="op">++</span>;
+      <span class="kw">this</span><span class="op">.</span><span class="var">requestsThisMinute</span><span class="op">++</span>;
+      <span class="kw">this</span><span class="op">.</span><span class="var">tokensThisMinute</span> <span class="op">+=</span> <span class="var">item</span><span class="op">.</span><span class="var">estimatedTokens</span>;
+
+      <span class="kw">this</span><span class="op">.</span><span class="fn">executeWithRetry</span><span class="op">(</span><span class="var">item</span><span class="op">)</span>
+        <span class="op">.</span><span class="fn">then</span><span class="op">(</span><span class="var">item</span><span class="op">.</span><span class="var">resolve</span><span class="op">)</span>
+        <span class="op">.</span><span class="fn">catch</span><span class="op">(</span><span class="var">item</span><span class="op">.</span><span class="var">reject</span><span class="op">)</span>
+        <span class="op">.</span><span class="fn">finally</span><span class="op">(()</span> <span class="op">=&gt;</span> {
+          <span class="kw">this</span><span class="op">.</span><span class="var">currentConcurrent</span><span class="op">--</span>;
+          <span class="kw">this</span><span class="op">.</span><span class="fn">processQueue</span><span class="op">()</span>;
+        <span class="op">}</span>);
+    }
+  }
+
+  <span class="kw">private async</span> <span class="fn">executeWithRetry</span><span class="op">(</span>
+    <span class="var">item</span>: <span class="typ">QueuedRequest</span>,
+    <span class="var">attempt</span>: <span class="typ">number</span> <span class="op">=</span> <span class="num">0</span>
+  <span class="op">)</span>: <span class="typ">Promise</span><span class="op">&lt;</span><span class="kw">any</span><span class="op">&gt;</span> {
+    <span class="kw">try</span> {
+      <span class="kw">return</span> <span class="kw">await</span> <span class="var">item</span><span class="op">.</span><span class="fn">fn</span><span class="op">()</span>;
+    } <span class="kw">catch</span> <span class="op">(</span><span class="var">error</span>: <span class="kw">any</span><span class="op">)</span> {
+      <span class="kw">const</span> <span class="var">is429</span> <span class="op">=</span> <span class="var">error</span><span class="op">?.</span><span class="var">status</span> <span class="op">===</span> <span class="num">429</span> <span class="op">||</span> <span class="var">error</span><span class="op">?.</span><span class="var">message</span><span class="op">?.</span><span class="fn">includes</span><span class="op">(</span><span class="str">'429'</span><span class="op">)</span>;
+
+      <span class="kw">if</span> <span class="op">(</span>
+        <span class="var">is429</span> <span class="op">&amp;&amp;</span>
+        <span class="kw">this</span><span class="op">.</span><span class="var">config</span><span class="op">.</span><span class="var">enableBackoff</span> <span class="op">&amp;&amp;</span>
+        <span class="var">attempt</span> <span class="op">&lt;</span> <span class="kw">this</span><span class="op">.</span><span class="var">config</span><span class="op">.</span><span class="var">retryAttempts</span>
+      <span class="op">)</span> {
+        <span class="kw">const</span> <span class="var">delay</span> <span class="op">=</span> <span class="fn">Math</span><span class="op">.</span><span class="fn">min</span><span class="op">(</span>
+          <span class="num">1000</span> <span class="op">*</span> <span class="fn">Math</span><span class="op">.</span><span class="fn">pow</span><span class="op">(</span><span class="num">2</span>, <span class="var">attempt</span><span class="op">)</span> <span class="op">+</span> <span class="fn">Math</span><span class="op">.</span><span class="fn">random</span><span class="op">()</span> <span class="op">*</span> <span class="num">1000</span>,
+          <span class="num">60000</span>
+        <span class="op">)</span>;
+
+        <span class="kw">await</span> <span class="kw">new</span> <span class="typ">Promise</span><span class="op">(</span><span class="var">r</span> <span class="op">=&gt;</span> <span class="fn">setTimeout</span><span class="op">(</span><span class="var">r</span>, <span class="var">delay</span><span class="op">))</span>;
+        <span class="kw">return</span> <span class="kw">this</span><span class="op">.</span><span class="fn">executeWithRetry</span><span class="op">(</span><span class="var">item</span>, <span class="var">attempt</span> <span class="op">+</span> <span class="num">1</span><span class="op">)</span>;
+      }
+
+      <span class="kw">throw</span> <span class="var">error</span>;
+    }
+  }
+
+  <span class="fn">getStatus</span><span class="op">()</span> {
+    <span class="kw">return</span> {
+      <span class="var">requestsThisMinute</span>: <span class="kw">this</span><span class="op">.</span><span class="var">requestsThisMinute</span>,
+      <span class="var">tokensThisMinute</span>: <span class="kw">this</span><span class="op">.</span><span class="var">tokensThisMinute</span>,
+      <span class="var">queueSize</span>: <span class="kw">this</span><span class="op">.</span><span class="var">queue</span><span class="op">.</span><span class="var">length</span>,
+      <span class="var">currentConcurrent</span>: <span class="kw">this</span><span class="op">.</span><span class="var">currentConcurrent</span>
+    };
+  }
+
+  <span class="fn">destroy</span><span class="op">()</span>: <span class="kw">void</span> {
+    <span class="kw">if</span> <span class="op">(</span><span class="kw">this</span><span class="op">.</span><span class="var">minuteResetTimer</span><span class="op">)</span> {
+      <span class="fn">clearInterval</span><span class="op">(</span><span class="kw">this</span><span class="op">.</span><span class="var">minuteResetTimer</span><span class="op">)</span>;
+    }
+  }
+}</div>
+        </div>
+
+        <h3 style="margin: 24px 0 16px; color: var(--text-secondary);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Usage Example
+        </h3>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">TypeScript — Using the Rate Limiter</span>
+                <button class="btn-copy" onclick="copyCode(this, 'ts-usage')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <div class="code-body" id="ts-usage"><span class="kw">const</span> <span class="var">limiter</span> <span class="op">=</span> <span class="kw">new</span> <span class="typ">GeminiRateLimiter</span><span class="op">({</span>
+  <span class="var">requestsPerMinute</span>: <span class="num">15</span>,
+  <span class="var">tokensPerMinute</span>: <span class="num">1000000</span>,
+  <span class="var">maxConcurrent</span>: <span class="num">2</span>,
+  <span class="var">retryAttempts</span>: <span class="num">3</span>,
+  <span class="var">enableBackoff</span>: <span class="kw">true</span>
+<span class="op">}</span>);
+
+<span class="kw">async function</span> <span class="fn">testModel</span><span class="op">(</span><span class="var">modelName</span>: <span class="typ">string</span>, <span class="var">apiKey</span>: <span class="typ">string</span><span class="op">)</span> {
+  <span class="kw">return</span> <span class="kw">await</span> <span class="var">limiter</span><span class="op">.</span><span class="fn">execute</span><span class="op">(</span>
+    <span class="kw">async</span> <span class="op">()</span> <span class="op">=&gt;</span> {
+      <span class="kw">const</span> <span class="var">response</span> <span class="op">=</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="op">(</span>
+        <span class="str">`https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${apiKey}`</span>,
+        {
+          <span class="var">method</span>: <span class="str">'POST'</span>,
+          <span class="var">headers</span>: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+          <span class="var">body</span>: <span class="typ">JSON</span><span class="op">.</span><span class="fn">stringify</span><span class="op">({</span>
+            <span class="var">contents</span>: <span class="op">[{</span> <span class="var">parts</span>: <span class="op">[{</span> <span class="var">text</span>: <span class="str">'Hi'</span> <span class="op">}]</span> <span class="op">}]</span>,
+            <span class="var">generationConfig</span>: { <span class="var">maxOutputTokens</span>: <span class="num">1</span> }
+          <span class="op">}</span>)
+        }
+      );
+
+      <span class="kw">if</span> <span class="op">(!</span><span class="var">response</span><span class="op">.</span><span class="var">ok</span><span class="op">)</span> {
+        <span class="kw">const</span> <span class="var">error</span>: <span class="kw">any</span> <span class="op">=</span> <span class="kw">new</span> <span class="typ">Error</span><span class="op">(</span><span class="str">`HTTP ${response.status}`</span><span class="op">)</span>;
+        <span class="var">error</span><span class="op">.</span><span class="var">status</span> <span class="op">=</span> <span class="var">response</span><span class="op">.</span><span class="var">status</span>;
+        <span class="kw">throw</span> <span class="var">error</span>;
+      }
+
+      <span class="kw">return</span> <span class="kw">await</span> <span class="var">response</span><span class="op">.</span><span class="fn">json</span><span class="op">()</span>;
+    },
+    <span class="num">100</span>
+  );
+}
+
+<span class="kw">async function</span> <span class="fn">testAllModels</span><span class="op">(</span><span class="var">models</span>: <span class="typ">string</span><span class="op">[]</span>, <span class="var">apiKey</span>: <span class="typ">string</span><span class="op">)</span> {
+  <span class="kw">const</span> <span class="var">results</span> <span class="op">=</span> <span class="kw">await</span> <span class="typ">Promise</span><span class="op">.</span><span class="fn">allSettled</span><span class="op">(</span>
+    <span class="var">models</span><span class="op">.</span><span class="fn">map</span><span class="op">(</span><span class="var">model</span> <span class="op">=&gt;</span> <span class="fn">testModel</span><span class="op">(</span><span class="var">model</span>, <span class="var">apiKey</span><span class="op">))</span>
+  );
+
+  <span class="kw">return</span> <span class="var">results</span><span class="op">.</span><span class="fn">map</span><span class="op">((</span><span class="var">result</span>, <span class="var">i</span><span class="op">)</span> <span class="op">=&gt;</span> <span class="op">({</span>
+    <span class="var">model</span>: <span class="var">models</span><span class="op">[</span><span class="var">i</span><span class="op">]</span>,
+    <span class="var">status</span>: <span class="var">result</span><span class="op">.</span><span class="var">status</span> <span class="op">===</span> <span class="str">'fulfilled'</span> <span class="op">?</span> <span class="str">'working'</span> : <span class="str">'failed'</span>,
+    <span class="var">error</span>: <span class="var">result</span><span class="op">.</span><span class="var">status</span> <span class="op">===</span> <span class="str">'rejected'</span> <span class="op">?</span> <span class="var">result</span><span class="op">.</span><span class="var">reason</span> : <span class="kw">null</span>
+  <span class="op">}</span>));
+}
+
+<span class="fn">setInterval</span><span class="op">(()</span> <span class="op">=&gt;</span> {
+  <span class="kw">const</span> <span class="var">status</span> <span class="op">=</span> <span class="var">limiter</span><span class="op">.</span><span class="fn">getStatus</span><span class="op">()</span>;
+  <span class="var">console</span><span class="op">.</span><span class="fn">log</span><span class="op">(</span><span class="str">'Rate Limiter Status:'</span>, <span class="var">status</span><span class="op">)</span>;
+<span class="op">}</span>, <span class="num">5000</span><span class="op">)</span>;
+
+<span class="var">limiter</span><span class="op">.</span><span class="fn">destroy</span><span class="op">()</span>;</div>
+        </div>
+
+    </div>
+
+    <div class="tab-content" data-tab="vpn">
+        
+        <div class="info-box">
+            <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                VPN Impact on Gemini API Access
+            </h3>
+            <p>Using a VPN can affect your access to Google's Gemini API in several ways:</p>
+        </div>
+
+        <div class="info-box">
+            <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                With VPN Active
+            </h3>
+            <ul>
+                <li><strong>Geo-restrictions:</strong> Some VPN IPs are blocked or rate-limited by Google</li>
+                <li><strong>Increased latency:</strong> Extra routing through VPN servers adds 50-500ms delay</li>
+                <li><strong>Shared IP issues:</strong> Other VPN users may have exhausted rate limits on that IP</li>
+                <li><strong>Suspicious activity detection:</strong> Rapid IP changes can trigger security blocks</li>
+                <li><strong>Country-specific models:</strong> Some models may only be available in certain regions</li>
+            </ul>
+            <p><strong>Recommendation:</strong> If testing fails with VPN, try disabling it temporarily or use a premium VPN with dedicated IPs.</p>
+        </div>
+
+        <div class="info-box">
+            <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Without VPN
+            </h3>
+            <ul>
+                <li><strong>Direct access:</strong> Fastest connection to Google's servers</li>
+                <li><strong>Lower latency:</strong> Typical response times 100-300ms</li>
+                <li><strong>Clean IP reputation:</strong> Your ISP IP is less likely to be rate-limited</li>
+                <li><strong>Consistent access:</strong> More reliable API responses</li>
+                <li><strong>Full model availability:</strong> Access to all region-specific models</li>
+            </ul>
+            <p><strong>Recommendation:</strong> For production use, avoid VPNs unless required for compliance.</p>
+        </div>
+
+        <div class="info-box">
+            <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m5.66-13.66l-4.24 4.24m0 6l-4.24 4.24M23 12h-6m-6 0H5m13.66 5.66l-4.24-4.24m0-6l-4.24-4.24"/></svg>
+                Configuration Adjustments for VPN
+            </h3>
+            <p>If you must use a VPN, adjust these settings:</p>
+            <ul>
+                <li><strong>Increase timeouts:</strong> Set fetch timeout to 30-60 seconds instead of 10</li>
+                <li><strong>Reduce concurrent requests:</strong> Lower from 5 to 1-2</li>
+                <li><strong>Add delay between requests:</strong> Wait 2-5 seconds between calls</li>
+                <li><strong>Enable aggressive retry:</strong> Retry up to 5 times with exponential backoff</li>
+                <li><strong>Monitor specific errors:</strong> Watch for <code class="code-inline">ECONNREFUSED</code>, <code class="code-inline">ETIMEDOUT</code>, <code class="code-inline">403 Forbidden</code></li>
+            </ul>
+        </div>
+
+        <h3 style="margin: 24px 0 16px; color: var(--text-secondary);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            VPN-Aware Configuration
+        </h3>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">TypeScript — VPN-Aware Fetch</span>
+                <button class="btn-copy" onclick="copyCode(this, 'ts-vpn')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copy
+                </button>
+            </div>
+            <div class="code-body" id="ts-vpn"><span class="kw">interface</span> <span class="typ">FetchConfig</span> {
+  <span class="var">timeout</span>: <span class="typ">number</span>;
+  <span class="var">retries</span>: <span class="typ">number</span>;
+  <span class="var">vpnMode</span>: <span class="typ">boolean</span>;
+}
+
+<span class="kw">async function</span> <span class="fn">fetchWithVPNSupport</span><span class="op">(</span>
+  <span class="var">url</span>: <span class="typ">string</span>,
+  <span class="var">options</span>: <span class="typ">RequestInit</span>,
+  <span class="var">config</span>: <span class="typ">FetchConfig</span>
+<span class="op">)</span>: <span class="typ">Promise</span><span class="op">&lt;</span><span class="typ">Response</span><span class="op">&gt;</span> {
+  <span class="kw">const</span> <span class="var">timeout</span> <span class="op">=</span> <span class="var">config</span><span class="op">.</span><span class="var">vpnMode</span> <span class="op">?</span> <span class="num">60000</span> : <span class="var">config</span><span class="op">.</span><span class="var">timeout</span>;
+  <span class="kw">const</span> <span class="var">maxRetries</span> <span class="op">=</span> <span class="var">config</span><span class="op">.</span><span class="var">vpnMode</span> <span class="op">?</span> <span class="num">5</span> : <span class="var">config</span><span class="op">.</span><span class="var">retries</span>;
+
+  <span class="kw">for</span> <span class="op">(</span><span class="kw">let</span> <span class="var">attempt</span> <span class="op">=</span> <span class="num">0</span>; <span class="var">attempt</span> <span class="op">&lt;=</span> <span class="var">maxRetries</span>; <span class="var">attempt</span><span class="op">++</span><span class="op">)</span> {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> <span class="var">controller</span> <span class="op">=</span> <span class="kw">new</span> <span class="typ">AbortController</span><span class="op">()</span>;
+      <span class="kw">const</span> <span class="var">timeoutId</span> <span class="op">=</span> <span class="fn">setTimeout</span><span class="op">(()</span> <span class="op">=&gt;</span> <span class="var">controller</span><span class="op">.</span><span class="fn">abort</span><span class="op">()</span>, <span class="var">timeout</span><span class="op">)</span>;
+
+      <span class="kw">const</span> <span class="var">response</span> <span class="op">=</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="op">(</span><span class="var">url</span>, {
+        <span class="op">...</span><span class="var">options</span>,
+        <span class="var">signal</span>: <span class="var">controller</span><span class="op">.</span><span class="var">signal</span>
+      <span class="op">}</span>);
+
+      <span class="fn">clearTimeout</span><span class="op">(</span><span class="var">timeoutId</span><span class="op">)</span>;
+
+      <span class="kw">if</span> <span class="op">(</span><span class="var">response</span><span class="op">.</span><span class="var">ok</span> <span class="op">||</span> <span class="op">(</span><span class="var">response</span><span class="op">.</span><span class="var">status</span> <span class="op">&gt;=</span> <span class="num">400</span> <span class="op">&amp;&amp;</span> <span class="var">response</span><span class="op">.</span><span class="var">status</span> <span class="op">&lt;</span> <span class="num">500</span> <span class="op">&amp;&amp;</span> <span class="var">response</span><span class="op">.</span><span class="var">status</span> <span class="op">!==</span> <span class="num">429</span><span class="op">))</span> {
+        <span class="kw">return</span> <span class="var">response</span>;
+      }
+
+      <span class="kw">const</span> <span class="var">baseDelay</span> <span class="op">=</span> <span class="var">config</span><span class="op">.</span><span class="var">vpnMode</span> <span class="op">?</span> <span class="num">3000</span> : <span class="num">1000</span>;
+      <span class="kw">const</span> <span class="var">delay</span> <span class="op">=</span> <span class="fn">Math</span><span class="op">.</span><span class="fn">min</span><span class="op">(</span>
+        <span class="var">baseDelay</span> <span class="op">*</span> <span class="fn">Math</span><span class="op">.</span><span class="fn">pow</span><span class="op">(</span><span class="num">2</span>, <span class="var">attempt</span><span class="op">)</span> <span class="op">+</span> <span class="fn">Math</span><span class="op">.</span><span class="fn">random</span><span class="op">()</span> <span class="op">*</span> <span class="num">1000</span>,
+        <span class="num">60000</span>
+      );
+
+      <span class="kw">if</span> <span class="op">(</span><span class="var">attempt</span> <span class="op">&lt;</span> <span class="var">maxRetries</span><span class="op">)</span> {
+        <span class="var">console</span><span class="op">.</span><span class="fn">warn</span><span class="op">(</span><span class="str">`Retry ${attempt + 1}/${maxRetries} after ${delay}ms`</span><span class="op">)</span>;
+        <span class="kw">await</span> <span class="kw">new</span> <span class="typ">Promise</span><span class="op">(</span><span class="var">r</span> <span class="op">=&gt;</span> <span class="fn">setTimeout</span><span class="op">(</span><span class="var">r</span>, <span class="var">delay</span><span class="op">))</span>;
+      } <span class="kw">else</span> {
+        <span class="kw">return</span> <span class="var">response</span>;
+      }
+
+    } <span class="kw">catch</span> <span class="op">(</span><span class="var">error</span>: <span class="kw">any</span><span class="op">)</span> {
+      <span class="kw">if</span> <span class="op">(</span><span class="var">attempt</span> <span class="op">===</span> <span class="var">maxRetries</span><span class="op">)</span> <span class="kw">throw</span> <span class="var">error</span>;
+
+      <span class="kw">const</span> <span class="var">isTimeout</span> <span class="op">=</span> <span class="var">error</span><span class="op">.</span><span class="var">name</span> <span class="op">===</span> <span class="str">'AbortError'</span>;
+      <span class="kw">const</span> <span class="var">isNetwork</span> <span class="op">=</span> <span class="var">error</span><span class="op">.</span><span class="var">message</span><span class="op">?.</span><span class="fn">includes</span><span class="op">(</span><span class="str">'network'</span><span class="op">)</span> <span class="op">||</span> <span class="var">error</span><span class="op">.</span><span class="var">message</span><span class="op">?.</span><span class="fn">includes</span><span class="op">(</span><span class="str">'fetch'</span><span class="op">)</span>;
+
+      <span class="kw">if</span> <span class="op">(</span><span class="var">isTimeout</span> <span class="op">||</span> <span class="var">isNetwork</span><span class="op">)</span> {
+        <span class="kw">const</span> <span class="var">delay</span> <span class="op">=</span> <span class="num">3000</span> <span class="op">*</span> <span class="fn">Math</span><span class="op">.</span><span class="fn">pow</span><span class="op">(</span><span class="num">2</span>, <span class="var">attempt</span><span class="op">)</span>;
+        <span class="var">console</span><span class="op">.</span><span class="fn">warn</span><span class="op">(</span><span class="str">`Network error, retry ${attempt + 1}/${maxRetries} after ${delay}ms`</span><span class="op">)</span>;
+        <span class="kw">await</span> <span class="kw">new</span> <span class="typ">Promise</span><span class="op">(</span><span class="var">r</span> <span class="op">=&gt;</span> <span class="fn">setTimeout</span><span class="op">(</span><span class="var">r</span>, <span class="var">delay</span><span class="op">))</span>;
+      } <span class="kw">else</span> {
+        <span class="kw">throw</span> <span class="var">error</span>;
+      }
+    }
+  }
+
+  <span class="kw">throw</span> <span class="kw">new</span> <span class="typ">Error</span><span class="op">(</span><span class="str">'Max retries exceeded'</span><span class="op">)</span>;
+}</div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
+
+class RateLimiter {
+    constructor(config) {
+        this.config = config;
+        this.requestsThisMinute = 0;
+        this.tokensThisMinute = 0;
+        this.currentConcurrent = 0;
+        this.queue = [];
+        
+        this.startMinuteReset();
+    }
+
+    startMinuteReset() {
+        this.resetInterval = setInterval(() => {
+            this.requestsThisMinute = 0;
+            this.tokensThisMinute = 0;
+            this.processQueue();
+            updateLimiterDisplay();
+        }, 60000);
+    }
+
+    async execute(fn, estimatedTokens = 100) {
+        return new Promise((resolve, reject) => {
+            this.queue.push({ fn, resolve, reject, estimatedTokens });
+            this.processQueue();
+        });
+    }
+
+    async processQueue() {
+        while (
+            this.queue.length > 0 &&
+            this.currentConcurrent < this.config.maxConcurrent
+        ) {
+            const item = this.queue[0];
+
+            if (
+                this.requestsThisMinute >= this.config.requestsPerMinute ||
+                this.tokensThisMinute + item.estimatedTokens > this.config.tokensPerMinute
+            ) {
+                break;
+            }
+
+            this.queue.shift();
+            this.currentConcurrent++;
+            this.requestsThisMinute++;
+            this.tokensThisMinute += item.estimatedTokens;
+
+            updateLimiterDisplay();
+
+            this.executeWithRetry(item)
+                .then(item.resolve)
+                .catch(item.reject)
+                .finally(() => {
+                    this.currentConcurrent--;
+                    this.processQueue();
+                    updateLimiterDisplay();
+                });
+        }
+    }
+
+    async executeWithRetry(item, attempt = 0) {
+        try {
+            return await item.fn();
+        } catch (error) {
+            const is429 = error?.status === 429 || error?.message?.includes('429');
+
+            if (
+                is429 &&
+                this.config.enableBackoff &&
+                attempt < this.config.retryAttempts
+            ) {
+                const delay = Math.min(
+                    1000 * Math.pow(2, attempt) + Math.random() * 1000,
+                    60000
+                );
+
+                await new Promise(r => setTimeout(r, delay));
+                return this.executeWithRetry(item, attempt + 1);
+            }
+
+            throw error;
+        }
+    }
+
+    getStatus() {
+        return {
+            requestsThisMinute: this.requestsThisMinute,
+            tokensThisMinute: this.tokensThisMinute,
+            queueSize: this.queue.length,
+            currentConcurrent: this.currentConcurrent
+        };
+    }
+
+    destroy() {
+        if (this.resetInterval) clearInterval(this.resetInterval);
+    }
+}
+
+let limiter = null;
+let models = [];
+let currentFilter = 'all';
+
+const $ = id => document.getElementById(id);
+const apiKeyEl = $('apiKey');
+const btnToggle = $('btnToggle');
+const eyeIcon = $('eyeIcon');
+const btnRun = $('btnRun');
+const statusEl = $('status');
+const progressEl = $('progress');
+const progressLabel = $('progressLabel');
+const progressCount = $('progressCount');
+const progressFill = $('progressFill');
+const resultsEl = $('results');
+const limiterDisplay = $('limiterDisplay');
+const statsContainer = $('statsContainer');
+const filterContainer = $('filterContainer');
+const exportSection = $('exportSection');
+
+const cfgRPM = $('cfgRPM');
+const cfgTPM = $('cfgTPM');
+const cfgConcurrent = $('cfgConcurrent');
+const cfgRetry = $('cfgRetry');
+const chkTest = $('chkTest');
+const chkRetry = $('chkRetry');
+const chkVPN = $('chkVPN');
+
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        tab.classList.add('active');
+        document.querySelector(`[data-tab="${target}"].tab-content`).classList.add('active');
+    });
+});
+
+btnToggle.onclick = () => {
+    const show = apiKeyEl.type === 'password';
+    apiKeyEl.type = show ? 'text' : 'password';
+    eyeIcon.innerHTML = show
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+};
+
+function updateLimiterDisplay() {
+    if (!limiter) return;
+
+    const status = limiter.getStatus();
+    const rpmMax = parseInt(cfgRPM.value);
+    const tpmMax = parseInt(cfgTPM.value);
+
+    $('rpmValue').textContent = `${status.requestsThisMinute} / ${rpmMax}`;
+    $('tpmValue').textContent = `${formatNumber(status.tokensThisMinute)} / ${formatNumber(tpmMax)}`;
+    $('queueValue').textContent = status.queueSize;
+
+    $('rpmBar').style.width = `${(status.requestsThisMinute / rpmMax) * 100}%`;
+    $('tpmBar').style.width = `${(status.tokensThisMinute / tpmMax) * 100}%`;
+    $('queueBar').style.width = `${Math.min((status.queueSize / 10) * 100, 100)}%`;
+}
+
+function formatNumber(n) {
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
+    return n.toString();
+}
+
+function showStatus(type, msg) {
+    statusEl.className = `status ${type}`;
+    statusEl.innerHTML = msg;
+}
+
+function showProgress(cur, tot) {
+    progressEl.classList.add('visible');
+    progressLabel.textContent = `Testing model ${cur} of ${tot}...`;
+    progressCount.textContent = `${cur}/${tot}`;
+    progressFill.style.width = `${(cur / tot) * 100}%`;
+}
+
+function hideProgress() {
+    progressEl.classList.remove('visible');
+}
+
+function renderStats() {
+    const working = models.filter(m => m._status === 'working').length;
+    const failed = models.filter(m => m._status === 'failed').length;
+    const untested = models.filter(m => m._status === 'untested').length;
+    const avgLatency = models.filter(m => m._latency).reduce((sum, m) => sum + m._latency, 0) / models.filter(m => m._latency).length || 0;
+
+    statsContainer.innerHTML = `
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">${models.length}</div>
+                <div class="stat-label">Total Models</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--green);">${working}</div>
+                <div class="stat-label">Working</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--red);">${failed}</div>
+                <div class="stat-label">Failed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${Math.round(avgLatency)}ms</div>
+                <div class="stat-label">Avg Latency</div>
+            </div>
+        </div>
+    `;
+}
+
+function renderFilters() {
+    filterContainer.innerHTML = `
+        <div class="filter-bar">
+            <button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" data-filter="all">All (${models.length})</button>
+            <button class="filter-btn ${currentFilter === 'working' ? 'active' : ''}" data-filter="working">Working (${models.filter(m => m._status === 'working').length})</button>
+            <button class="filter-btn ${currentFilter === 'failed' ? 'active' : ''}" data-filter="failed">Failed (${models.filter(m => m._status === 'failed').length})</button>
+            <button class="filter-btn ${currentFilter === 'untested' ? 'active' : ''}" data-filter="untested">Untested (${models.filter(m => m._status === 'untested').length})</button>
+        </div>
+    `;
+
+    filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.onclick = () => {
+            currentFilter = btn.dataset.filter;
+            renderFilters();
+            renderResults();
+        };
+    });
+}
+
+function renderResults() {
+    if (!models.length) {
+        resultsEl.innerHTML = '<div class="info-box"><p>No models to display.</p></div>';
+        return;
+    }
+
+    const filtered = currentFilter === 'all' 
+        ? models 
+        : models.filter(m => m._status === currentFilter);
+
+    if (!filtered.length) {
+        resultsEl.innerHTML = '<div class="info-box"><p>No models match the current filter.</p></div>';
+        return;
+    }
+
+    let html = '<div class="model-grid">';
+    
+    filtered.forEach(m => {
+        const methods = (m.supportedGenerationMethods || []).map(method => {
+            if (method.includes('generateContent')) return 'Generate';
+            if (method.includes('embedContent')) return 'Embed';
+            if (method.includes('countTokens')) return 'Count';
+            return method;
+        }).join(', ');
+
+        html += `
+            <div class="model-card ${m._status}">
+                <div class="model-name">${escapeHtml(m._id)}</div>
+                <div class="model-meta">
+                    <span class="model-badge status-${m._status}">${m._status}</span>
+                    ${methods ? `<span class="model-badge type">${methods}</span>` : ''}
+                </div>
+                ${m._latency ? `<div class="model-latency">Latency: ${m._latency}ms</div>` : ''}
+                ${m._error ? `<div class="model-error">${escapeHtml(m._error.message || 'Unknown error')}</div>` : ''}
+            </div>
+        `;
+    });
+
+    html += '</div>';
+    resultsEl.innerHTML = html;
+}
+
+btnRun.onclick = async () => {
+    const key = apiKeyEl.value.trim();
+    if (!key) {
+        showStatus('error', '⚠️ Please enter your API key');
+        apiKeyEl.focus();
+        return;
+    }
+
+    if (limiter) limiter.destroy();
+    
+    limiter = new RateLimiter({
+        requestsPerMinute: parseInt(cfgRPM.value),
+        tokensPerMinute: parseInt(cfgTPM.value),
+        maxConcurrent: parseInt(cfgConcurrent.value),
+        retryAttempts: parseInt(cfgRetry.value),
+        enableBackoff: chkRetry.checked
+    });
+
+    limiterDisplay.style.display = 'block';
+    updateLimiterDisplay();
+
+    btnRun.disabled = true;
+    btnRun.innerHTML = '<div class="spinner"></div><span>Testing...</span>';
+    showStatus('info', '🔄 Fetching model list...');
+    models = [];
+    resultsEl.innerHTML = '';
+    statsContainer.innerHTML = '';
+    filterContainer.innerHTML = '';
+    exportSection.style.display = 'none';
+
+    try {
+        const res = await fetch(`${BASE_URL}/models?key=${key}&pageSize=1000`);
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err?.error?.message || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        const raw = data.models || [];
+        if (!raw.length) {
+            showStatus('error', '⚠️ No models returned');
+            return;
+        }
+
+        models = raw.map(m => ({
+            ...m,
+            _id: (m.name || '').replace('models/', ''),
+            _status: 'untested',
+            _latency: null,
+            _error: null
+        }));
+
+        showStatus('info', `📋 Found ${models.length} models. ${chkTest.checked ? 'Starting tests...' : ''}`);
+        renderStats();
+        renderFilters();
+        renderResults();
+
+        if (chkTest.checked) {
+            for (let i = 0; i < models.length; i++) {
+                showProgress(i + 1, models.length);
+                await testModel(models[i], key);
+                renderStats();
+                renderResults();
+            }
+            hideProgress();
+
+            const working = models.filter(m => m._status === 'working').length;
+            showStatus('success', `✅ Complete! <strong>${working} / ${models.length}</strong> models working`);
+        }
+
+        exportSection.style.display = 'block';
+
+    } catch (err) {
+        showStatus('error', `❌ ${escapeHtml(err.message)}`);
+    } finally {
+        btnRun.disabled = false;
+        btnRun.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Test All Models</span>';
+    }
+};
+
+async function testModel(model, key) {
+    const start = performance.now();
+    const name = model.name;
+    const isGen = (model.supportedGenerationMethods || []).some(m => m.includes('generateContent'));
+    const isEmb = (model.supportedGenerationMethods || []).some(m => m.includes('embedContent'));
+
+    try {
+        await limiter.execute(async () => {
+            let url, body;
+
+            if (isGen) {
+                url = `${BASE_URL}/${name}:generateContent?key=${key}`;
+                body = {
+                    contents: [{ parts: [{ text: 'Hi' }] }],
+                    generationConfig: { maxOutputTokens: 1 }
+                };
+            } else if (isEmb) {
+                url = `${BASE_URL}/${name}:embedContent?key=${key}`;
+                body = { content: { parts: [{ text: 'test' }] } };
+            } else {
+                url = `${BASE_URL}/${name}:countTokens?key=${key}`;
+                body = { contents: [{ parts: [{ text: 'test' }] }] };
+            }
+
+            const vpnMode = chkVPN.checked;
+            const timeout = vpnMode ? 60000 : 10000;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId);
+
+            model._latency = Math.round(performance.now() - start);
+
+            if (res.ok) {
+                model._status = 'working';
+            } else {
+                const err = await res.json().catch(() => ({}));
+                model._status = 'failed';
+                model._error = {
+                    code: err?.error?.code || res.status,
+                    message: err?.error?.message || res.statusText
+                };
+            }
+        }, 100);
+
+    } catch (err) {
+        model._latency = Math.round(performance.now() - start);
+        model._status = 'failed';
+        model._error = {
+            code: 0,
+            message: err.message
+        };
+    }
+}
+
+$('btnExportJSON').onclick = () => {
+    const data = JSON.stringify(models, null, 2);
+    downloadFile('gemini-models.json', data, 'application/json');
+};
+
+$('btnExportCSV').onclick = () => {
+    const headers = ['Name', 'Status', 'Latency (ms)', 'Methods', 'Error'];
+    const rows = models.map(m => [
+        m._id,
+        m._status,
+        m._latency || '',
+        (m.supportedGenerationMethods || []).join('; '),
+        m._error ? m._error.message : ''
+    ]);
+
+    const csv = [headers, ...rows].map(row => 
+        row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+    ).join('\n');
+
+    downloadFile('gemini-models.csv', csv, 'text/csv');
+};
+
+$('btnCopyWorking').onclick = () => {
+    const working = models.filter(m => m._status === 'working').map(m => m._id);
+    navigator.clipboard.writeText(working.join('\n')).then(() => {
+        showStatus('success', `✅ Copied ${working.length} working model names to clipboard`);
+    });
+};
+
+function downloadFile(filename, content, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function copyCode(btn, id) {
+    const code = $(id).textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Copied';
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';
+        }, 2000);
+    });
+}
+window.copyCode = copyCode;
+
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+apiKeyEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter') btnRun.click();
+});
+</script>
+</body>
+</html>

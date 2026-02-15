@@ -1,0 +1,32 @@
+# Master-upgrade changes 20250215 (no git; summary patch)
+# Apply manually or use as reference. Project is not a git repo.
+
+# === MODIFIED ===
+# src/components/modals/VoiceChatModal.tsx
+# - Added MIGRATION NOTE in file header.
+# - In speak(): guard "if (typeof window === 'undefined' || !('speechSynthesis' in window) || !synthRef.current) return;" before TTS.
+
+# src/hooks/useSpeechRecognition.tsx
+# - Added MIGRATION NOTE in file header (logic aligned with master-update; no API change).
+
+# src/stores/index.ts
+# - Exported useVoiceStore and types VoiceState, VoiceSettings from ./voiceStore.
+
+# === ADDED ===
+# src/stores/voiceStore.ts (new file)
+# - Full voice store: startListening, stopListening, startSpeaking, stopSpeaking, updateTranscript, etc.
+# - Uses SpeechRecognitionService and voskRendererService from existing services.
+# - TTS guarded when speechSynthesis unavailable.
+
+# src/services/ai/ThinkingEngine.ts (new file)
+# - Minimal engine: speak(text) calls voiceStore.startSpeaking(text).
+# - Exported singleton thinkingEngine.
+
+# === NOT MODIFIED (by design) ===
+# src/components/chat/InputArea.tsx (kept as-is; conflict-risk)
+# src/services/ai/geminiService.ts (kept as-is; conflict-risk)
+
+# === BACKUPS ===
+# backup/voice-backups/src/components/modals/VoiceChatModal.tsx-20250215
+# backup/voice-backups/src/components/chat/InputArea.tsx-20250215
+# backup/voice-backups/src/hooks/useSpeechRecognition.tsx-20250215

@@ -1,0 +1,345 @@
+/**
+ * PreviewPanel Component - Enhanced Preview with Hot Reload
+ * 
+ * STRATEGY: ENHANCE existing preview, ADD hot reload and error capture
+ */
+
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+
+interface PreviewError {
+  message: string;
+  line?: number;
+  column?: number;
+  filename?: string;
+  stack?: string;
+  timestamp: Date;
+}
+
+interface FileData {
+  name: string;
+  content: string;
+  language?: string;
+  path?: string;
+}
+
+interface PreviewPanelProps {
+  /** Raw content mode */
+  html?: string;
+  css?: string;
+  javascript?: string;
+  /** Files-based mode (App passes these) */
+  files?: Record<string, FileData>;
+  activeFile?: string | null;
+  errors?: PreviewError[];
+  onErrorsChange?: React.Dispatch<React.SetStateAction<PreviewError[]>>;
+  /** Hot reload options */
+  hotReload?: boolean;
+  debounceMs?: number;
+  onError?: (error: PreviewError) => void;
+  syncScroll?: boolean;
+  captureConsole?: boolean;
+}
+
+function buildFromFiles(files: Record<string, FileData>, activeFile: string | null): { html: string; css: string; javascript: string } {
+  let html = '';
+  let css = '';
+  let javascript = '';
+  const entries = Object.entries(files);
+  for (const [path, file] of entries) {
+    const content = file.content ?? '';
+    const lang = (file.language ?? '').toLowerCase();
+    if (path.endsWith('.html') || lang.includes('html')) html += content;
+    else if (path.endsWith('.css') || lang.includes('css')) css += content;
+    else if (path.endsWith('.js') || path.endsWith('.tsx') || path.endsWith('.ts') || lang.includes('javascript') || lang.includes('typescript')) javascript += content;
+    else if (!activeFile || path === activeFile) html += `<pre>${content}</pre>`;
+  }
+  if (!html.trim()) html = '<div>No preview</div>';
+  return { html, css, javascript };
+}
+
+export const PreviewPanel: React.FC<PreviewPanelProps> = (props) => {
+  const {
+    html: htmlProp,
+    css: cssProp = '',
+    javascript: javascriptProp = '',
+    files,
+    activeFile,
+    errors: errorsProp,
+    onErrorsChange,
+    hotReload = true,
+    debounceMs = 300,
+    onError,
+    syncScroll = false,
+    captureConsole = false,
+  } = props;
+
+  const derived = files && (htmlProp === undefined || htmlProp === '') ? buildFromFiles(files, activeFile ?? null) : null;
+  const html = derived ? derived.html : (htmlProp ?? '');
+  const css = derived ? derived.css : (cssProp ?? '');
+  const javascript = derived ? derived.javascript : (javascriptProp ?? '');
+
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [errors, setErrors] = useState<PreviewError[]>(errorsProp ?? []);
+  const effectiveErrors = errorsProp !== undefined ? errorsProp : errors;
+  const setErrorsEffective = onErrorsChange ?? setErrors;
+  const [consoleMessages, setConsoleMessages] = useState<Array<{ level: string; args: any[] }>>([]);
+  const debounceRef = useRef<NodeJS.Timeout>();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Update preview
+  const updatePreview = useCallback(() => {
+    if (!iframeRef.current) return;
+
+    const iframe = iframeRef.current;
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    
+    if (!iframeDoc) return;
+
+    setIsRefreshing(true);
+
+    // Build complete HTML
+    const fullHTML = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Preview</title>
+        <style>${css}</style>
+      </head>
+      <body>
+        ${html}
+        <script>
+          // Error handler
+          window.addEventListener('error', (event) => {
+            window.parent.postMessage({
+              type: 'error',
+              error: {
+                message: event.message,
+                line: event.lineno,
+                column: event.colno,
+                filename: event.filename,
+                stack: event.error?.stack
+              }
+            }, '*');
+          });
+          
+          // Promise rejection handler
+          window.addEventListener('unhandledrejection', (event) => {
+            window.parent.postMessage({
+              type: 'error',
+              error: {
+                message: event.reason?.message || String(event.reason),
+                stack: event.reason?.stack
+              }
+            }, '*');
+          });
+          
+          ${captureConsole ? `
+          // Console capture
+          const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn,
+            info: console.info
+          };
+          
+          ['log', 'error', 'warn', 'info'].forEach(level => {
+            console[level] = (...args) => {
+              originalConsole[level](...args);
+              window.parent.postMessage({
+                type: 'console',
+                level,
+                args: args.map(arg => {
+                  try {
+                    return typeof arg === 'object' ? JSON.stringify(arg) : String(arg);
+                  } catch {
+                    return String(arg);
+                  }
+                })
+              }, '*');
+            };
+          });
+          ` : ''}
+          
+          // User's JavaScript
+          try {
+            ${javascript}
+          } catch (error) {
+            window.parent.postMessage({
+              type: 'error',
+              error: {
+                message: error.message,
+                stack: error.stack
+              }
+            }, '*');
+          }
+        </script>
+      </body>
+      </html>
+    `;
+
+    // Update iframe
+    iframeDoc.open();
+    iframeDoc.write(fullHTML);
+    iframeDoc.close();
+
+    setTimeout(() => setIsRefreshing(false), 100);
+  }, [html, css, javascript, captureConsole]);
+
+  // Hot reload with debouncing
+  useEffect(() => {
+    if (!hotReload) return;
+
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      updatePreview();
+    }, debounceMs);
+
+    return () => clearTimeout(debounceRef.current);
+  }, [html, css, javascript, hotReload, debounceMs, updatePreview]);
+
+  // Listen for messages from iframe
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'error') {
+        const error: PreviewError = {
+          message: event.data.error.message,
+          line: event.data.error.line,
+          column: event.data.error.column,
+          filename: event.data.error.filename,
+          stack: event.data.error.stack,
+          timestamp: new Date(),
+        };
+        
+        setErrorsEffective(prev => [...prev, error]);
+        onError?.(error);
+      }
+      
+      if (event.data.type === 'console' && captureConsole) {
+        setConsoleMessages(prev => [
+          ...prev.slice(-99), // Keep last 100 messages
+          { level: event.data.level, args: event.data.args }
+        ]);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [onError, captureConsole]);
+
+  // Initial render
+  useEffect(() => {
+    updatePreview();
+  }, []);
+
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-slate-900">
+      {/* Empty State */}
+      {!html && (
+        <div className="empty-preview">
+          <svg
+            width="180"
+            height="180"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ opacity: 0.4 }}
+          >
+            <path
+              d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M14 2V8H20"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M8 13H16M8 17H14"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+      )}
+      
+      {/* Iframe */}
+      {html && (
+        <div className="relative h-full w-full bg-slate-900">
+          <iframe
+            ref={iframeRef}
+            className="w-full h-full border-0 bg-white"
+            sandbox="allow-scripts allow-same-origin allow-modals allow-forms allow-popups"
+            title="Preview"
+          />
+        </div>
+      )}
+      
+      {/* Refreshing indicator */}
+      {isRefreshing && (
+        <div className="absolute top-2 right-2 px-3 py-1 bg-blue-600 text-white text-xs rounded-full shadow-lg">
+          Refreshing...
+        </div>
+      )}
+      
+      {/* Error overlay */}
+      {effectiveErrors.length > 0 && (
+        <div className="absolute bottom-0 left-0 right-0 bg-red-900/95 text-white p-4 max-h-48 overflow-auto">
+          <div className="flex justify-between items-start mb-2">
+            <span className="font-semibold text-sm flex items-center gap-2">
+              <span>⚠️</span>
+              <span>Preview Errors ({effectiveErrors.length})</span>
+            </span>
+            <button
+              onClick={() => setErrorsEffective([])}
+              className="text-xs hover:bg-red-800 px-2 py-1 rounded transition-colors"
+            >
+              Clear
+            </button>
+          </div>
+          <div className="space-y-2">
+            {effectiveErrors.slice(-5).map((error, i) => (
+              <div key={i} className="font-mono text-xs bg-red-950/50 p-2 rounded">
+                <div className="font-semibold">{error.message}</div>
+                {error.line && (
+                  <div className="text-red-300 mt-1">
+                    Line {error.line}{error.column && `:${error.column}`}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Console output (if enabled) */}
+      {captureConsole && consoleMessages.length > 0 && (
+        <div className="absolute top-0 left-0 right-0 bg-slate-800/95 text-white p-2 max-h-32 overflow-auto text-xs font-mono">
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-semibold">Console</span>
+            <button
+              onClick={() => setConsoleMessages([])}
+              className="text-xs hover:bg-slate-700 px-2 py-1 rounded"
+            >
+              Clear
+            </button>
+          </div>
+          {consoleMessages.slice(-10).map((msg, i) => (
+            <div key={i} className={`
+              ${msg.level === 'error' ? 'text-red-400' : ''}
+              ${msg.level === 'warn' ? 'text-yellow-400' : ''}
+              ${msg.level === 'info' ? 'text-blue-400' : ''}
+            `}>
+              [{msg.level}] {msg.args.join(' ')}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};

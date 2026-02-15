@@ -1,0 +1,4173 @@
+{
+  "version": "9.2.1",
+  "timestamp": "2026-02-13T19:10:22.937480",
+  "summary": {
+    "total_files": 314,
+    "total_lines": 83271,
+    "tsx_percentage": 56.36942675159236,
+    "framework": "vite",
+    "duration": 6.319185256958008,
+    "cache_hit_rate": 0.5376712328767124
+  },
+  "valuable_unused": [
+    {
+      "name": "DebuggingTools",
+      "path": "src\\components\\features\\DebuggingTools.tsx",
+      "layer": "components",
+      "value_score": 32.0,
+      "reasons": [
+        "+12 Complexity",
+        "+10 Well-typed",
+        "+5 714 lines",
+        "+5 4 hooks"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { DebuggingTools } from '@/src/components/features/DebuggingTools';\n<DebuggingTools />",
+      "exports": [
+        "DebuggingTools",
+        "default"
+      ],
+      "hooks": [
+        "useMemo",
+        "useEffect",
+        "useState",
+        "useCallback"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "SystemStatusDashboard",
+      "path": "src\\components\\panels\\SystemStatusDashboard.tsx",
+      "layer": "components",
+      "value_score": 31.0,
+      "reasons": [
+        "+6 Complexity",
+        "+10 Well-typed",
+        "+10 Name: SystemStatusDashboard",
+        "+5 362 lines"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { SystemStatusDashboard } from '@/src/components/panels/SystemStatusDashboard';\n<SystemStatusDashboard />",
+      "exports": [
+        "SystemStatusDashboard",
+        "default"
+      ],
+      "hooks": [
+        "useEffect",
+        "useState"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "accessibility",
+      "path": "src\\components\\ui\\accessibility.tsx",
+      "layer": "components",
+      "value_score": 32.0,
+      "reasons": [
+        "+12 Complexity",
+        "+10 Well-typed",
+        "+5 404 lines",
+        "+5 4 hooks"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { accessibility } from '@/src/components/ui/accessibility';\n<accessibility />",
+      "exports": [
+        "ScreenReaderOnly",
+        "LiveRegion",
+        "SkipLink",
+        "FocusTrap",
+        "useKeyboardNavigation",
+        "useRovingTabIndex",
+        "useReducedMotion",
+        "useHighContrast",
+        "announce",
+        "default"
+      ],
+      "hooks": [
+        "useEffect",
+        "useRef",
+        "useState",
+        "useCallback"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "AppStateContext",
+      "path": "src\\contexts\\AppStateContext.tsx",
+      "layer": "contexts",
+      "value_score": 35.0,
+      "reasons": [
+        "+15 Complexity",
+        "+10 Well-typed",
+        "+5 356 lines",
+        "+5 9 hooks"
+      ],
+      "suggested_location": "src/App.tsx or AppProvider (wrap in provider)",
+      "integration_effort": "medium",
+      "integration_code": "// In App.tsx:\nimport { AppStateContextProvider } from '@/src/contexts/AppStateContext';\n<AppStateContextProvider>\n  {children}\n</AppStateContextProvider>",
+      "exports": [
+        "AppStateProvider",
+        "useAppState",
+        "useAppStateContext",
+        "useEditorFiles",
+        "useChatMessages",
+        "useUIPanels",
+        "useAgent",
+        "useTheme",
+        "useVoice"
+      ],
+      "hooks": [
+        "useChatState",
+        "useAgentConfig",
+        "useState",
+        "useEditorState",
+        "useCallback",
+        "useAppState",
+        "useMemo",
+        "useUIPanelState",
+        "useContext"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "ModalContext",
+      "path": "src\\contexts\\ModalContext.tsx",
+      "layer": "contexts",
+      "value_score": 85.0,
+      "reasons": [
+        "+25 MCP integration",
+        "+20 Voice capabilities",
+        "+15 Complexity",
+        "+10 Well-typed",
+        "+5 Name: ModalContext",
+        "+5 319 lines",
+        "+5 6 hooks"
+      ],
+      "suggested_location": "src/App.tsx or AppProvider (wrap in provider)",
+      "integration_effort": "medium",
+      "integration_code": "// In App.tsx:\nimport { ModalContextProvider } from '@/src/contexts/ModalContext';\n<ModalContextProvider>\n  {children}\n</ModalContextProvider>",
+      "exports": [
+        "ModalProvider",
+        "useModal",
+        "useModalContext",
+        "useSpecificModal",
+        "useSettingsModal",
+        "useAgentModal",
+        "useMcpToolModal",
+        "useAISettingsHubModal",
+        "useGeminiTesterModal",
+        "useCodeIntelligenceModal",
+        "useVoiceChatModal",
+        "useCommandPaletteModal",
+        "useEnhancedSettingsModal",
+        "useRibbonModals"
+      ],
+      "hooks": [
+        "useModal",
+        "useSpecificModal",
+        "useState",
+        "useCallback",
+        "useMemo",
+        "useContext"
+      ],
+      "patterns": [
+        "MCP Protocol",
+        "Voice Commands"
+      ],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "EnhancedSettingsPanel",
+      "path": "src\\features\\ai\\EnhancedSettingsPanel.tsx",
+      "layer": "components",
+      "value_score": 34.0,
+      "reasons": [
+        "+9 Complexity",
+        "+10 Well-typed",
+        "+10 Name: EnhancedSettingsPanel",
+        "+5 298 lines"
+      ],
+      "suggested_location": "MainLayout or relevant feature",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { EnhancedSettingsPanel } from '@/src/features/ai/EnhancedSettingsPanel';\n<EnhancedSettingsPanel />",
+      "exports": [
+        "EnhancedSettingsPanel"
+      ],
+      "hooks": [
+        "useEffect",
+        "useState",
+        "useCallback"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "CodeIntelligenceDashboard",
+      "path": "src\\features\\code-intelligence\\CodeIntelligenceDashboard.tsx",
+      "layer": "components",
+      "value_score": 34.0,
+      "reasons": [
+        "+9 Complexity",
+        "+10 Well-typed",
+        "+10 Name: CodeIntelligenceDashboard",
+        "+5 1068 lines"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { CodeIntelligenceDashboard } from '@/src/features/code-intelligence/CodeIntelligenceDashboard';\n<CodeIntelligenceDashboard />",
+      "exports": [
+        "default",
+        "CodeIntelligenceDashboard"
+      ],
+      "hooks": [
+        "useEffect",
+        "useRef",
+        "useState"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "useCodeEditor",
+      "path": "src\\hooks\\useCodeEditor.tsx",
+      "layer": "types",
+      "value_score": 32.0,
+      "reasons": [
+        "+12 Complexity",
+        "+10 Well-typed",
+        "+5 267 lines",
+        "+5 4 hooks"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { useCodeEditor } from '@/src/hooks/useCodeEditor';\n<useCodeEditor />",
+      "exports": [
+        "useCodeEditor",
+        "useEditorCommands"
+      ],
+      "hooks": [
+        "useEffect",
+        "useRef",
+        "useState",
+        "useCallback"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "useSpeechRecognition",
+      "path": "src\\hooks\\useSpeechRecognition.tsx",
+      "layer": "types",
+      "value_score": 52.0,
+      "reasons": [
+        "+20 Voice capabilities",
+        "+12 Complexity",
+        "+10 Well-typed",
+        "+5 282 lines",
+        "+5 4 hooks"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { useSpeechRecognition } from '@/src/hooks/useSpeechRecognition';\n<useSpeechRecognition />",
+      "exports": [
+        "useSpeechRecognition"
+      ],
+      "hooks": [
+        "useEffect",
+        "useRef",
+        "useState",
+        "useCallback"
+      ],
+      "patterns": [
+        "Voice Commands"
+      ],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "useLMStudio",
+      "path": "src\\hooks\\ai\\useLMStudio.tsx",
+      "layer": "types",
+      "value_score": 32.0,
+      "reasons": [
+        "+12 Complexity",
+        "+10 Well-typed",
+        "+5 418 lines",
+        "+5 4 hooks"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { useLMStudio } from '@/src/hooks/ai/useLMStudio';\n<useLMStudio />",
+      "exports": [
+        "useLMStudio",
+        "default"
+      ],
+      "hooks": [
+        "useEffect",
+        "useRef",
+        "useState",
+        "useCallback"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "useLocalAI",
+      "path": "src\\hooks\\ai\\useLocalAI.tsx",
+      "layer": "types",
+      "value_score": 32.0,
+      "reasons": [
+        "+12 Complexity",
+        "+10 Well-typed",
+        "+5 541 lines",
+        "+5 4 hooks"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { useLocalAI } from '@/src/hooks/ai/useLocalAI';\n<useLocalAI />",
+      "exports": [
+        "useLocalAI",
+        "default"
+      ],
+      "hooks": [
+        "useEffect",
+        "useRef",
+        "useState",
+        "useCallback"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "useCache",
+      "path": "src\\hooks\\utils\\useCache.tsx",
+      "layer": "types",
+      "value_score": 32.0,
+      "reasons": [
+        "+12 Complexity",
+        "+10 Well-typed",
+        "+5 366 lines",
+        "+5 4 hooks"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { useCache } from '@/src/hooks/utils/useCache';\n<useCache />",
+      "exports": [
+        "default",
+        "useCache"
+      ],
+      "hooks": [
+        "useEffect",
+        "useRef",
+        "useState",
+        "useCallback"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "useTelemetry",
+      "path": "src\\hooks\\utils\\useTelemetry.tsx",
+      "layer": "types",
+      "value_score": 32.0,
+      "reasons": [
+        "+12 Complexity",
+        "+10 Well-typed",
+        "+5 372 lines",
+        "+5 4 hooks"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { useTelemetry } from '@/src/hooks/utils/useTelemetry';\n<useTelemetry />",
+      "exports": [
+        "useTelemetry",
+        "default"
+      ],
+      "hooks": [
+        "useEffect",
+        "useRef",
+        "useState",
+        "useCallback"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "index",
+      "path": "src\\services\\index.ts",
+      "layer": "services",
+      "value_score": 45.0,
+      "reasons": [
+        "+25 MCP integration",
+        "+20 Voice capabilities"
+      ],
+      "suggested_location": "src/services/index.ts (add to barrel export)",
+      "integration_effort": "medium",
+      "integration_code": "// In src/services/index.ts:\nexport { index } from './index.ts';\n// Usage:\nimport { index } from '@/services';\nconst result = await index.method();",
+      "exports": [
+        "GeminiClient",
+        "createApiClient",
+        "categorizeError",
+        "StreamProcessor",
+        "executeTool",
+        "getAvailableTools",
+        "getToolsByCategory",
+        "hasToolHandler",
+        "VoskRendererService",
+        "voskRendererService",
+        "VoskRendererCallbacks",
+        "modelService",
+        "GeminiModel",
+        "FetchModelsOptions",
+        "codeAnalysisService",
+        "CodeIssue",
+        "AnalysisResult",
+        "ContextManager",
+        "ContextEntry",
+        "debugService",
+        "Breakpoint",
+        "StackFrame",
+        "DebugSession",
+        "gitService",
+        "GitStatus",
+        "GitLog",
+        "GitDiff",
+        "ResourceQuotaManager",
+        "AuditLogger",
+        "AuditLogEntry",
+        "speechRecognitionService",
+        "SpeechRecognitionConfig",
+        "SpeechRecognitionCallbacks",
+        "uiActionRegistry"
+      ],
+      "hooks": [],
+      "patterns": [
+        "MCP Protocol",
+        "Voice Commands"
+      ],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "sandboxIntegration",
+      "path": "src\\services\\sandboxIntegration.tsx",
+      "layer": "types",
+      "value_score": 40.0,
+      "reasons": [
+        "+25 MCP integration",
+        "+10 Well-typed",
+        "+5 363 lines"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { sandboxIntegration } from '@/src/services/sandboxIntegration';\n<sandboxIntegration />",
+      "exports": [
+        "default",
+        "DEFAULT_CONFIG"
+      ],
+      "hooks": [],
+      "patterns": [
+        "MCP Protocol"
+      ],
+      "last_author": "",
+      "last_modified_date": ""
+    },
+    {
+      "name": "monitoring",
+      "path": "src\\utils\\monitoring.tsx",
+      "layer": "types",
+      "value_score": 35.0,
+      "reasons": [
+        "+15 Complexity",
+        "+10 Well-typed",
+        "+5 482 lines",
+        "+5 5 hooks"
+      ],
+      "suggested_location": "App.tsx or appropriate parent component",
+      "integration_effort": "medium",
+      "integration_code": "// Import and use:\nimport { monitoring } from '@/src/utils/monitoring';\n<monitoring />",
+      "exports": [
+        "createStreamingMonitor",
+        "useStreamingMonitor",
+        "createMemoryMonitor",
+        "useMemoryMonitor",
+        "usePerformanceMonitor",
+        "StreamingMonitor",
+        "MemoryPressureMonitor",
+        "default"
+      ],
+      "hooks": [
+        "useState",
+        "useEffect",
+        "useMemo",
+        "useRef",
+        "useCallback"
+      ],
+      "patterns": [],
+      "last_author": "",
+      "last_modified_date": ""
+    }
+  ],
+  "wiring_issues": [
+    {
+      "file_path": "src\\contexts\\AppStateContext.tsx",
+      "line_number": 184,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(AppStateContext)",
+      "better_alternative": "Create custom hook useAppStateContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useAppStateContext = () => {\n  const context = useContext(AppStateContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\contexts\\ModalContext.tsx",
+      "line_number": 174,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(ModalContext)",
+      "better_alternative": "Create custom hook useModalContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useModalContext = () => {\n  const context = useContext(ModalContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\GeminiTesterContext.tsx",
+      "line_number": 441,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(GeminiTesterContext)",
+      "better_alternative": "Create custom hook useGeminiTesterContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useGeminiTesterContext = () => {\n  const context = useContext(GeminiTesterContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\features\\help\\HelpSystem.tsx",
+      "line_number": 209,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(TooltipContext)",
+      "better_alternative": "Create custom hook useTooltipContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useTooltipContext = () => {\n  const context = useContext(TooltipContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\hooks\\core\\useAgentOrchestrator.tsx",
+      "line_number": 512,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(AgentOrchestratorContext)",
+      "better_alternative": "Create custom hook useAgentOrchestratorContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useAgentOrchestratorContext = () => {\n  const context = useContext(AgentOrchestratorContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\hooks\\core\\useAutonomousMode.tsx",
+      "line_number": 456,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(AutonomousModeContext)",
+      "better_alternative": "Create custom hook useAutonomousModeContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useAutonomousModeContext = () => {\n  const context = useContext(AutonomousModeContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\hooks\\core\\useContextManager.tsx",
+      "line_number": 457,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(ContextManagerContext)",
+      "better_alternative": "Create custom hook useContextManagerContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useContextManagerContext = () => {\n  const context = useContext(ContextManagerContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\hooks\\core\\useGemini.tsx",
+      "line_number": 529,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(GeminiContext)",
+      "better_alternative": "Create custom hook useGeminiContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useGeminiContext = () => {\n  const context = useContext(GeminiContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\hooks\\core\\useMcp.tsx",
+      "line_number": 681,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(McpContext)",
+      "better_alternative": "Create custom hook useMcpContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useMcpContext = () => {\n  const context = useContext(McpContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\hooks\\core\\useModelSelection.tsx",
+      "line_number": 417,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(ModelSelectionContext)",
+      "better_alternative": "Create custom hook useModelSelectionContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useModelSelectionContext = () => {\n  const context = useContext(ModelSelectionContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\hooks\\voice\\useSpeechRecognition.tsx",
+      "line_number": 391,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(SpeechRecognitionContext)",
+      "better_alternative": "Create custom hook useSpeechRecognitionContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useSpeechRecognitionContext = () => {\n  const context = useContext(SpeechRecognitionContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    },
+    {
+      "file_path": "src\\hooks\\voice\\useVoiceCommands.tsx",
+      "line_number": 745,
+      "severity": "low",
+      "issue_type": "Direct useContext Usage",
+      "current_import": "useContext(VoiceCommandsContext)",
+      "better_alternative": "Create custom hook useVoiceCommandsContext()",
+      "reasoning": [
+        "Encapsulate context logic in a custom hook",
+        "Improves reusability and testability"
+      ],
+      "refactor_sample": "// Create a custom hook:\nexport const useVoiceCommandsContext = () => {\n  const context = useContext(VoiceCommandsContext);\n  if (!context) throw new Error('...');\n  return context;\n};",
+      "auto_fixable": false,
+      "severity_score": 14
+    }
+  ],
+  "insights": [
+    {
+      "pattern": "ai_provider",
+      "health_score": 40,
+      "files_involved": 1,
+      "strengths": [
+        "\u2713 1 files with AI integration"
+      ],
+      "weaknesses": [
+        "Missing custom hooks for AI providers",
+        "Limited error handling in AI layer"
+      ],
+      "recommendations": [
+        "Create useAI hooks for better component integration",
+        "Add comprehensive error handling for AI operations"
+      ],
+      "affected_files": []
+    },
+    {
+      "pattern": "mcp_integration",
+      "health_score": 100,
+      "files_involved": 25,
+      "strengths": [
+        "\u2713 MCP integration found in 25 files",
+        "\u2713 MCP service layer implemented",
+        "\u2713 MCP hooks for React integration"
+      ],
+      "weaknesses": [],
+      "recommendations": [],
+      "affected_files": []
+    },
+    {
+      "pattern": "voice_command",
+      "health_score": 100,
+      "files_involved": 8,
+      "strengths": [
+        "\u2713 Voice integration in 8 files",
+        "\u2713 Voice hooks properly implemented"
+      ],
+      "weaknesses": [],
+      "recommendations": [],
+      "affected_files": []
+    },
+    {
+      "pattern": "context_pattern",
+      "health_score": 100,
+      "files_involved": 11,
+      "strengths": [
+        "\u2713 11 context providers defined",
+        "\u2713 All contexts properly typed",
+        "\u2713 Balanced context usage"
+      ],
+      "weaknesses": [],
+      "recommendations": [],
+      "affected_files": []
+    },
+    {
+      "pattern": "hook_pattern",
+      "health_score": 60,
+      "files_involved": 3,
+      "strengths": [
+        "\u2713 All hooks follow naming convention",
+        "\u2713 All hooks in TypeScript"
+      ],
+      "weaknesses": [],
+      "recommendations": [],
+      "affected_files": []
+    },
+    {
+      "pattern": "context_pattern",
+      "health_score": 35,
+      "files_involved": 13,
+      "strengths": [],
+      "weaknesses": [
+        "13 files use raw useContext in components"
+      ],
+      "recommendations": [
+        "Encapsulate context access in custom hooks"
+      ],
+      "affected_files": []
+    },
+    {
+      "pattern": "ai_provider",
+      "health_score": 70,
+      "files_involved": 1,
+      "strengths": [
+        "Focused on one provider: Gemini"
+      ],
+      "weaknesses": [],
+      "recommendations": [
+        "Consider adding fallback/secondary provider for resilience"
+      ],
+      "affected_files": []
+    },
+    {
+      "pattern": "mcp_integration",
+      "health_score": 5.128205128205128,
+      "files_involved": 2,
+      "strengths": [],
+      "weaknesses": [
+        "Only 2/39 entry points have MCP"
+      ],
+      "recommendations": [
+        "Initialize MCP in main application root"
+      ],
+      "affected_files": []
+    },
+    {
+      "pattern": "hook_pattern",
+      "health_score": 10,
+      "files_involved": 9,
+      "strengths": [],
+      "weaknesses": [
+        "9 custom hooks violate naming convention"
+      ],
+      "recommendations": [
+        "Rename hooks to start with 'use' (e.g., useMyHook)"
+      ],
+      "affected_files": []
+    }
+  ],
+  "layer_stats": {
+    "unknown": 29,
+    "components": 62,
+    "types": 114,
+    "contexts": 11,
+    "features": 9,
+    "hooks": 12,
+    "services": 74,
+    "stores": 1,
+    "utils": 2
+  },
+  "duplicate_clusters": [
+    {
+      "cluster_id": "ast_edca9045",
+      "similarity_score": 0.996573368060668,
+      "files": [
+        "src\\index.ts",
+        "src\\main.tsx",
+        "src\\monaco-editor.ts",
+        "src\\path.ts",
+        "src\\react.ts",
+        "src\\vite.ts",
+        "src\\components\\LoadingScreen.tsx",
+        "src\\components\\app\\AppProvider.tsx",
+        "src\\components\\chat\\ChatWelcome.tsx",
+        "src\\components\\editor\\EditorBranding.tsx",
+        "src\\components\\features\\DebuggingTools.tsx",
+        "src\\components\\features\\EnhancedSettingsModal.tsx",
+        "src\\components\\features\\IntegratedTerminal.tsx",
+        "src\\components\\layout\\ProjectTree.tsx",
+        "src\\components\\layout\\TitleBar.tsx",
+        "src\\components\\modals\\ConfirmDialog.tsx",
+        "src\\components\\modals\\PromptDialog.tsx",
+        "src\\components\\panels\\CodeMetricsPanel.tsx",
+        "src\\components\\panels\\EmptyFilePreview.tsx",
+        "src\\components\\panels\\EnhancedErrorDisplay.tsx",
+        "src\\components\\panels\\PerformanceMetrics.tsx",
+        "src\\components\\panels\\SystemStatusDashboard.tsx",
+        "src\\components\\ribbon\\AISettingsTab.tsx",
+        "src\\components\\ribbon\\ribbonModals.ts",
+        "src\\components\\sidebar\\file-tree\\FileTreeTypes.ts",
+        "src\\components\\ui\\accessibility.tsx",
+        "src\\components\\ui\\AccessibilityChecker.tsx",
+        "src\\components\\ui\\EventBus.tsx",
+        "src\\components\\ui\\HelpSystem.tsx",
+        "src\\components\\ui\\Icons.tsx",
+        "src\\components\\ui\\KeyboardShortcuts.tsx",
+        "src\\components\\ui\\primitives.tsx",
+        "src\\components\\welcome\\WelcomeScreen.tsx",
+        "src\\config\\config.ts",
+        "src\\config\\index.ts",
+        "src\\contexts\\AppStateContext.tsx",
+        "src\\contexts\\ModalContext.tsx",
+        "src\\features\\index.ts",
+        "src\\features\\PreviewPane.tsx",
+        "src\\features\\ai\\AgentCollaboration.tsx",
+        "src\\features\\ai\\AgentReasoning.tsx",
+        "src\\features\\ai\\AgentSelector.tsx",
+        "src\\features\\ai\\AISettingsHub.tsx",
+        "src\\features\\ai\\AISuggestions.tsx",
+        "src\\features\\ai\\AutonomousModeControl.tsx",
+        "src\\features\\ai\\EnhancedSettingsPanel.tsx",
+        "src\\features\\ai\\index.ts",
+        "src\\features\\ai\\LocalAISettings.tsx",
+        "src\\features\\ai\\McpConnectionStatus.tsx",
+        "src\\features\\ai\\MultiAgentStatus.tsx",
+        "src\\features\\ai\\SpeechTest.tsx",
+        "src\\features\\ai\\AISettingsHub\\APITestTab.tsx",
+        "src\\features\\ai\\AISettingsHub\\BehaviorTab.tsx",
+        "src\\features\\ai\\AISettingsHub\\ConnectionTab.tsx",
+        "src\\features\\ai\\AISettingsHub\\CustomProviderModal.tsx",
+        "src\\features\\ai\\AISettingsHub\\index.ts",
+        "src\\features\\ai\\AISettingsHub\\LocalAITab.tsx",
+        "src\\features\\ai\\AISettingsHub\\ModelsTab.tsx",
+        "src\\features\\ai\\AISettingsHub\\ProvidersTab.tsx",
+        "src\\features\\ai\\AISettingsHub\\types.ts",
+        "src\\features\\ai\\AISettingsHub\\VoiceInputTab.tsx",
+        "src\\features\\ai\\AISettingsHub\\VoiceOutputTab.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterConfig.ts",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterConfigPanel.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterContext.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterControls.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterCore.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterResults.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterService.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterTypes.tsx",
+        "src\\features\\ai\\gemini-tester\\GeminiTesterUI.tsx",
+        "src\\features\\ai\\gemini-tester\\index.tsx",
+        "src\\features\\code-intelligence\\CodeIntelligenceDashboard.tsx",
+        "src\\features\\code-intelligence\\CodeIntelligenceImpactMap.tsx",
+        "src\\features\\code-intelligence\\CodeIntelligenceSettings.tsx",
+        "src\\features\\code-intelligence\\CodeIntelligenceTimeline.tsx",
+        "src\\features\\code-intelligence\\CodeNavigation.tsx",
+        "src\\features\\code-intelligence\\DependencyGraph.tsx",
+        "src\\features\\code-intelligence\\ImpactHeatmap.tsx",
+        "src\\features\\code-intelligence\\index.ts",
+        "src\\features\\code-intelligence\\RefactoringSuggestions.tsx",
+        "src\\features\\collaboration\\CollaborationIndicator.tsx",
+        "src\\features\\collaboration\\index.ts",
+        "src\\features\\help\\HelpSystem.tsx",
+        "src\\features\\help\\index.ts",
+        "src\\features\\keyboard\\index.ts",
+        "src\\features\\keyboard\\keyboardShortcuts.tsx",
+        "src\\features\\onboarding\\index.ts",
+        "src\\google\\generative-ai.tsx",
+        "src\\google\\index.ts",
+        "src\\hooks\\useButtonFeedback.ts",
+        "src\\hooks\\useButtonFeedback.tsx",
+        "src\\hooks\\useCodeEditor.tsx",
+        "src\\hooks\\useConversation.ts",
+        "src\\hooks\\useEditorHandlers.ts",
+        "src\\hooks\\useKeyboardShortcuts.ts",
+        "src\\hooks\\useMediaQuery.ts",
+        "src\\hooks\\useNetworkStatus.tsx",
+        "src\\hooks\\usePreview.tsx",
+        "src\\hooks\\useSpeechRecognition.tsx",
+        "src\\hooks\\useVisibilityAwareInterval.tsx",
+        "src\\hooks\\ai\\useAIProvider.tsx",
+        "src\\hooks\\ai\\useLMStudio.tsx",
+        "src\\hooks\\ai\\useLocalAI.tsx",
+        "src\\hooks\\ai\\useMultiAgent.tsx",
+        "src\\hooks\\code\\useCodeIntelligence.tsx",
+        "src\\hooks\\code\\useSandbox.tsx",
+        "src\\hooks\\core\\index.ts",
+        "src\\hooks\\core\\useAgentOrchestrator.tsx",
+        "src\\hooks\\core\\useAutonomousMode.tsx",
+        "src\\hooks\\core\\useContextManager.tsx",
+        "src\\hooks\\core\\useGemini.tsx",
+        "src\\hooks\\core\\useMcp.tsx",
+        "src\\hooks\\core\\useModelSelection.tsx",
+        "src\\hooks\\core\\useSecureStorage.tsx",
+        "src\\hooks\\core\\useStateTransaction.tsx",
+        "src\\hooks\\utils\\useCache.tsx",
+        "src\\hooks\\utils\\useNetworkReliability.tsx",
+        "src\\hooks\\utils\\useRuntimeGuardrails.tsx",
+        "src\\hooks\\utils\\useTelemetry.tsx",
+        "src\\hooks\\voice\\index.ts",
+        "src\\hooks\\voice\\useSpeechRecognition.tsx",
+        "src\\hooks\\voice\\useVoiceCommands.tsx",
+        "src\\jest\\globals.ts",
+        "src\\jest\\index.ts",
+        "src\\llm\\agent.tsx",
+        "src\\llm\\cache.ts",
+        "src\\llm\\config.ts",
+        "src\\llm\\context.tsx",
+        "src\\llm\\contextAbstraction.tsx",
+        "src\\llm\\cost.ts",
+        "src\\llm\\index.tsx",
+        "src\\llm\\optimizer.ts",
+        "src\\llm\\quota.tsx",
+        "src\\llm\\telemetry.ts",
+        "src\\llm\\types.ts",
+        "src\\llm\\providers\\index.ts",
+        "src\\mcp\\index.ts",
+        "src\\mcp\\policy\\enforcement.ts",
+        "src\\mcp\\runtime\\context.ts",
+        "src\\mcp\\runtime\\executor.tsx",
+        "src\\mcp\\runtime\\types.ts",
+        "src\\mcp\\tools\\analysis.ts",
+        "src\\mcp\\tools\\base64_decode.ts",
+        "src\\mcp\\tools\\base64_encode.ts",
+        "src\\mcp\\tools\\calculate.ts",
+        "src\\mcp\\tools\\code-generation.ts",
+        "src\\mcp\\tools\\create_file.ts",
+        "src\\mcp\\tools\\execution.ts",
+        "src\\mcp\\tools\\format_json.ts",
+        "src\\mcp\\tools\\forwardingRegistry.ts",
+        "src\\mcp\\tools\\generate_uuid.ts",
+        "src\\mcp\\tools\\get_current_time.ts",
+        "src\\mcp\\tools\\hash_text.ts",
+        "src\\mcp\\tools\\migratedTools.ts",
+        "src\\mcp\\tools\\read_file.ts",
+        "src\\mcp\\tools\\registry.ts",
+        "src\\mcp\\tools\\text_transform.ts",
+        "src\\mcp\\tools\\validators.ts",
+        "src\\monaco-editor\\index.ts",
+        "src\\monaco-editor\\react.tsx",
+        "src\\providers\\DevAppProvider.tsx",
+        "src\\providers\\index.ts",
+        "src\\providers\\MinimalAppProvider.tsx",
+        "src\\runtime\\toolRuntime.ts",
+        "src\\services\\autonomousController.tsx",
+        "src\\services\\codeAnalysisService.tsx",
+        "src\\services\\debugService.ts",
+        "src\\services\\error-handler-global.ts",
+        "src\\services\\errorHandler.tsx",
+        "src\\services\\fatalAIError.ts",
+        "src\\services\\GeminiClient.tsx",
+        "src\\services\\gitService.tsx",
+        "src\\services\\hybridDecisionEngine.tsx",
+        "src\\services\\index.ts",
+        "src\\services\\mcpAgentIntegration.ts",
+        "src\\services\\notificationDeduplicator.ts",
+        "src\\services\\planningFeedback.tsx",
+        "src\\services\\promptProfessionalizer.tsx",
+        "src\\services\\runtimeUIVerification.tsx",
+        "src\\services\\sandboxIntegration.tsx",
+        "src\\services\\sandboxManager.tsx",
+        "src\\services\\speechRecognitionService.ts",
+        "src\\services\\stateTransaction.tsx",
+        "src\\services\\taskDecompositionEngine.tsx",
+        "src\\services\\tokenOptimizer.ts",
+        "src\\services\\uiActionRegistry.ts",
+        "src\\services\\utilityTools.tsx",
+        "src\\services\\VoskRendererService.ts",
+        "src\\services\\VoskSpeechService.ts",
+        "src\\services\\ai\\ContextBuilder.ts",
+        "src\\services\\ai\\geminiSmartLayer.tsx",
+        "src\\services\\ai\\index.ts",
+        "src\\services\\ai\\localAIApiService.tsx",
+        "src\\services\\ai\\localAIClientApi.tsx",
+        "src\\services\\ai\\localAILogger.tsx",
+        "src\\services\\ai\\localAIModelService.tsx",
+        "src\\services\\ai\\localAIWebEngine.tsx",
+        "src\\services\\ai\\modelArbitrator.tsx",
+        "src\\services\\ai\\modelFallbackManager.tsx",
+        "src\\services\\ai\\modelInfo.ts",
+        "src\\services\\ai\\modelSelectionService.tsx",
+        "src\\services\\ai\\modelService.ts",
+        "src\\services\\ai\\modelTelemetryService.ts",
+        "src\\services\\ai\\modelTestingService.tsx",
+        "src\\services\\ai\\modelValidationStore.ts",
+        "src\\services\\ai\\observability.ts",
+        "src\\services\\ai\\smartModelSelector.tsx",
+        "src\\services\\ai\\gemini\\CacheManager.tsx",
+        "src\\services\\ai\\gemini\\CircuitBreaker.tsx",
+        "src\\services\\ai\\gemini\\GeminiClient.tsx",
+        "src\\services\\ai\\gemini\\index.ts",
+        "src\\services\\ai\\gemini\\RetryPolicy.tsx",
+        "src\\services\\ai\\gemini\\types.tsx",
+        "src\\services\\aiProviders\\base.tsx",
+        "src\\services\\aiProviders\\custom.tsx",
+        "src\\services\\aiProviders\\factory.ts",
+        "src\\services\\aiProviders\\index.ts",
+        "src\\services\\aiProviders\\openai.tsx",
+        "src\\services\\aiProviders\\storage.ts",
+        "src\\services\\aiProviders\\types.ts",
+        "src\\services\\code\\codeCompletionService.tsx",
+        "src\\services\\code\\filesystemAdapter.tsx",
+        "src\\services\\code\\index.ts",
+        "src\\services\\codeIntelligence\\api.tsx",
+        "src\\services\\codeIntelligence\\changeTracker.tsx",
+        "src\\services\\codeIntelligence\\hashManager.ts",
+        "src\\services\\codeIntelligence\\index.ts",
+        "src\\services\\codeIntelligence\\indexer.tsx",
+        "src\\services\\codeIntelligence\\nodeCompat.ts",
+        "src\\services\\codeIntelligence\\analysis\\aiAnalyzer.tsx",
+        "src\\services\\codeIntelligence\\api\\restServer.ts",
+        "src\\services\\codeIntelligence\\vcs\\gitIntegration.ts",
+        "src\\services\\errorHandling\\ErrorManager.ts",
+        "src\\services\\errorHandling\\ErrorPresentation.ts",
+        "src\\services\\errorHandling\\index.ts",
+        "src\\services\\gemini\\apiClient.tsx",
+        "src\\services\\gemini\\errorHandler.ts",
+        "src\\services\\gemini\\GeminiAdapter.tsx",
+        "src\\services\\gemini\\GeminiClient.tsx",
+        "src\\services\\gemini\\index.tsx",
+        "src\\services\\gemini\\ModelManager.ts",
+        "src\\services\\gemini\\RetryPolicy.tsx",
+        "src\\services\\gemini\\streamProcessor.tsx",
+        "src\\services\\gemini\\types.ts",
+        "src\\services\\gemini\\types.tsx",
+        "src\\services\\mcp\\executorAdapter.ts",
+        "src\\services\\mcp\\fileOperations.tsx",
+        "src\\services\\mcp\\index.tsx",
+        "src\\services\\monitoring\\capabilityMonitor.tsx",
+        "src\\services\\monitoring\\completionReporter.ts",
+        "src\\services\\monitoring\\index.ts",
+        "src\\services\\monitoring\\memoryPressureMonitor.tsx",
+        "src\\services\\monitoring\\productivityMetrics.tsx",
+        "src\\services\\monitoring\\streamingMonitor.ts",
+        "src\\services\\monitoring\\telemetryService.tsx",
+        "src\\services\\network\\circuitBreaker.ts",
+        "src\\services\\network\\degradedMode.ts",
+        "src\\services\\network\\index.ts",
+        "src\\services\\network\\networkReliabilityService.ts",
+        "src\\services\\network\\networkReliabilityVerification.ts",
+        "src\\services\\network\\providerLimit.ts",
+        "src\\services\\network\\rateLimitService.ts",
+        "src\\services\\network\\requestCoalescer.tsx",
+        "src\\services\\policies\\index.ts",
+        "src\\services\\security\\adversarialDetector.ts",
+        "src\\services\\security\\agentVerifier.ts",
+        "src\\services\\security\\aiBehaviorValidation.ts",
+        "src\\services\\security\\apiKeyMasking.ts",
+        "src\\services\\security\\auditLogger.ts",
+        "src\\services\\security\\goalIntegrityGuard.ts",
+        "src\\services\\security\\index.ts",
+        "src\\services\\security\\killSwitch.ts",
+        "src\\services\\security\\policyEngine.ts",
+        "src\\services\\security\\runtimeGuardrails.ts",
+        "src\\services\\security\\secureStorage.tsx",
+        "src\\services\\security\\toolValidator.ts",
+        "src\\services\\storage\\contextDatabaseBridge.tsx",
+        "src\\services\\storage\\contextManager.ts",
+        "src\\services\\storage\\databaseService.tsx",
+        "src\\services\\storage\\importanceCache.ts",
+        "src\\services\\storage\\index.ts",
+        "src\\services\\storage\\responseCache.ts",
+        "src\\stores\\appStore.tsx",
+        "src\\stores\\codeIntelligenceStore.tsx",
+        "src\\stores\\conversationStore.tsx",
+        "src\\stores\\index.ts",
+        "src\\stores\\projectStore.tsx",
+        "src\\stores\\settingsStore.tsx",
+        "src\\stores\\themeStore.ts",
+        "src\\testing-library\\react.ts",
+        "src\\theme\\themeSystem.tsx",
+        "src\\types\\additional.tsx",
+        "src\\types\\ai.tsx",
+        "src\\types\\common.tsx",
+        "src\\types\\conversation.ts",
+        "src\\types\\core.ts",
+        "src\\types\\editor.ts",
+        "src\\types\\index.ts",
+        "src\\types\\ipc.tsx",
+        "src\\types\\preview.ts",
+        "src\\types\\types.ts",
+        "src\\types\\uiPatterns.ts",
+        "src\\utils\\errorHandler.tsx",
+        "src\\utils\\errors.ts",
+        "src\\utils\\EventBus.tsx",
+        "src\\utils\\logger.tsx",
+        "src\\utils\\monitoring.tsx",
+        "src\\utils\\performanceUtils.tsx",
+        "src\\utils\\stateUpdateLogger.tsx",
+        "src\\vitejs\\index.ts",
+        "src\\vitejs\\plugin-react.ts"
+      ],
+      "base_file": "src\\path.ts",
+      "merge_target": "src\\path.ts",
+      "diff_summary": "Structural duplicate (AST\u2011based)",
+      "estimated_savings_lines": 83262,
+      "confidence": 99.6573368060668
+    }
+  ],
+  "archive_candidates": [
+    {
+      "file_path": "src\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\main.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\monaco-editor.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\react.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\vite.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\LoadingScreen.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\app\\AppProvider.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\chat\\ChatWelcome.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\conversation\\main.py",
+      "should_archive": true,
+      "confidence": 70.0,
+      "reasons": [
+        "Unused, low value, small size"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\editor\\EditorBranding.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\features\\DebuggingTools.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\features\\EnhancedSettingsModal.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\features\\IntegratedTerminal.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\layout\\ProjectTree.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\layout\\TitleBar.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\modals\\ConfirmDialog.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\modals\\PromptDialog.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\panels\\CodeMetricsPanel.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\panels\\EmptyFilePreview.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\panels\\EnhancedErrorDisplay.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\panels\\PerformanceMetrics.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\panels\\SystemStatusDashboard.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\ribbon\\AISettingsTab.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\ribbon\\ribbonModals.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\sidebar\\file-tree\\FileTreeTypes.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\ui\\accessibility.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\ui\\AccessibilityChecker.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\ui\\EventBus.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\ui\\HelpSystem.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\ui\\Icons.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\ui\\KeyboardShortcuts.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\ui\\primitives.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\components\\welcome\\WelcomeScreen.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\config\\config.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\config\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\contexts\\AppStateContext.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\contexts\\ModalContext.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\PreviewPane.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AgentCollaboration.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AgentReasoning.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AgentSelector.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISuggestions.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AutonomousModeControl.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\EnhancedSettingsPanel.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\LocalAISettings.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\McpConnectionStatus.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\MultiAgentStatus.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\SpeechTest.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\APITestTab.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\BehaviorTab.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\ConnectionTab.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\CustomProviderModal.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\LocalAITab.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\ModelsTab.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\ProvidersTab.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\types.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\VoiceInputTab.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\AISettingsHub\\VoiceOutputTab.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\GeminiTesterConfig.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\GeminiTesterConfigPanel.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\GeminiTesterContext.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\GeminiTesterControls.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\GeminiTesterCore.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\GeminiTesterResults.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\GeminiTesterService.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\GeminiTesterTypes.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\GeminiTesterUI.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\ai\\gemini-tester\\index.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\code-intelligence\\CodeIntelligenceDashboard.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\code-intelligence\\CodeIntelligenceImpactMap.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\code-intelligence\\CodeIntelligenceSettings.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\code-intelligence\\CodeIntelligenceTimeline.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\code-intelligence\\CodeNavigation.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\code-intelligence\\DependencyGraph.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\code-intelligence\\ImpactHeatmap.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\code-intelligence\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\code-intelligence\\RefactoringSuggestions.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\collaboration\\CollaborationIndicator.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\collaboration\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\help\\HelpSystem.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\help\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\keyboard\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\keyboard\\keyboardShortcuts.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\features\\onboarding\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\google\\generative-ai.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\google\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\useButtonFeedback.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\useButtonFeedback.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\useCodeEditor.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\useConversation.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\useEditorHandlers.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\useKeyboardShortcuts.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\useMediaQuery.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\useNetworkStatus.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\usePreview.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\useSpeechRecognition.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\useVisibilityAwareInterval.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\ai\\useAIProvider.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\ai\\useLMStudio.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\ai\\useLocalAI.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\ai\\useMultiAgent.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\code\\useCodeIntelligence.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\code\\useSandbox.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\core\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\core\\useAgentOrchestrator.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\core\\useAutonomousMode.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\core\\useContextManager.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\core\\useGemini.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\core\\useMcp.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\core\\useModelSelection.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\core\\useSecureStorage.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\core\\useStateTransaction.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\utils\\useCache.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\utils\\useNetworkReliability.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\utils\\useRuntimeGuardrails.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\utils\\useTelemetry.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\voice\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\voice\\useSpeechRecognition.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\hooks\\voice\\useVoiceCommands.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\jest\\globals.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\jest\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\agent.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\cache.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\config.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\context.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\contextAbstraction.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\cost.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\index.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\optimizer.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\quota.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\telemetry.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\types.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\llm\\providers\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\policy\\enforcement.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\runtime\\context.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\runtime\\executor.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\runtime\\types.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\analysis.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\base64_decode.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\base64_encode.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\calculate.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\code-generation.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\create_file.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\execution.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\format_json.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\forwardingRegistry.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\generate_uuid.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\get_current_time.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\hash_text.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\migratedTools.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\read_file.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\registry.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\text_transform.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\mcp\\tools\\validators.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\monaco-editor\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\monaco-editor\\react.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\providers\\DevAppProvider.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\providers\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\providers\\MinimalAppProvider.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\runtime\\toolRuntime.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\autonomousController.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\codeAnalysisService.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\debugService.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\error-handler-global.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\errorHandler.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\fatalAIError.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\GeminiClient.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gitService.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\hybridDecisionEngine.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\mcpAgentIntegration.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\notificationDeduplicator.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\planningFeedback.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\promptProfessionalizer.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\runtimeUIVerification.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\sandboxIntegration.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\sandboxManager.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\speechRecognitionService.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\stateTransaction.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\taskDecompositionEngine.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\tokenOptimizer.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\uiActionRegistry.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\utilityTools.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\VoskRendererService.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\VoskSpeechService.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\ContextBuilder.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\geminiSmartLayer.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\localAIApiService.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\localAIClientApi.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\localAILogger.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\localAIModelService.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\localAIWebEngine.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\modelArbitrator.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\modelFallbackManager.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\modelInfo.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\modelSelectionService.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\modelService.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\modelTelemetryService.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\modelTestingService.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\modelValidationStore.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\observability.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\smartModelSelector.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\gemini\\CacheManager.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\gemini\\CircuitBreaker.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\gemini\\GeminiClient.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\gemini\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\gemini\\RetryPolicy.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\ai\\gemini\\types.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\aiProviders\\base.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\aiProviders\\custom.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\aiProviders\\factory.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\aiProviders\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\aiProviders\\openai.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\aiProviders\\storage.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\aiProviders\\types.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\code\\codeCompletionService.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\code\\filesystemAdapter.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\code\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\codeIntelligence\\api.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\codeIntelligence\\changeTracker.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\codeIntelligence\\hashManager.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\codeIntelligence\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\codeIntelligence\\indexer.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\codeIntelligence\\nodeCompat.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\codeIntelligence\\analysis\\aiAnalyzer.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\codeIntelligence\\api\\restServer.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\codeIntelligence\\vcs\\gitIntegration.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\errorHandling\\ErrorManager.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\errorHandling\\ErrorPresentation.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\errorHandling\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gemini\\apiClient.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gemini\\errorHandler.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gemini\\GeminiAdapter.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gemini\\GeminiClient.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gemini\\index.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gemini\\ModelManager.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gemini\\RetryPolicy.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gemini\\streamProcessor.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gemini\\types.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\gemini\\types.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\mcp\\executorAdapter.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\mcp\\fileOperations.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\mcp\\index.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\monitoring\\capabilityMonitor.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\monitoring\\completionReporter.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\monitoring\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\monitoring\\memoryPressureMonitor.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\monitoring\\productivityMetrics.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\monitoring\\streamingMonitor.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\monitoring\\telemetryService.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\network\\circuitBreaker.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\network\\degradedMode.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\network\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\network\\networkReliabilityService.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\network\\networkReliabilityVerification.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\network\\providerLimit.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\network\\rateLimitService.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\network\\requestCoalescer.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\policies\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\adversarialDetector.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\agentVerifier.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\aiBehaviorValidation.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\apiKeyMasking.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\auditLogger.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\goalIntegrityGuard.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\killSwitch.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\policyEngine.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\runtimeGuardrails.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\secureStorage.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\security\\toolValidator.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\storage\\contextDatabaseBridge.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\storage\\contextManager.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\storage\\databaseService.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\storage\\importanceCache.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\storage\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\services\\storage\\responseCache.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\stores\\appStore.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\stores\\codeIntelligenceStore.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\stores\\conversationStore.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\stores\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\stores\\projectStore.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\stores\\settingsStore.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\stores\\themeStore.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\testing-library\\react.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\theme\\themeSystem.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\additional.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\ai.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\common.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\conversation.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\core.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\editor.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\ipc.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\preview.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\types.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\types\\uiPatterns.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\utils\\errorHandler.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\utils\\errors.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\utils\\EventBus.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\utils\\logger.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\utils\\monitoring.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\utils\\performanceUtils.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\utils\\stateUpdateLogger.tsx",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\vitejs\\index.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    },
+    {
+      "file_path": "src\\vitejs\\plugin-react.ts",
+      "should_archive": true,
+      "confidence": 95.0,
+      "reasons": [
+        "Duplicate of src\\path.ts"
+      ],
+      "blockers": []
+    }
+  ],
+  "unused_files": [
+    "src\\main.tsx",
+    "src\\components\\LoadingScreen.tsx",
+    "src\\components\\chat\\ChatWelcome.tsx",
+    "src\\components\\conversation\\main.py",
+    "src\\components\\editor\\EditorBranding.tsx",
+    "src\\components\\features\\DebuggingTools.tsx",
+    "src\\components\\features\\EnhancedSettingsModal.tsx",
+    "src\\components\\features\\IntegratedTerminal.tsx",
+    "src\\components\\layout\\TitleBar.tsx",
+    "src\\components\\modals\\ConfirmDialog.tsx",
+    "src\\components\\modals\\PromptDialog.tsx",
+    "src\\components\\panels\\CodeMetricsPanel.tsx",
+    "src\\components\\panels\\EnhancedErrorDisplay.tsx",
+    "src\\components\\panels\\PerformanceMetrics.tsx",
+    "src\\components\\panels\\SystemStatusDashboard.tsx",
+    "src\\components\\ribbon\\AISettingsTab.tsx",
+    "src\\components\\ribbon\\ribbonModals.ts",
+    "src\\components\\sidebar\\file-tree\\FileTreeTypes.ts",
+    "src\\components\\ui\\accessibility.tsx",
+    "src\\components\\ui\\AccessibilityChecker.tsx",
+    "src\\components\\ui\\EventBus.tsx",
+    "src\\components\\ui\\HelpSystem.tsx",
+    "src\\components\\ui\\Icons.tsx",
+    "src\\components\\ui\\KeyboardShortcuts.tsx",
+    "src\\components\\ui\\primitives.tsx",
+    "src\\components\\welcome\\WelcomeScreen.tsx",
+    "src\\config\\config.ts",
+    "src\\config\\index.ts",
+    "src\\contexts\\AppStateContext.tsx",
+    "src\\contexts\\ModalContext.tsx",
+    "src\\features\\index.ts",
+    "src\\features\\ai\\AgentCollaboration.tsx",
+    "src\\features\\ai\\AgentReasoning.tsx",
+    "src\\features\\ai\\AgentSelector.tsx",
+    "src\\features\\ai\\AISettingsHub.tsx",
+    "src\\features\\ai\\AutonomousModeControl.tsx",
+    "src\\features\\ai\\EnhancedSettingsPanel.tsx",
+    "src\\features\\ai\\index.ts",
+    "src\\features\\ai\\LocalAISettings.tsx",
+    "src\\features\\ai\\MultiAgentStatus.tsx",
+    "src\\features\\ai\\SpeechTest.tsx",
+    "src\\features\\ai\\AISettingsHub\\index.ts",
+    "src\\features\\ai\\gemini-tester\\GeminiTesterTypes.tsx",
+    "src\\features\\ai\\gemini-tester\\index.tsx",
+    "src\\features\\code-intelligence\\CodeIntelligenceDashboard.tsx",
+    "src\\features\\code-intelligence\\CodeIntelligenceSettings.tsx",
+    "src\\features\\code-intelligence\\CodeNavigation.tsx",
+    "src\\features\\code-intelligence\\index.ts",
+    "src\\features\\code-intelligence\\RefactoringSuggestions.tsx",
+    "src\\features\\collaboration\\index.ts",
+    "src\\features\\help\\index.ts",
+    "src\\features\\keyboard\\index.ts",
+    "src\\features\\onboarding\\index.ts",
+    "src\\google\\index.ts",
+    "src\\hooks\\useButtonFeedback.ts",
+    "src\\hooks\\useButtonFeedback.tsx",
+    "src\\hooks\\useCodeEditor.tsx",
+    "src\\hooks\\useConversation.ts",
+    "src\\hooks\\useEditorHandlers.ts",
+    "src\\hooks\\useKeyboardShortcuts.ts",
+    "src\\hooks\\useMediaQuery.ts",
+    "src\\hooks\\useNetworkStatus.tsx",
+    "src\\hooks\\usePreview.tsx",
+    "src\\hooks\\useSpeechRecognition.tsx",
+    "src\\hooks\\useVisibilityAwareInterval.tsx",
+    "src\\hooks\\ai\\useAIProvider.tsx",
+    "src\\hooks\\ai\\useLMStudio.tsx",
+    "src\\hooks\\ai\\useLocalAI.tsx",
+    "src\\hooks\\ai\\useMultiAgent.tsx",
+    "src\\hooks\\code\\useCodeIntelligence.tsx",
+    "src\\hooks\\code\\useSandbox.tsx",
+    "src\\hooks\\core\\index.ts",
+    "src\\hooks\\utils\\useCache.tsx",
+    "src\\hooks\\utils\\useNetworkReliability.tsx",
+    "src\\hooks\\utils\\useRuntimeGuardrails.tsx",
+    "src\\hooks\\utils\\useTelemetry.tsx",
+    "src\\hooks\\voice\\index.ts",
+    "src\\jest\\index.ts",
+    "src\\llm\\index.tsx",
+    "src\\llm\\types.ts",
+    "src\\llm\\providers\\index.ts",
+    "src\\mcp\\index.ts",
+    "src\\monaco-editor\\index.ts",
+    "src\\providers\\index.ts",
+    "src\\runtime\\index.ts",
+    "src\\runtime\\toolRuntime.ts",
+    "src\\services\\error-handler-global.ts",
+    "src\\services\\GeminiClient.tsx",
+    "src\\services\\index.ts",
+    "src\\services\\mcpAgentIntegration.ts",
+    "src\\services\\runtimeUIVerification.tsx",
+    "src\\services\\sandboxIntegration.tsx",
+    "src\\services\\taskDecompositionEngine.tsx",
+    "src\\services\\VoskSpeechService.ts",
+    "src\\services\\ai\\geminiSmartLayer.tsx",
+    "src\\services\\ai\\modelFallbackManager.tsx",
+    "src\\services\\ai\\modelSelectionService.tsx",
+    "src\\services\\ai\\modelTelemetryService.ts",
+    "src\\services\\ai\\modelTestingService.tsx",
+    "src\\services\\ai\\gemini\\index.ts",
+    "src\\services\\aiProviders\\index.ts",
+    "src\\services\\code\\index.ts",
+    "src\\services\\codeIntelligence\\index.ts",
+    "src\\services\\errorHandling\\index.ts",
+    "src\\services\\gemini\\types.tsx",
+    "src\\services\\mcp\\executorAdapter.ts",
+    "src\\services\\monitoring\\index.ts",
+    "src\\services\\network\\index.ts",
+    "src\\services\\policies\\index.ts",
+    "src\\services\\security\\index.ts",
+    "src\\services\\storage\\index.ts",
+    "src\\stores\\index.ts",
+    "src\\testing-library\\react.ts",
+    "src\\theme\\themeSystem.tsx",
+    "src\\types\\ai.tsx",
+    "src\\types\\common.tsx",
+    "src\\types\\conversation.ts",
+    "src\\types\\ipc.tsx",
+    "src\\utils\\logger.tsx",
+    "src\\utils\\monitoring.tsx",
+    "src\\utils\\performanceUtils.tsx",
+    "src\\utils\\stateUpdateLogger.tsx",
+    "src\\vitejs\\index.ts"
+  ],
+  "unwired_features": [
+    "src\\components\\chat\\ChatWelcome.tsx",
+    "src\\components\\editor\\EditorBranding.tsx",
+    "src\\components\\features\\DebuggingTools.tsx",
+    "src\\components\\features\\EnhancedSettingsModal.tsx",
+    "src\\components\\features\\IntegratedTerminal.tsx",
+    "src\\components\\modals\\PromptDialog.tsx",
+    "src\\components\\panels\\EnhancedErrorDisplay.tsx",
+    "src\\components\\panels\\PerformanceMetrics.tsx",
+    "src\\components\\panels\\SystemStatusDashboard.tsx",
+    "src\\components\\ribbon\\AISettingsTab.tsx",
+    "src\\components\\ui\\accessibility.tsx",
+    "src\\components\\ui\\AccessibilityChecker.tsx",
+    "src\\components\\ui\\EventBus.tsx",
+    "src\\components\\ui\\HelpSystem.tsx",
+    "src\\components\\ui\\Icons.tsx",
+    "src\\components\\ui\\KeyboardShortcuts.tsx",
+    "src\\components\\ui\\primitives.tsx",
+    "src\\components\\welcome\\WelcomeScreen.tsx",
+    "src\\contexts\\AppStateContext.tsx",
+    "src\\contexts\\ModalContext.tsx",
+    "src\\features\\ai\\AgentCollaboration.tsx",
+    "src\\features\\ai\\AgentReasoning.tsx",
+    "src\\features\\ai\\AISettingsHub.tsx",
+    "src\\features\\ai\\LocalAISettings.tsx",
+    "src\\features\\ai\\MultiAgentStatus.tsx",
+    "src\\features\\code-intelligence\\CodeIntelligenceDashboard.tsx",
+    "src\\features\\code-intelligence\\CodeIntelligenceSettings.tsx",
+    "src\\features\\code-intelligence\\CodeNavigation.tsx",
+    "src\\hooks\\useButtonFeedback.ts",
+    "src\\hooks\\useButtonFeedback.tsx",
+    "src\\hooks\\useCodeEditor.tsx",
+    "src\\hooks\\useConversation.ts",
+    "src\\hooks\\useEditorHandlers.ts",
+    "src\\hooks\\useKeyboardShortcuts.ts",
+    "src\\hooks\\useNetworkStatus.tsx",
+    "src\\hooks\\usePreview.tsx",
+    "src\\hooks\\useVisibilityAwareInterval.tsx",
+    "src\\hooks\\ai\\useAIProvider.tsx",
+    "src\\hooks\\ai\\useLMStudio.tsx",
+    "src\\hooks\\ai\\useLocalAI.tsx",
+    "src\\hooks\\ai\\useMultiAgent.tsx",
+    "src\\hooks\\code\\useCodeIntelligence.tsx",
+    "src\\hooks\\code\\useSandbox.tsx",
+    "src\\hooks\\utils\\useCache.tsx",
+    "src\\hooks\\utils\\useNetworkReliability.tsx",
+    "src\\hooks\\utils\\useRuntimeGuardrails.tsx",
+    "src\\hooks\\utils\\useTelemetry.tsx",
+    "src\\services\\mcpAgentIntegration.ts",
+    "src\\services\\sandboxIntegration.tsx",
+    "src\\services\\taskDecompositionEngine.tsx",
+    "src\\services\\ai\\geminiSmartLayer.tsx",
+    "src\\services\\ai\\modelSelectionService.tsx",
+    "src\\services\\ai\\modelTelemetryService.ts",
+    "src\\services\\gemini\\types.tsx",
+    "src\\services\\mcp\\executorAdapter.ts",
+    "src\\theme\\themeSystem.tsx",
+    "src\\types\\common.tsx",
+    "src\\utils\\logger.tsx",
+    "src\\utils\\monitoring.tsx",
+    "src\\utils\\performanceUtils.tsx",
+    "src\\utils\\stateUpdateLogger.tsx"
+  ],
+  "high_risk_files": [],
+  "clones": [],
+  "circular_deps": [],
+  "potentially_unused_files": [],
+  "unused_confidence_summary": {},
+  "unused_classification_counts": {}
+}

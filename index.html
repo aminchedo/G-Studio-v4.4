@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* ws://localhost:* data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* https://cdn.jsdelivr.net https://cdn.tailwindcss.com blob:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data:; img-src 'self' data: blob: http://localhost:*; connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* https://*.google.com https://*.googleapis.com https://*.gstatic.com https://www.google.com https://speech.googleapis.com https://www.googleapis.com https://cdn.jsdelivr.net https://*.huggingface.co https://huggingface.co; media-src 'self' blob:; worker-src 'self' blob:;" />
+    <link rel="icon" type="image/x-icon" href="/assets/icon.ico" />
+    <title>G Studio</title>
+
+    <!-- Fonts loaded locally - no external requests -->
+
+    <!-- Vite injects CSS here -->
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <!-- Vite entry -->
+    <script type="module" src="/src/index.tsx"></script>
+    
+    <!-- UI Test Automation (for debugging) -->
+    <script src="/run-ui-test.js"></script>
+  </body>
+</html>

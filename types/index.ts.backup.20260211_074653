@@ -1,0 +1,2 @@
+export { ExportInfo, ASTSnapshot, ImportInfo } from './codeIntelligence'
+export { format, clearConfigCache, formatWithCursor } from './prettier.d'

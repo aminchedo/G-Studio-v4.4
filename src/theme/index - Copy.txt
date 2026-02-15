@@ -1,0 +1,8 @@
+/**
+ * G Studio v2.3.0 - Theme Index
+ */
+
+export * from './themeSystem';
+
+// Re-export design tokens for convenience
+export { designTokens } from './designTokens';

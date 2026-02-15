@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gemini Studio · Dark glass icons</title>
+    <!-- Feather Icons (pure SVG) -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <!-- Inter: crisp, minimal UI font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        /* ---------- ULTRA DARK METALLIC · RAISED 3D GLASS ICONS (NO TEXT) ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #010203;
+            background: radial-gradient(circle at 30% 20%, #0a0e13, #000000);
+            color: #e6f0ff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.5;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: 104px 1fr;   /* two-row ribbon | main */
+            letter-spacing: 0.01em;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* hide all scrollbars – pristine */
+        ::-webkit-scrollbar { display: none; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+
+        /* ---------- DARK METALLIC RIBBON – 2 ROWS ---------- */
+        .dark-ribbon {
+            background: #05080c;
+            background: linear-gradient(165deg, #0c1119 0%, #030609 100%);
+            border-bottom: 0.5px solid rgba(100, 160, 240, 0.12);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.02), 0 12px 28px -12px black;
+            display: flex;
+            flex-direction: column;
+            padding: 0 24px;
+            backdrop-filter: blur(6px);
+        }
+
+        /* ROW 1: LOGO + PRIMARY GROUP TITLES (HOME, VIEW, INTELLIGENCE, MCP TOOLS) */
+        .ribbon-row1 {
+            display: flex;
+            align-items: center;
+            height: 52px;
+            gap: 40px;
+        }
+
+        .logo-minimal {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.8;
+            transition: 0.2s;
+        }
+        .logo-minimal:hover { opacity: 1; }
+        .logo-minimal svg {
+            stroke: #aac8ff;
+            stroke-width: 1.8;
+            width: 20px;
+            height: 20px;
+        }
+        .logo-minimal span {
+            font-weight: 500;
+            font-size: 14px;
+            color: #ccdeff;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .group-titles {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .group-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #a2bbd9;
+            padding: 6px 0;
+            cursor: default;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1.5px solid transparent;
+            transition: color 0.15s, border 0.15s;
+        }
+        .group-title.active {
+            color: white;
+            border-bottom: 1.5px solid #5f9ac0;
+            text-shadow: 0 0 6px rgba(90,170,240,0.2);
+        }
+        .group-title:hover { color: #ecf3ff; }
+
+        .ribbon-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-left: auto;
+        }
+        .search-dark {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.6);
+            border: 0.5px solid rgba(120,180,255,0.15);
+            border-radius: 40px;
+            padding: 6px 14px;
+            backdrop-filter: blur(8px);
+            gap: 8px;
+        }
+        .search-dark svg {
+            stroke: #9cbae6;
+            width: 15px;
+            height: 15px;
+        }
+        .search-dark input {
+            background: transparent;
+            border: none;
+            color: #edf5ff;
+            font-size: 13px;
+            width: 150px;
+            outline: none;
+            padding: 6px 0;
+        }
+        .search-dark input::placeholder { color: #7a94b5; font-weight: 300; }
+
+        /* ---------- ROW 2: RAISED 3D GLASS ICONS – FILE, EDIT, FORMAT, VIEW, RUN, ANALYTICS, PROJECT (NO TEXT) ---------- */
+        .ribbon-row2 {
+            display: flex;
+            align-items: center;
+            height: 52px;
+            gap: 16px;
+            border-top: 0.5px solid rgba(255,255,255,0.03);
+            padding: 6px 0;
+        }
+
+        /* ----- MORPHEUS GLASS 3D ICONS – RAISED, DEEP, ATTRACTIVE ----- */
+        .glass-icon-3d {
+            position: relative;
+            background: radial-gradient(circle at 20% 25%, rgba(50,80,120,0.45), rgba(10,20,35,0.8));
+            backdrop-filter: blur(8px);
+            border: 0.8px solid rgba(130,200,255,0.25);
+            border-radius: 16px;
+            padding: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 12px 18px -8px rgba(0,0,0,0.7),
+                0 -2px 2px rgba(0,0,0,0.8) inset,
+                0 2px 2px rgba(255,255,255,0.1) inset,
+                0 0 0 1px rgba(255,255,255,0.02) inset;
+            transition: all 0.18s cubic-bezier(0.23, 1, 0.32, 1);
+            color: #e0f0ff;
+            width: 44px;
+            height: 44px;
+        }
+
+        .glass-icon-3d svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+        }
+
+        /* individual vibrant glass tints – deeper, more premium */
+        .glass-icon-3d:nth-child(1) { background: radial-gradient(circle at 30% 30%, rgba(55,100,180,0.5), rgba(12,25,45,0.9)); border-color: rgba(80,160,255,0.5); }
+        .glass-icon-3d:nth-child(2) { background: radial-gradient(circle at 30% 30%, rgba(130,70,210,0.5), rgba(20,15,45,0.9)); border-color: rgba(170,130,255,0.5); }
+        .glass-icon-3d:nth-child(3) { background: radial-gradient(circle at 30% 30%, rgba(40,160,140,0.5), rgba(10,35,35,0.9)); border-color: rgba(70,220,190,0.5); }
+        .glass-icon-3d:nth-child(4) { background: radial-gradient(circle at 30% 30%, rgba(200,140,60,0.5), rgba(40,25,15,0.9)); border-color: rgba(255,200,80,0.5); }
+        .glass-icon-3d:nth-child(5) { background: radial-gradient(circle at 30% 30%, rgba(200,70,100,0.5), rgba(40,10,20,0.9)); border-color: rgba(255,120,150,0.5); }
+        .glass-icon-3d:nth-child(6) { background: radial-gradient(circle at 30% 30%, rgba(50,140,200,0.5), rgba(10,30,50,0.9)); border-color: rgba(90,200,255,0.5); }
+        .glass-icon-3d:nth-child(7) { background: radial-gradient(circle at 30% 30%, rgba(110,90,180,0.5), rgba(20,15,45,0.9)); border-color: rgba(180,150,255,0.5); }
+
+        .glass-icon-3d:hover {
+            transform: translateY(-5px) scale(1.08);
+            border-color: rgba(130,220,255,0.9);
+            background: radial-gradient(circle at 20% 25%, rgba(90,180,255,0.5), rgba(20,50,85,0.95));
+            box-shadow: 0 20px 28px -12px rgba(0,160,255,0.4), 0 -2px 2px rgba(0,0,0,0.8) inset, 0 2px 2px rgba(255,255,255,0.15) inset;
+            color: white;
+        }
+
+        /* run button – raised glass, integrated */
+        .run-button-raised {
+            background: radial-gradient(circle at 30% 30%, rgba(60,170,100,0.55), rgba(15,50,30,0.9));
+            border: 0.8px solid rgba(100,240,160,0.5);
+            border-radius: 40px;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #e0ffe8;
+            font-weight: 600;
+            font-size: 13px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 12px 20px -10px black, inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: 0.18s;
+            margin-left: 8px;
+        }
+        .run-button-raised:hover {
+            background: radial-gradient(circle at 30% 30%, rgba(80,220,130,0.65), rgba(20,70,40,0.95));
+            border-color: rgba(140,255,200,0.8);
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 20px 28px -12px #00cc8840;
+        }
+        .run-button-raised svg { stroke: #e6fff0; stroke-width: 1.8; }
+
+        /* ---------- MAIN 3-COLUMN DASHBOARD – DARKER, UNIFIED ---------- */
+        .main-dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr 340px;
+            overflow: hidden;
+            background: #010304;
+            gap: 1px;
+            border-top: 0.5px solid rgba(0,0,0,0.9);
+        }
+
+        /* LEFT PANEL – EXPLORER, DEEP METALLIC */
+        .explorer-panel {
+            background: #0a0e14;
+            background: linear-gradient(145deg, #0d131b, #070b0f);
+            box-shadow: inset -4px 0 15px rgba(0,0,0,0.9);
+            padding: 20px 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .explorer-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #b0cae5;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.05);
+            padding-bottom: 16px;
+        }
+        .overview-tab {
+            background: rgba(70,140,220,0.1);
+            border-radius: 40px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+            border: 0.5px solid rgba(80,160,255,0.18);
+            color: #c6e0ff;
+            font-size: 12px;
+        }
+        .search-files {
+            background: rgba(0,0,0,0.6);
+            border: 0.5px solid rgba(255,255,255,0.05);
+            border-radius: 40px;
+            padding: 12px 18px;
+            color: #e6f0ff;
+            font-size: 13px;
+            outline: none;
+            backdrop-filter: blur(4px);
+        }
+        .search-files::placeholder { color: #869eb8; }
+        .add-items-btn {
+            background: rgba(70,140,220,0.12);
+            border: 0.5px solid rgba(80,160,255,0.22);
+            border-radius: 40px;
+            padding: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            color: #c8e0ff;
+        }
+        .assistant-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .new-item-input {
+            background: rgba(0,0,0,0.6);
+            border: 0.5px solid rgba(255,255,255,0.05);
+            border-radius: 40px;
+            padding: 12px 18px;
+            color: white;
+        }
+        .add-item-btn {
+            background: rgba(90,170,90,0.15);
+            border: 0.5px solid rgba(100,200,120,0.25);
+            border-radius: 40px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #d4f0d4;
+        }
+
+        /* CENTER PANEL – DARK, GLOWING */
+        .center-panel {
+            background: radial-gradient(circle at 30% 40%, #10171f, #04080c);
+            box-shadow: inset 0 0 70px rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
+        .center-icon {
+            background: rgba(30,55,80,0.4);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            padding: 22px;
+            border: 0.5px solid rgba(255,255,255,0.06);
+            margin-bottom: 20px;
+        }
+        .center-title { font-size: 26px; font-weight: 350; color: #e6f2ff; }
+        .center-sub { color: #a6c0da; font-size: 16px; margin: 6px 0; }
+        .center-desc { color: #819bb5; max-width: 280px; margin: 12px 0; }
+        .load-demo-btn {
+            background: rgba(70,140,220,0.15);
+            border: 0.5px solid rgba(80,160,255,0.3);
+            border-radius: 60px;
+            padding: 12px 36px;
+            font-weight: 500;
+            color: #d6ecff;
+            backdrop-filter: blur(8px);
+        }
+
+        /* RIGHT PANEL – CHAT SIDEBAR, DEEP UNIFIED */
+        .chat-sidebar {
+            background: #0a0e14;
+            background: linear-gradient(225deg, #0d131b, #070b0f);
+            box-shadow: inset 4px 0 15px rgba(0,0,0,0.9);
+            padding: 20px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            gap: 16px;
+        }
+        .chat-header {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.05);
+            padding-bottom: 18px;
+        }
+        .chat-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .assistant-identity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .assistant-identity svg { stroke: #aac8ff; width: 18px; }
+        .assistant-name { font-weight: 600; font-size: 14px; color: #d6eaff; }
+        .badge-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .badge-3d {
+            background: rgba(70,130,210,0.1);
+            border: 0.5px solid rgba(100,160,240,0.2);
+            border-radius: 60px;
+            padding: 4px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #c6defa;
+            backdrop-filter: blur(4px);
+            font-size: 12px;
+        }
+        .badge-3d.monitor { background: rgba(200,150,50,0.08); border-color: rgba(230,180,70,0.2); }
+        .overview-row {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .welcome-message {
+            display: flex; align-items: center; gap: 10px; color: #cae0fc;
+        }
+        .overview-pill {
+            background: rgba(0,0,0,0.6);
+            border-radius: 40px;
+            padding: 5px 18px;
+            border: 0.5px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; gap: 8px;
+            color: #b8d2f0;
+        }
+        .chat-messages {
+            flex: 1; display: flex; flex-direction: column; gap: 16px;
+            overflow-y: auto; margin: 8px 0 16px;
+        }
+        .message-bubble {
+            background: rgba(30,50,70,0.6);
+            backdrop-filter: blur(8px);
+            border: 0.5px solid rgba(255,255,255,0.06);
+            border-radius: 20px 20px 20px 6px;
+            padding: 14px 18px;
+            font-size: 12.5px;
+            color: #e2f0ff;
+            align-self: flex-start;
+            max-width: 95%;
+        }
+        .message-bubble.user {
+            background: rgba(45,85,120,0.5);
+            border-radius: 20px 20px 6px 20px;
+            align-self: flex-end;
+            border-color: rgba(100,170,240,0.25);
+        }
+        .typing-indicator {
+            display: flex; gap: 6px; padding: 12px 18px;
+            background: rgba(30,50,65,0.4); border-radius: 40px;
+            align-self: flex-start; backdrop-filter: blur(4px);
+        }
+        .typing-dot { width: 6px; height: 6px; background: #b0d0ff; border-radius: 50%; animation: pulse-dot 1.4s infinite; }
+        .chat-input-area {
+            display: flex; flex-direction: column; gap: 12px;
+            border-top: 0.5px solid rgba(255,255,255,0.05); padding-top: 16px;
+        }
+        .clear-chat {
+            display: flex; align-items: center; gap: 10px; color: #a6c0dd; transition: 0.15s; font-size: 12.5px;
+        }
+        .input-wrapper {
+            display: flex; align-items: center;
+            background: rgba(8,18,28,0.9); border: 0.5px solid rgba(255,255,255,0.07);
+            border-radius: 60px; padding: 4px 4px 4px 20px; backdrop-filter: blur(12px);
+        }
+        .input-wrapper input {
+            flex: 1; background: transparent; border: none; color: white; font-size: 13px; outline: none; padding: 12px 0;
+        }
+        .input-wrapper input::placeholder { color: #859fb8; }
+        .send-icon {
+            background: rgba(70,140,220,0.25); border-radius: 50%; padding: 10px; display: flex;
+        }
+
+        @keyframes pulse-dot { 0%,100%{opacity:0.4;transform:scale(0.9)}50%{opacity:1;transform:scale(1.2)} }
+        .w-100 { width: 100%; }
+    </style>
+</head>
+<body>
+    <!-- 
+        ========== DARK METALLIC RIBBON – RAISED 3D GLASS ICONS ========= 
+        - Row 1: Logo + Group titles (HOME, VIEW, INTELLIGENCE, MCP TOOLS)
+        - Row 2: FILE, EDIT, FORMAT, VIEW, RUN, ANALYTICS, PROJECT as PURE ICONS – no text
+        - Run Code button integrated
+    -->
+    <div class="dark-ribbon">
+        <!-- ROW 1 – TITLES ONLY -->
+        <div class="ribbon-row1">
+            <div class="logo-minimal">
+                <i data-feather="star"></i>
+                <span>STUDIO</span>
+            </div>
+            <div class="group-titles">
+                <span class="group-title active">HOME</span>
+                <span class="group-title">VIEW</span>
+                <span class="group-title">INTELLIGENCE</span>
+                <span class="group-title">MCP TOOLS</span>
+            </div>
+            <div class="ribbon-actions">
+                <div class="search-dark">
+                    <i data-feather="search"></i>
+                    <input type="text" placeholder="Quick search...">
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 2 – RAISED 3D GLASS ICONS (NO TEXT) + RUN BUTTON -->
+        <div class="ribbon-row2">
+            <!-- FILE -->
+            <span class="glass-icon-3d" title="FILE"><i data-feather="file-text"></i></span>
+            <!-- EDIT -->
+            <span class="glass-icon-3d" title="EDIT"><i data-feather="edit-3"></i></span>
+            <!-- FORMAT -->
+            <span class="glass-icon-3d" title="FORMAT"><i data-feather="type"></i></span>
+            <!-- VIEW -->
+            <span class="glass-icon-3d" title="VIEW"><i data-feather="layout"></i></span>
+            <!-- RUN -->
+            <span class="glass-icon-3d" title="RUN"><i data-feather="play-circle"></i></span>
+            <!-- ANALYTICS -->
+            <span class="glass-icon-3d" title="ANALYTICS"><i data-feather="bar-chart-2"></i></span>
+            <!-- PROJECT -->
+            <span class="glass-icon-3d" title="PROJECT"><i data-feather="briefcase"></i></span>
+
+            <!-- Run Code button – glass, raised -->
+            <button class="run-button-raised">
+                <i data-feather="play" width="16"></i> Run Code
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== MAIN 3-COLUMN DASHBOARD – EXPLORER | CENTER | CHAT SIDEBAR ========= -->
+    <div class="main-dashboard">
+        <!-- LEFT: EXPLORER (full screenshot layout) -->
+        <div class="explorer-panel">
+            <div class="explorer-header">
+                <i data-feather="folder" width="16"></i> EXPLORER
+            </div>
+            <div class="overview-tab">
+                <i data-feather="layers" width="14"></i> OVERVIEW
+            </div>
+            <input type="text" class="search-files" placeholder="Search files...">
+            <button class="add-items-btn w-100">
+                <i data-feather="plus-circle"></i> ADD ITEMS
+            </button>
+            <div class="assistant-section">
+                <div style="display: flex; align-items: center; gap: 8px; color: #c4defa;">
+                    <i data-feather="message-circle" width="15"></i> ASSISTANT
+                </div>
+                <input type="text" class="new-item-input" placeholder="Enter new item name">
+                <button class="add-item-btn w-100">
+                    <i data-feather="plus"></i> Add Item
+                </button>
+            </div>
+        </div>
+
+        <!-- CENTER: NO FILE OPEN / NO FILES FOUND -->
+        <div class="center-panel">
+            <div class="center-icon">
+                <i data-feather="code" width="48" height="48" style="stroke: #a0c8f0;"></i>
+            </div>
+            <div class="center-title">No file open</div>
+            <div class="center-sub">No Files Found</div>
+            <div class="center-desc">Select a file from the Sidebar<br>Start by creating a file or loading a demo project.</div>
+            <button class="load-demo-btn">
+                <i data-feather="download-cloud" width="16"></i> Load Demo
+            </button>
+        </div>
+
+        <!-- RIGHT: CHAT SIDEBAR – full assistant experience -->
+        <div class="chat-sidebar">
+            <div class="chat-header">
+                <div class="chat-title-row">
+                    <div class="assistant-identity">
+                        <i data-feather="star"></i>
+                        <span class="assistant-name">GStudio Assistant</span>
+                    </div>
+                    <div style="display: flex; gap: 8px; color: #aac4e0;">
+                        <i data-feather="clock" width="15"></i>
+                        <i data-feather="bell" width="15"></i>
+                    </div>
+                </div>
+                <div class="badge-group">
+                    <span class="badge-3d"><i data-feather="shield" width="12"></i> professional Mode</span>
+                    <span class="badge-3d" style="background: rgba(30,120,210,0.1);">☁ CLOUD</span>
+                    <span class="badge-3d monitor"><i data-feather="activity" width="12"></i> MONITOR</span>
+                </div>
+                <div class="overview-row">
+                    <div class="welcome-message">
+                        <i data-feather="smile"></i>
+                        <span style="font-weight: 500;">Welcome to G Studio!</span>
+                    </div>
+                    <div class="overview-pill">
+                        <i data-feather="pie-chart" width="14"></i> 88 OVERVIEW
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-messages">
+                <div class="message-bubble">
+                    <i data-feather="star" width="12" style="float: left; margin-right: 8px;"></i>
+                    Hello! I'm your assistant. How can I help?
+                </div>
+                <div class="message-bubble user">
+                    Show me project structure.
+                </div>
+                <div class="message-bubble">
+                    ✅ Project scan: 214 files, 12 modules. No critical issues.
+                </div>
+                <div class="typing-indicator">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot" style="animation-delay: 0.2s;"></span>
+                    <span class="typing-dot" style="animation-delay: 0.4s;"></span>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="clear-chat">
+                    <i data-feather="trash-2" width="15"></i> Clear Chat History
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" placeholder="Ask Gemini to analyze code or run commands..">
+                    <span class="send-icon"><i data-feather="send" width="16"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feather icon replacement -->
+    <script>
+        feather.replace({ 
+            width: 16, 
+            height: 16,
+            'stroke-width': 1.7,
+            fill: 'none',
+            'class': 'feather-svg'
+        });
+        // subtle run button feedback
+        const runBtn = document.querySelector('.run-button-raised');
+        runBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            runBtn.style.transform = 'scale(0.96)';
+            setTimeout(() => runBtn.style.transform = '', 150);
+        });
+    </script>
+</body>
+</html>

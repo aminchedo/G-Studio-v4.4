@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roche</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        *{margin:0;padding:0;box-sizing:border-box}
+        *{scrollbar-width:none;-ms-overflow-style:none}
+        *::-webkit-scrollbar{display:none}
+
+        :root{
+            --bg-deep:#08080c;
+            --bg-base:#0c0c14;
+            --bg-surface:#10101c;
+            --bg-raised:#161624;
+            --bg-overlay:#1c1c2e;
+            --border-subtle:rgba(255,255,255,0.04);
+            --border-dim:rgba(255,255,255,0.06);
+            --border-soft:rgba(255,255,255,0.08);
+            --text-primary:rgba(255,255,255,0.85);
+            --text-secondary:rgba(255,255,255,0.45);
+            --text-muted:rgba(255,255,255,0.25);
+            --accent:#7c6aef;
+            --accent-dim:rgba(124,106,239,0.12);
+            --accent-soft:rgba(124,106,239,0.25);
+            --green:#3ecf8e;
+            --green-dim:rgba(62,207,142,0.12);
+            --blue:#5b9cf6;
+            --blue-dim:rgba(91,156,246,0.12);
+            --orange:#e8995a;
+            --orange-dim:rgba(232,153,90,0.12);
+            --pink:#d96db5;
+            --pink-dim:rgba(217,109,181,0.12);
+            --cyan:#5bc0d4;
+            --cyan-dim:rgba(91,192,212,0.12);
+            --red:#e06060;
+            --red-dim:rgba(224,96,96,0.1);
+            --glass-bg:rgba(255,255,255,0.025);
+            --glass-border:rgba(255,255,255,0.06);
+            --glass-shine:rgba(255,255,255,0.08);
+        }
+
+        body{
+            font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+            background:var(--bg-deep);
+            color:var(--text-primary);
+            overflow:hidden;
+            height:100vh;
+            -webkit-font-smoothing:antialiased;
+        }
+
+        .app{display:flex;flex-direction:column;height:100vh;background:var(--bg-deep)}
+
+        /* ====== APP BAR ====== */
+        .app-bar{
+            display:flex;
+            align-items:center;
+            padding:0 16px;
+            height:40px;
+            background:var(--bg-base);
+            border-bottom:1px solid var(--border-subtle);
+            gap:16px;
+            -webkit-app-region:drag;
+        }
+
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin-right:8px;
+        }
+
+        .brand svg{width:18px;height:18px;opacity:0.6}
+        .brand-name{
+            font-size:12px;
+            font-weight:600;
+            color:var(--text-secondary);
+            letter-spacing:1.5px;
+            text-transform:uppercase;
+        }
+
+        .tab-strip{display:flex;gap:2px;-webkit-app-region:no-drag}
+
+        .tab{
+            padding:8px 18px;
+            font-size:11px;
+            font-weight:600;
+            color:var(--text-muted);
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            transition:all 0.2s ease;
+            border-radius:4px;
+            letter-spacing:0.3px;
+        }
+
+        .tab:hover{color:var(--text-secondary);background:rgba(255,255,255,0.02)}
+        .tab.active{color:var(--text-primary);background:var(--accent-dim)}
+
+        .app-bar-spacer{flex:1}
+
+        .minimize-btn{
+            width:28px;height:28px;
+            display:flex;align-items:center;justify-content:center;
+            background:transparent;border:none;cursor:pointer;
+            border-radius:4px;transition:all 0.2s;
+            -webkit-app-region:no-drag;
+        }
+        .minimize-btn svg{width:14px;height:14px;opacity:0.25}
+        .minimize-btn:hover{background:rgba(255,255,255,0.04)}
+        .minimize-btn:hover svg{opacity:0.5}
+
+        /* ====== RIBBON ====== */
+        .ribbon-container{
+            background:var(--bg-base);
+            border-bottom:1px solid var(--border-subtle);
+            position:relative;
+        }
+
+        .ribbon-panel{display:none;padding:8px 12px;gap:2px;align-items:center}
+        .ribbon-panel.active{display:flex}
+
+        .ribbon-divider{
+            width:1px;
+            height:36px;
+            background:var(--border-subtle);
+            margin:0 6px;
+        }
+
+        .ribbon-group{display:flex;gap:4px;align-items:center;padding:0 4px}
+
+        .ribbon-group-label{
+            font-size:9px;
+            font-weight:600;
+            color:var(--text-muted);
+            text-transform:uppercase;
+            letter-spacing:1px;
+            writing-mode:vertical-rl;
+            text-orientation:mixed;
+            transform:rotate(180deg);
+            padding:0 2px;
+            user-select:none;
+        }
+
+        /* Glass 3D Icon Button */
+        .rb{
+            width:40px;height:40px;
+            display:flex;align-items:center;justify-content:center;
+            background:var(--glass-bg);
+            border:1px solid var(--glass-border);
+            border-radius:10px;
+            cursor:pointer;
+            transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+            position:relative;
+            overflow:hidden;
+        }
+
+        .rb::before{
+            content:'';
+            position:absolute;
+            top:0;left:0;right:0;
+            height:50%;
+            background:linear-gradient(180deg,var(--glass-shine),transparent);
+            border-radius:10px 10px 0 0;
+            pointer-events:none;
+        }
+
+        .rb::after{
+            content:'';
+            position:absolute;
+            bottom:-2px;left:10%;right:10%;
+            height:4px;
+            background:transparent;
+            border-radius:50%;
+            filter:blur(4px);
+            transition:all 0.3s;
+        }
+
+        .rb:hover{
+            transform:translateY(-2px);
+            background:rgba(255,255,255,0.04);
+            border-color:rgba(255,255,255,0.1);
+            box-shadow:0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .rb:hover::after{background:rgba(124,106,239,0.2)}
+
+        .rb:active{transform:translateY(0)}
+
+        .rb svg{width:20px;height:20px;position:relative;z-index:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3))}
+
+        /* Color variants */
+        .rb.v:hover{border-color:rgba(124,106,239,0.3)}
+        .rb.v:hover::after{background:rgba(124,106,239,0.3)}
+
+        .rb.b:hover{border-color:rgba(91,156,246,0.3)}
+        .rb.b:hover::after{background:rgba(91,156,246,0.3)}
+
+        .rb.g:hover{border-color:rgba(62,207,142,0.3)}
+        .rb.g:hover::after{background:rgba(62,207,142,0.3)}
+
+        .rb.o:hover{border-color:rgba(232,153,90,0.3)}
+        .rb.o:hover::after{background:rgba(232,153,90,0.3)}
+
+        .rb.p:hover{border-color:rgba(217,109,181,0.3)}
+        .rb.p:hover::after{background:rgba(217,109,181,0.3)}
+
+        .rb.c:hover{border-color:rgba(91,192,212,0.3)}
+        .rb.c:hover::after{background:rgba(91,192,212,0.3)}
+
+        /* Run button */
+        .run-btn{
+            height:40px;padding:0 18px;
+            display:flex;align-items:center;gap:8px;
+            background:var(--green-dim);
+            border:1px solid rgba(62,207,142,0.2);
+            border-radius:10px;cursor:pointer;
+            transition:all 0.25s;
+            color:var(--green);
+            font-size:11px;font-weight:600;
+            position:relative;overflow:hidden;
+        }
+
+        .run-btn::before{
+            content:'';position:absolute;
+            top:0;left:0;right:0;height:50%;
+            background:linear-gradient(180deg,rgba(62,207,142,0.08),transparent);
+            pointer-events:none;
+        }
+
+        .run-btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 8px 20px rgba(62,207,142,0.15);
+            background:rgba(62,207,142,0.18);
+        }
+
+        .run-btn svg{width:16px;height:16px}
+
+        /* ====== MAIN LAYOUT ====== */
+        .main{display:flex;flex:1;overflow:hidden}
+
+        /* Left Activity Bar */
+        .activity-bar{
+            width:48px;
+            background:var(--bg-base);
+            border-right:1px solid var(--border-subtle);
+            display:flex;flex-direction:column;
+            align-items:center;
+            padding:12px 0;gap:4px;
+        }
+
+        .ab-icon{
+            width:36px;height:36px;
+            display:flex;align-items:center;justify-content:center;
+            border-radius:8px;cursor:pointer;
+            transition:all 0.2s;
+            position:relative;
+        }
+
+        .ab-icon svg{width:18px;height:18px;opacity:0.25;transition:all 0.2s}
+        .ab-icon:hover svg{opacity:0.5}
+        .ab-icon.active svg{opacity:0.7}
+
+        .ab-icon.active::before{
+            content:'';position:absolute;
+            left:-6px;width:2px;height:16px;
+            background:var(--accent);border-radius:0 2px 2px 0;
+            opacity:0.6;
+        }
+
+        .ab-spacer{flex:1}
+
+        /* Explorer Panel */
+        .explorer{
+            width:280px;
+            background:var(--bg-surface);
+            border-right:1px solid var(--border-subtle);
+            display:flex;flex-direction:column;
+        }
+
+        .explorer-head{
+            padding:14px 16px;
+            display:flex;align-items:center;
+            justify-content:space-between;
+            border-bottom:1px solid var(--border-subtle);
+        }
+
+        .explorer-title{
+            font-size:11px;font-weight:600;
+            color:var(--text-secondary);
+            text-transform:uppercase;
+            letter-spacing:0.8px;
+        }
+
+        .explorer-actions{display:flex;gap:4px}
+
+        .ea-btn{
+            width:24px;height:24px;
+            display:flex;align-items:center;justify-content:center;
+            border-radius:4px;cursor:pointer;
+            transition:all 0.2s;
+        }
+        .ea-btn:hover{background:rgba(255,255,255,0.04)}
+        .ea-btn svg{width:13px;height:13px;opacity:0.25}
+
+        .search-wrap{padding:10px 12px}
+
+        .search-field{
+            width:100%;padding:8px 10px 8px 32px;
+            background:var(--bg-raised);
+            border:1px solid var(--border-dim);
+            border-radius:6px;
+            color:var(--text-primary);
+            font-size:11px;font-family:inherit;
+            transition:all 0.25s;
+            position:relative;
+        }
+
+        .search-field:focus{
+            outline:none;
+            border-color:rgba(124,106,239,0.25);
+            background:var(--bg-overlay);
+        }
+
+        .search-field::placeholder{color:var(--text-muted)}
+
+        .search-wrap{position:relative}
+
+        .search-wrap svg{
+            position:absolute;left:22px;top:50%;
+            transform:translateY(-50%);
+            width:13px;height:13px;opacity:0.2;
+        }
+
+        .explorer-body{
+            flex:1;display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            padding:40px 24px;
+            text-align:center;
+        }
+
+        .empty-box{
+            width:64px;height:64px;
+            display:flex;align-items:center;justify-content:center;
+            background:var(--bg-raised);
+            border:1px solid var(--border-dim);
+            border-radius:16px;
+            margin-bottom:16px;
+        }
+
+        .empty-box svg{width:28px;height:28px;opacity:0.15}
+
+        .empty-title{font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+        .empty-desc{font-size:11px;color:var(--text-muted);line-height:1.5;margin-bottom:20px}
+
+        .demo-btn{
+            padding:8px 20px;
+            background:var(--accent-dim);
+            border:1px solid rgba(124,106,239,0.2);
+            border-radius:6px;
+            color:var(--accent);
+            font-size:11px;font-weight:600;
+            cursor:pointer;transition:all 0.25s;
+        }
+
+        .demo-btn:hover{
+            background:var(--accent-soft);
+            transform:translateY(-1px);
+            box-shadow:0 4px 12px rgba(124,106,239,0.15);
+        }
+
+        /* Editor */
+        .editor{
+            flex:1;
+            display:flex;flex-direction:column;
+            background:var(--bg-deep);
+        }
+
+        .editor-empty{
+            flex:1;display:flex;
+            flex-direction:column;
+            align-items:center;justify-content:center;
+            gap:16px;
+        }
+
+        .editor-empty svg{width:80px;height:80px;opacity:0.06}
+        .editor-empty-title{font-size:15px;font-weight:500;color:var(--text-muted)}
+        .editor-empty-sub{font-size:12px;color:var(--text-muted);opacity:0.5}
+
+        /* Right Panel */
+        .right-panel{
+            width:340px;
+            background:var(--bg-surface);
+            border-left:1px solid var(--border-subtle);
+            display:flex;flex-direction:column;
+        }
+
+        .rp-header{
+            padding:12px 16px;
+            display:flex;align-items:center;gap:10px;
+            border-bottom:1px solid var(--border-subtle);
+            background:rgba(255,255,255,0.01);
+        }
+
+        .rp-avatar{
+            width:28px;height:28px;
+            display:flex;align-items:center;justify-content:center;
+            background:var(--accent-dim);
+            border:1px solid rgba(124,106,239,0.2);
+            border-radius:8px;
+        }
+
+        .rp-avatar svg{width:14px;height:14px;opacity:0.6}
+
+        .rp-info{flex:1}
+
+        .rp-name{font-size:12px;font-weight:600;color:var(--text-secondary)}
+
+        .rp-mode{
+            font-size:9px;color:var(--text-muted);
+            text-transform:uppercase;letter-spacing:0.5px;
+            display:flex;align-items:center;gap:6px;
+            margin-top:1px;
+        }
+
+        .cloud-tag{
+            padding:2px 6px;
+            background:var(--blue-dim);
+            border:1px solid rgba(91,156,246,0.15);
+            border-radius:3px;
+            font-size:8px;font-weight:700;
+            color:var(--blue);
+            letter-spacing:0.5px;
+        }
+
+        .usage-tag{
+            padding:3px 8px;
+            background:var(--bg-raised);
+            border:1px solid var(--border-dim);
+            border-radius:4px;
+            font-size:9px;font-weight:600;
+            color:var(--text-muted);
+        }
+
+        /* Overview Section */
+        .overview-section{
+            padding:16px;
+            border-bottom:1px solid var(--border-subtle);
+        }
+
+        .ov-head{
+            display:flex;align-items:center;
+            justify-content:space-between;
+            margin-bottom:14px;
+        }
+
+        .ov-title{
+            font-size:10px;font-weight:700;
+            color:var(--text-muted);
+            text-transform:uppercase;
+            letter-spacing:1px;
+            display:flex;align-items:center;gap:6px;
+        }
+
+        .ov-title svg{width:12px;height:12px;opacity:0.4}
+
+        .ov-close{
+            width:22px;height:22px;
+            display:flex;align-items:center;justify-content:center;
+            border-radius:4px;cursor:pointer;transition:all 0.2s;
+        }
+        .ov-close:hover{background:rgba(224,96,96,0.1)}
+        .ov-close svg{width:12px;height:12px;opacity:0.2}
+
+        .add-card{
+            background:var(--bg-raised);
+            border:1px solid var(--border-dim);
+            border-radius:8px;
+            padding:14px;
+        }
+
+        .add-label{
+            font-size:9px;font-weight:700;
+            color:var(--text-muted);
+            text-transform:uppercase;
+            letter-spacing:1px;
+            margin-bottom:10px;
+        }
+
+        .add-field{
+            width:100%;padding:8px 10px;
+            background:var(--bg-surface);
+            border:1px solid var(--border-dim);
+            border-radius:6px;
+            color:var(--text-primary);
+            font-size:11px;font-family:inherit;
+            margin-bottom:8px;transition:all 0.25s;
+        }
+
+        .add-field:focus{
+            outline:none;
+            border-color:rgba(62,207,142,0.25);
+        }
+
+        .add-field::placeholder{color:var(--text-muted)}
+
+        .add-submit{
+            width:100%;padding:8px;
+            background:var(--green-dim);
+            border:1px solid rgba(62,207,142,0.15);
+            border-radius:6px;
+            color:var(--green);
+            font-size:11px;font-weight:600;
+            cursor:pointer;transition:all 0.2s;
+        }
+
+        .add-submit:hover{background:rgba(62,207,142,0.18)}
+
+        .items-empty{
+            margin-top:14px;
+            padding:32px 16px;
+            background:var(--bg-raised);
+            border:1px dashed var(--border-dim);
+            border-radius:8px;
+            text-align:center;
+        }
+
+        .items-empty svg{width:32px;height:32px;opacity:0.08;margin-bottom:8px}
+        .items-empty-text{font-size:11px;color:var(--text-muted)}
+
+        /* Chat Area */
+        .chat-area{
+            flex:1;padding:16px;
+            overflow-y:auto;
+        }
+
+        .chat-msg{
+            padding:10px 12px;
+            background:var(--bg-raised);
+            border:1px solid var(--border-dim);
+            border-radius:8px;
+            font-size:11px;line-height:1.6;
+            color:var(--text-secondary);
+        }
+
+        /* Chat Input */
+        .chat-footer{
+            padding:12px 16px;
+            border-top:1px solid var(--border-subtle);
+            background:rgba(0,0,0,0.15);
+        }
+
+        .chat-row{
+            display:flex;gap:6px;
+            align-items:center;
+            margin-bottom:8px;
+        }
+
+        .chat-ibtn{
+            width:32px;height:32px;
+            display:flex;align-items:center;justify-content:center;
+            background:var(--glass-bg);
+            border:1px solid var(--glass-border);
+            border-radius:6px;cursor:pointer;
+            transition:all 0.2s;
+        }
+
+        .chat-ibtn:hover{background:rgba(255,255,255,0.04)}
+        .chat-ibtn svg{width:14px;height:14px;opacity:0.3}
+
+        .chat-field{
+            flex:1;padding:8px 12px;
+            background:var(--bg-raised);
+            border:1px solid var(--border-dim);
+            border-radius:6px;
+            color:var(--text-primary);
+            font-size:11px;font-family:inherit;
+            transition:all 0.25s;
+        }
+
+        .chat-field:focus{
+            outline:none;
+            border-color:rgba(124,106,239,0.25);
+        }
+
+        .chat-field::placeholder{color:var(--text-muted)}
+
+        .chat-send{
+            width:32px;height:32px;
+            display:flex;align-items:center;justify-content:center;
+            background:var(--green-dim);
+            border:1px solid rgba(62,207,142,0.2);
+            border-radius:6px;cursor:pointer;
+            transition:all 0.2s;
+        }
+
+        .chat-send:hover{background:rgba(62,207,142,0.18)}
+        .chat-send svg{width:14px;height:14px}
+
+        .clear-btn{
+            width:100%;padding:7px;
+            background:transparent;
+            border:1px solid var(--border-dim);
+            border-radius:5px;
+            color:var(--text-muted);
+            font-size:10px;font-weight:500;
+            cursor:pointer;transition:all 0.2s;
+            display:flex;align-items:center;
+            justify-content:center;gap:6px;
+        }
+
+        .clear-btn:hover{
+            background:var(--red-dim);
+            border-color:rgba(224,96,96,0.2);
+            color:var(--red);
+        }
+
+        .clear-btn svg{width:12px;height:12px}
+
+        /* Right Activity Strip */
+        .right-strip{
+            width:36px;
+            background:var(--bg-base);
+            border-left:1px solid var(--border-subtle);
+            display:flex;flex-direction:column;
+            align-items:center;
+            padding:10px 0;gap:4px;
+        }
+
+        .rs-label{
+            writing-mode:vertical-rl;
+            text-orientation:mixed;
+            font-size:9px;font-weight:600;
+            color:var(--text-muted);
+            text-transform:uppercase;
+            letter-spacing:1.5px;
+            padding:14px 0;
+            cursor:pointer;
+            transition:all 0.2s;
+            opacity:0.4;
+        }
+
+        .rs-label:hover{opacity:0.7}
+        .rs-label.active{opacity:1;color:var(--accent)}
+
+        .rs-dot{
+            width:3px;height:3px;
+            border-radius:50%;
+            background:var(--border-soft);
+            margin:4px 0;
+        }
+
+        /* SVG palette */
+        .ic-v{stroke:var(--accent);opacity:0.55}
+        .ic-b{stroke:var(--blue);opacity:0.55}
+        .ic-g{stroke:var(--green);opacity:0.55}
+        .ic-o{stroke:var(--orange);opacity:0.55}
+        .ic-p{stroke:var(--pink);opacity:0.55}
+        .ic-c{stroke:var(--cyan);opacity:0.55}
+
+        .rb:hover .ic-v{opacity:0.9}
+        .rb:hover .ic-b{opacity:0.9}
+        .rb:hover .ic-g{opacity:0.9}
+        .rb:hover .ic-o{opacity:0.9}
+        .rb:hover .ic-p{opacity:0.9}
+        .rb:hover .ic-c{opacity:0.9}
+    </style>
+</head>
+<body>
+<div class="app">
+
+    <!-- ====== APP BAR ====== -->
+    <div class="app-bar">
+        <div class="brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity="0.4">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+            </svg>
+            <span class="brand-name">Roche</span>
+        </div>
+
+        <div class="tab-strip">
+            <button class="tab active" onclick="switchTab(this,'home-ribbon')">Home</button>
+            <button class="tab" onclick="switchTab(this,'view-ribbon')">View</button>
+            <button class="tab" onclick="switchTab(this,'intel-ribbon')">Intelligence</button>
+            <button class="tab" onclick="switchTab(this,'mcp-ribbon')">MCP Tools</button>
+        </div>
+
+        <div class="app-bar-spacer"></div>
+
+        <button class="minimize-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- ====== RIBBON ====== -->
+    <div class="ribbon-container">
+
+        <!-- HOME RIBBON -->
+        <div class="ribbon-panel active" id="home-ribbon">
+            <div class="ribbon-group">
+                <button class="rb v" title="New File">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-v" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline class="ic-v" points="14 2 14 8 20 8"/>
+                        <line class="ic-v" x1="12" y1="11" x2="12" y2="17"/>
+                        <line class="ic-v" x1="9" y1="14" x2="15" y2="14"/>
+                    </svg>
+                </button>
+                <button class="rb v" title="Open Folder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-v" d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                    </svg>
+                </button>
+                <button class="rb v" title="Save">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-v" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                        <polyline class="ic-v" points="17 21 17 13 7 13 7 21"/>
+                        <polyline class="ic-v" points="7 3 7 8 15 8"/>
+                    </svg>
+                </button>
+                <button class="rb v" title="Download">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-v" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline class="ic-v" points="7 10 12 15 17 10"/>
+                        <line class="ic-v" x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="ribbon-divider"></div>
+
+            <div class="ribbon-group">
+                <button class="rb b" title="Undo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline class="ic-b" points="1 4 1 10 7 10"/>
+                        <path class="ic-b" d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+                    </svg>
+                </button>
+                <button class="rb b" title="Redo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline class="ic-b" points="23 4 23 10 17 10"/>
+                        <path class="ic-b" d="M20.49 15a9 9 0 11-2.13-9.36L23 10"/>
+                    </svg>
+                </button>
+                <button class="rb b" title="Find">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle class="ic-b" cx="11" cy="11" r="8"/>
+                        <line class="ic-b" x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </button>
+                <button class="rb b" title="Replace">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-b" d="M17 1l4 4-4 4"/>
+                        <path class="ic-b" d="M3 11V9a4 4 0 014-4h14"/>
+                        <path class="ic-b" d="M7 23l-4-4 4-4"/>
+                        <path class="ic-b" d="M21 13v2a4 4 0 01-4 4H3"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="ribbon-divider"></div>
+
+            <div class="ribbon-group">
+                <button class="rb p" title="Format">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <line class="ic-p" x1="4" y1="7" x2="20" y2="7"/>
+                        <line class="ic-p" x1="4" y1="12" x2="20" y2="12"/>
+                        <line class="ic-p" x1="4" y1="17" x2="12" y2="17"/>
+                    </svg>
+                </button>
+                <button class="rb p" title="Beautify">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-p" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="ribbon-divider"></div>
+
+            <div class="ribbon-group">
+                <button class="rb c" title="Code View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline class="ic-c" points="16 18 22 12 16 6"/>
+                        <polyline class="ic-c" points="8 6 2 12 8 18"/>
+                    </svg>
+                </button>
+                <button class="rb c" title="Preview">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-c" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle class="ic-c" cx="12" cy="12" r="3"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="ribbon-divider"></div>
+
+            <div class="ribbon-group">
+                <button class="run-btn">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <polygon points="5 3 19 12 5 21 5 3" fill="var(--green)" opacity="0.7"/>
+                    </svg>
+                    Run
+                </button>
+            </div>
+
+            <div class="ribbon-divider"></div>
+
+            <div class="ribbon-group">
+                <button class="rb o" title="Analytics">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <line class="ic-o" x1="18" y1="20" x2="18" y2="10"/>
+                        <line class="ic-o" x1="12" y1="20" x2="12" y2="4"/>
+                        <line class="ic-o" x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="ribbon-divider"></div>
+
+            <div class="ribbon-group">
+                <button class="rb v" title="Project Home">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-v" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                        <polyline class="ic-v" points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </button>
+                <button class="rb v" title="Upload">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-v" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline class="ic-v" points="17 8 12 3 7 8"/>
+                        <line class="ic-v" x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                </button>
+                <button class="rb v" title="Export">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-v" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline class="ic-v" points="7 10 12 15 17 10"/>
+                        <line class="ic-v" x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW RIBBON -->
+        <div class="ribbon-panel" id="view-ribbon">
+            <div class="ribbon-group">
+                <button class="rb c" title="Split Editor">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect class="ic-c" x="3" y="3" width="18" height="18" rx="2"/>
+                        <line class="ic-c" x1="12" y1="3" x2="12" y2="21"/>
+                    </svg>
+                </button>
+                <button class="rb c" title="Toggle Sidebar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect class="ic-c" x="3" y="3" width="18" height="18" rx="2"/>
+                        <line class="ic-c" x1="9" y1="3" x2="9" y2="21"/>
+                    </svg>
+                </button>
+                <button class="rb c" title="Terminal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline class="ic-c" points="4 17 10 11 4 5"/>
+                        <line class="ic-c" x1="12" y1="19" x2="20" y2="19"/>
+                    </svg>
+                </button>
+                <button class="rb c" title="Minimap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect class="ic-c" x="3" y="3" width="18" height="18" rx="2"/>
+                        <line class="ic-c" x1="7" y1="8" x2="17" y2="8"/>
+                        <line class="ic-c" x1="7" y1="12" x2="14" y2="12"/>
+                        <line class="ic-c" x1="7" y1="16" x2="11" y2="16"/>
+                    </svg>
+                </button>
+                <button class="rb c" title="Zen Mode">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-c" d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- INTELLIGENCE RIBBON -->
+        <div class="ribbon-panel" id="intel-ribbon">
+            <div class="ribbon-group">
+                <button class="rb p" title="AI Chat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-p" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                    </svg>
+                </button>
+                <button class="rb p" title="Code Explain">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle class="ic-p" cx="12" cy="12" r="10"/>
+                        <path class="ic-p" d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+                        <line class="ic-p" x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </button>
+                <button class="rb p" title="Generate Code">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-p" d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83"/>
+                    </svg>
+                </button>
+                <button class="rb p" title="Refactor">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-p" d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </button>
+                <button class="rb p" title="Security Scan">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-p" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- MCP TOOLS RIBBON -->
+        <div class="ribbon-panel" id="mcp-ribbon">
+            <div class="ribbon-group">
+                <button class="rb o" title="Server Connect">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect class="ic-o" x="2" y="2" width="20" height="8" rx="2"/>
+                        <rect class="ic-o" x="2" y="14" width="20" height="8" rx="2"/>
+                        <line class="ic-o" x1="6" y1="6" x2="6.01" y2="6"/>
+                        <line class="ic-o" x1="6" y1="18" x2="6.01" y2="18"/>
+                    </svg>
+                </button>
+                <button class="rb o" title="API Explorer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-o" d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                        <path class="ic-o" d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+                    </svg>
+                </button>
+                <button class="rb o" title="Logs">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path class="ic-o" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline class="ic-o" points="14 2 14 8 20 8"/>
+                        <line class="ic-o" x1="16" y1="13" x2="8" y2="13"/>
+                        <line class="ic-o" x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline class="ic-o" points="10 9 9 9 8 9"/>
+                    </svg>
+                </button>
+                <button class="rb o" title="Plugin Manager">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect class="ic-o" x="3" y="3" width="7" height="7"/>
+                        <rect class="ic-o" x="14" y="3" width="7" height="7"/>
+                        <rect class="ic-o" x="14" y="14" width="7" height="7"/>
+                        <rect class="ic-o" x="3" y="14" width="7" height="7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MAIN CONTENT ====== -->
+    <div class="main">
+
+        <!-- Activity Bar -->
+        <aside class="activity-bar">
+            <div class="ab-icon active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                </svg>
+            </div>
+            <div class="ab-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                </svg>
+            </div>
+            <div class="ab-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+            </div>
+            <div class="ab-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                </svg>
+            </div>
+            <div class="ab-spacer"></div>
+            <div class="ab-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                </svg>
+            </div>
+        </aside>
+
+        <!-- Explorer -->
+        <aside class="explorer">
+            <div class="explorer-head">
+                <span class="explorer-title">Explorer</span>
+                <div class="explorer-actions">
+                    <div class="ea-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                        </svg>
+                    </div>
+                    <div class="ea-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <div class="ea-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" class="search-field" placeholder="Search files...">
+            </div>
+            <div class="explorer-body">
+                <div class="empty-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <div class="empty-title">No Files Found</div>
+                <div class="empty-desc">Create a file or load a demo project to get started.</div>
+                <button class="demo-btn">Load Demo</button>
+            </div>
+        </aside>
+
+        <!-- Editor -->
+        <main class="editor">
+            <div class="editor-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <polyline points="16 18 22 12 16 6"/>
+                    <polyline points="8 6 2 12 8 18"/>
+                </svg>
+                <div class="editor-empty-title">No file open</div>
+                <div class="editor-empty-sub">Select a file from the sidebar</div>
+            </div>
+        </main>
+
+        <!-- Right Panel -->
+        <aside class="right-panel">
+            <div class="rp-header">
+                <div class="rp-avatar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <div class="rp-info">
+                    <div class="rp-name">Roche Assistant</div>
+                    <div class="rp-mode">Professional <span class="cloud-tag">CLOUD</span></div>
+                </div>
+                <div class="usage-tag">5,951</div>
+            </div>
+
+            <div class="overview-section">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Overview
+                </div>
+                <div class="ov-close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="add-card">
+                <div class="add-label">Add Items</div>
+                <input type="text" class="add-field" placeholder="Enter new item name">
+                <button class="add-submit">Add Item</button>
+
+                <div class="items-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    <div class="items-empty-text">No items yet</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-area">
+            <div class="chat-msg">
+                🎉 <strong>Welcome to Roche!</strong><br><br>
+                To analyze the project structure, I first need to see the file listing. I will use the project_overview tool to get a full list of all files in the project.
+            </div>
+        </div>
+
+        <div class="chat-footer">
+            <div class="chat-row">
+                <button class="chat-ibtn" style="background:var(--green-dim);border-color:rgba(62,207,142,0.15)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2">
+                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                    </svg>
+                </button>
+                <button class="chat-ibtn" style="background:var(--orange-dim);border-color:rgba(232,153,90,0.15)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                </button>
+                <input type="text" class="chat-field" placeholder="Ask Roche to analyze code or run commands...">
+                <button class="chat-send">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </div>
+            <button class="clear-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                </svg>
+                Clear Chat History
+            </button>
+        </div>
+    </aside>
+
+    <!-- Right Strip -->
+    <aside class="right-strip">
+        <div class="rs-label">ASSISTANT</div>
+        <div class="rs-dot"></div>
+        <div class="rs-label">PREVIEW</div>
+        <div class="rs-dot"></div>
+        <div class="rs-label">INSPECTOR</div>
+        <div class="rs-dot"></div>
+        <div class="rs-label">MONITOR</div>
+        <div class="rs-dot"></div>
+        <div class="rs-label active">OVERVIEW</div>
+    </aside>
+
+    </div>
+</div>
+
+<script>
+function switchTab(btn, panelId) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.ribbon-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(panelId).classList.add('active');
+}
+</script>
+</body>
+</html>

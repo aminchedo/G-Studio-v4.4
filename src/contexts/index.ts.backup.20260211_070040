@@ -1,0 +1,68 @@
+/**
+ * G Studio v2.0.0 - Contexts Index
+ * 
+ * Exports all context providers and hooks
+ */
+
+export {
+  NotificationProvider,
+  useNotification,
+  showNotification,
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo,
+  setGlobalNotificationDispatch,
+} from './NotificationContext';
+export type { Notification, NotificationType } from './NotificationContext';
+
+export {
+  DatabaseProvider,
+  useDatabase,
+  initDatabaseSingleton,
+  getDatabaseSingleton,
+} from './DatabaseContext';
+export type {
+  DatabaseProject,
+  DatabaseConversation,
+  DatabaseFile,
+  DatabaseSnippet,
+} from './DatabaseContext';
+
+export {
+  LMStudioProvider,
+  useLMStudioContext,
+  useLMStudioOptional,
+} from './LMStudioProvider';
+export type {
+  LMStudioContextValue,
+  LMStudioProviderProps,
+} from './LMStudioProvider';
+
+// New Context Providers for State Management
+export { 
+  AppStateProvider, 
+  useAppState,
+  useEditorFiles,
+  useChatMessages,
+  useUIPanels,
+  useAgent,
+  useTheme,
+  useVoice
+} from './AppStateContext';
+
+export {
+  ModalProvider,
+  useModal,
+  useSpecificModal,
+  useSettingsModal,
+  useAgentModal,
+  useMcpToolModal,
+  useAISettingsHubModal,
+  useGeminiTesterModal,
+  useCodeIntelligenceModal,
+  useRibbonModals
+} from './ModalContext';
+export { useModal, useAgentModal, useRibbonModals } from './ModalContext'
+export { useEditorFiles, useAppState, AppStateProvider } from './AppStateContext'
+export { DatabaseFile, initDatabaseSingleton, DatabaseSnippet } from './DatabaseContext'

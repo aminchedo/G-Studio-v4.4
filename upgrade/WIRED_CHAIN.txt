@@ -1,0 +1,17 @@
+Wired chain (copies of main files — source paths below)
+
+  index.tsx          <- src/index.tsx
+  App.tsx            <- src/App.tsx
+  chat-enhancements.css  <- src/styles/chat-enhancements.css
+  useChatState.ts    <- src/hooks/useChatState.ts
+  chat-index.ts      <- src/components/chat/index.ts
+  EnhancedMessageList.tsx  <- src/components/chat/EnhancedMessageList.tsx
+  EnhancedInputArea.tsx    <- src/components/chat/EnhancedInputArea.tsx
+  MessageBubble.tsx  <- src/components/chat/MessageBubble.tsx
+  VoiceChatModal.tsx <- src/components/modals/VoiceChatModal.tsx
+
+Wired chain:
+  index.tsx → App.tsx
+  App.tsx → useChatState, @/components/chat (EnhancedMessageList, EnhancedInputArea), VoiceChatModal
+  index.tsx → chat-enhancements.css
+  EnhancedMessageList → MessageBubble

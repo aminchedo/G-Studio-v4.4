@@ -1,0 +1,77 @@
+/**
+ * G Studio v2.3.0 - Services Index
+ * 
+ * Central export for all services
+ */
+
+// ============================================================================
+// NEW MODULAR SERVICES
+// ============================================================================
+
+// Gemini Service (modular)
+export * as Gemini from './gemini';
+export { 
+  GeminiClient, 
+  createApiClient,
+  categorizeError,
+  StreamProcessor
+} from './gemini';
+
+// MCP Service (modular)
+export * as MCP from './mcp';
+export {
+  executeTool,
+  getAvailableTools,
+  getToolsByCategory,
+  hasToolHandler
+} from './mcp';
+
+// AI Service
+export * from './ai';
+
+// Advanced Features Services
+
+
+
+
+// ============================================================================
+// LEGACY SERVICE RE-EXPORTS
+// ============================================================================
+
+// These are the original services that are still in use
+// They will be gradually migrated to the modular structure
+
+// Note: The actual implementations remain in /services/*.ts
+// This file provides a clean interface for importing services
+
+/**
+ * @example
+ * ```typescript
+ * // New modular imports
+ * import { Gemini, MCP } from '@/services';
+ * 
+ * const client = new Gemini.GeminiClient(apiKey);
+ * const result = await MCP.executeTool('create_file', args, files, callbacks);
+ * 
+ * // Legacy imports still work
+ * import { GeminiService } from './services/geminiService';
+ * import { McpService } from './services/mcpService';
+ * ```
+ */
+export { VoskRendererService, voskRendererService } from './VoskRendererService'
+export type { VoskRendererCallbacks } from './VoskRendererService'
+export { modelService } from './ai/modelService'
+export type { GeminiModel, FetchModelsOptions } from './ai/modelService'
+export { codeAnalysisService } from './codeAnalysisService'
+export type { CodeIssue, AnalysisResult } from './codeAnalysisService'
+export { ContextManager } from './contextManager'
+export type { ContextEntry } from './contextManager'
+export { debugService, DebugScope } from './debugService'
+export type { Breakpoint, StackFrame, DebugSession } from './debugService'
+export { gitService } from './gitService'
+export type { GitStatus, GitLog, GitDiff } from './gitService'
+export { ResourceQuotaManager, AuditLogger } from './sandboxAdvanced'
+export type { AuditLogEntry } from './sandboxAdvanced'
+export { speechRecognitionService } from './speechRecognitionService'
+export type { SpeechRecognitionConfig, SpeechRecognitionCallbacks } from './speechRecognitionService'
+export { uiActionRegistry } from './uiActionRegistry'

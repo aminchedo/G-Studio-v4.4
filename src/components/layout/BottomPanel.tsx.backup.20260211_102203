@@ -1,0 +1,31 @@
+import React, { ReactNode } from 'react';
+import PropTypes from 'prop-types';
+
+export interface BottomPanelProps {
+  className?: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children?: ReactNode;
+}
+
+export const BottomPanel: React.FC<BottomPanelProps> = ({ className, isOpen, onToggle, children }) => {
+  return (
+    <div className={`${className} ${isOpen ? 'open' : 'closed'}`}>
+      <div className="bottom-panel-header">
+        <button onClick={onToggle} className="bottom-panel-toggle">
+          {isOpen ? 'Hide' : 'Show'}
+        </button>
+      </div>
+      <div className="bottom-panel-content">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+BottomPanel.propTypes = {
+  className: PropTypes.string,
+  isOpen: PropTypes.bool.isRequired,
+  onToggle: PropTypes.func.isRequired,
+  children: PropTypes.node,
+};

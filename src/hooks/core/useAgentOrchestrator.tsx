@@ -1,0 +1,546 @@
+/**
+ * useAgentOrchestrator - Refactored from class AgentOrchestrator
+ *
+ * Manages AI agent orchestration for the IDE
+ * Handles message processing, tool execution, and project state
+ */
+
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useCallback,
+  useRef,
+  useEffect,
+  ReactNode,
+  useMemo,
+} from "react";
+
+// Types
+export interface FileData {
+  content: string;
+  language: string;
+  path?: string;
+}
+
+export interface Message {
+  id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  timestamp?: number;
+}
+
+export interface ProjectState {
+  name: string;
+  description: string;
+  files: string[];
+  structure: Record<string, unknown>;
+  technologies: string[];
+  status: "planning" | "developing" | "testing" | "complete";
+}
+
+export interface AgentAction {
+  type: string;
+  payload: Record<string, unknown>;
+  timestamp: number;
+  status: "pending" | "executing" | "completed" | "failed";
+  result?: unknown;
+  error?: string;
+}
+
+export interface AgentContext {
+  files: Record<string, FileData>;
+  activeFile: string | null;
+  messages: Message[];
+  projectState: ProjectState;
+}
+
+export type ExecutionMode = "cloud" | "local" | "hybrid";
+
+export interface ProcessingResult {
+  response: string;
+  actions: AgentAction[];
+  updatedFiles?: Record<string, FileData>;
+  projectState?: ProjectState;
+  tokenUsage?: { prompt: number; response: number };
+  aiMode?: ExecutionMode;
+  isOfflineResponse?: boolean;
+}
+
+// State types
+interface OrchestratorState {
+  context: AgentContext;
+  isProcessing: boolean;
+  currentRequestId: string | null;
+  actionQueue: AgentAction[];
+  executionHistory: Array<{
+    requestId: string;
+    result: ProcessingResult;
+    timestamp: number;
+  }>;
+  error: Error | null;
+  executionMode: ExecutionMode;
+}
+
+type OrchestratorAction =
+  | { type: "SET_PROCESSING"; payload: { requestId: string } }
+  | {
+      type: "PROCESSING_COMPLETE";
+      payload: { result: ProcessingResult; requestId: string };
+    }
+  | { type: "PROCESSING_ERROR"; payload: { error: Error; requestId: string } }
+  | { type: "UPDATE_CONTEXT"; payload: Partial<AgentContext> }
+  | { type: "UPDATE_PROJECT_STATE"; payload: Partial<ProjectState> }
+  | { type: "ADD_ACTION"; payload: AgentAction }
+  | {
+      type: "UPDATE_ACTION";
+      payload: { index: number; updates: Partial<AgentAction> };
+    }
+  | { type: "CLEAR_ACTIONS" }
+  | { type: "SET_EXECUTION_MODE"; payload: ExecutionMode }
+  | { type: "RESET" };
+
+// Initial state
+const initialProjectState: ProjectState = {
+  name: "New Project",
+  description: "",
+  files: [],
+  structure: {},
+  technologies: [],
+  status: "planning",
+};
+
+const initialState: OrchestratorState = {
+  context: {
+    files: {},
+    activeFile: null,
+    messages: [],
+    projectState: initialProjectState,
+  },
+  isProcessing: false,
+  currentRequestId: null,
+  actionQueue: [],
+  executionHistory: [],
+  error: null,
+  executionMode: "cloud",
+};
+
+// Reducer
+const orchestratorReducer = (
+  state: OrchestratorState,
+  action: OrchestratorAction,
+): OrchestratorState => {
+  switch (action.type) {
+    case "SET_PROCESSING":
+      return {
+        ...state,
+        isProcessing: true,
+        currentRequestId: action.payload.requestId,
+        error: null,
+      };
+
+    case "PROCESSING_COMPLETE":
+      return {
+        ...state,
+        isProcessing: false,
+        currentRequestId: null,
+        context: {
+          ...state.context,
+          ...(action.payload.result.updatedFiles && {
+            files: action.payload.result.updatedFiles,
+          }),
+          ...(action.payload.result.projectState && {
+            projectState: action.payload.result.projectState,
+          }),
+        },
+        executionHistory: [
+          ...state.executionHistory.slice(-99),
+          {
+            requestId: action.payload.requestId,
+            result: action.payload.result,
+            timestamp: Date.now(),
+          },
+        ],
+      };
+
+    case "PROCESSING_ERROR":
+      return {
+        ...state,
+        isProcessing: false,
+        currentRequestId: null,
+        error: action.payload.error,
+      };
+
+    case "UPDATE_CONTEXT":
+      return {
+        ...state,
+        context: { ...state.context, ...action.payload },
+      };
+
+    case "UPDATE_PROJECT_STATE":
+      return {
+        ...state,
+        context: {
+          ...state.context,
+          projectState: { ...state.context.projectState, ...action.payload },
+        },
+      };
+
+    case "ADD_ACTION":
+      return {
+        ...state,
+        actionQueue: [...state.actionQueue, action.payload],
+      };
+
+    case "UPDATE_ACTION":
+      return {
+        ...state,
+        actionQueue: state.actionQueue.map((a, i) =>
+          i === action.payload.index ? { ...a, ...action.payload.updates } : a,
+        ),
+      };
+
+    case "CLEAR_ACTIONS":
+      return {
+        ...state,
+        actionQueue: [],
+      };
+
+    case "SET_EXECUTION_MODE":
+      return {
+        ...state,
+        executionMode: action.payload,
+      };
+
+    case "RESET":
+      return initialState;
+
+    default:
+      return state;
+  }
+};
+
+// Hook return type
+export interface UseAgentOrchestratorReturn {
+  // State
+  context: AgentContext;
+  isProcessing: boolean;
+  currentRequestId: string | null;
+  actionQueue: AgentAction[];
+  executionHistory: OrchestratorState["executionHistory"];
+  error: Error | null;
+  executionMode: ExecutionMode;
+  // Methods
+  processMessage: (
+    message: string,
+    apiKey: string,
+    modelId: string,
+    options?: {
+      requestId?: string;
+      onProgress?: (progress: string) => void;
+    },
+  ) => Promise<ProcessingResult>;
+  updateContext: (updates: Partial<AgentContext>) => void;
+  updateProjectState: (updates: Partial<ProjectState>) => void;
+  setExecutionMode: (mode: ExecutionMode) => void;
+  cancelProcessing: () => void;
+  clearHistory: () => void;
+  reset: () => void;
+  // File Operations
+  setFiles: (files: Record<string, FileData>) => void;
+  setActiveFile: (path: string | null) => void;
+  addMessage: (message: Message) => void;
+}
+
+// Generate request ID
+const generateRequestId = (): string =>
+  `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+/**
+ * useAgentOrchestrator hook
+ */
+export function useAgentOrchestrator(): UseAgentOrchestratorReturn {
+  const [state, dispatch] = useReducer(orchestratorReducer, initialState);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
+  const processMessage = useCallback(
+    async (
+      message: string,
+      apiKey: string,
+      modelId: string,
+      options: {
+        requestId?: string;
+        onProgress?: (progress: string) => void;
+      } = {},
+    ): Promise<ProcessingResult> => {
+      const requestId = options.requestId || generateRequestId();
+
+      // Create abort controller for this request
+      abortControllerRef.current = new AbortController();
+
+      dispatch({ type: "SET_PROCESSING", payload: { requestId } });
+
+      try {
+        // Validate inputs
+        if (!apiKey) {
+          throw new Error("API key is required");
+        }
+
+        if (!message.trim()) {
+          throw new Error("Message cannot be empty");
+        }
+
+        options.onProgress?.("Analyzing request...");
+
+        // Build context for AI
+        const contextPrompt = buildContextPrompt(state.context, message);
+
+        options.onProgress?.("Processing with AI...");
+
+        // Simulate AI processing (in real implementation, call GeminiService)
+        const aiResponse = await simulateAIProcessing(
+          contextPrompt,
+          apiKey,
+          modelId,
+          abortControllerRef.current.signal,
+        );
+
+        options.onProgress?.("Executing actions...");
+
+        // Parse and execute actions from AI response
+        const actions = parseActionsFromResponse(aiResponse.text);
+        const executedActions = await executeActions(
+          actions,
+          state.context.files,
+          abortControllerRef.current.signal,
+        );
+
+        const result: ProcessingResult = {
+          response: aiResponse.text,
+          actions: executedActions,
+          tokenUsage: aiResponse.tokenUsage,
+          aiMode: state.executionMode,
+        };
+
+        dispatch({
+          type: "PROCESSING_COMPLETE",
+          payload: { result, requestId },
+        });
+
+        return result;
+      } catch (error) {
+        const err = error instanceof Error ? error : new Error(String(error));
+
+        dispatch({
+          type: "PROCESSING_ERROR",
+          payload: { error: err, requestId },
+        });
+
+        throw err;
+      }
+    },
+    [state.context, state.executionMode],
+  );
+
+  const updateContext = useCallback((updates: Partial<AgentContext>) => {
+    dispatch({ type: "UPDATE_CONTEXT", payload: updates });
+  }, []);
+
+  const updateProjectState = useCallback((updates: Partial<ProjectState>) => {
+    dispatch({ type: "UPDATE_PROJECT_STATE", payload: updates });
+  }, []);
+
+  const setExecutionMode = useCallback((mode: ExecutionMode) => {
+    dispatch({ type: "SET_EXECUTION_MODE", payload: mode });
+  }, []);
+
+  const cancelProcessing = useCallback(() => {
+    abortControllerRef.current?.abort();
+    dispatch({
+      type: "PROCESSING_ERROR",
+      payload: {
+        error: new Error("Processing cancelled"),
+        requestId: state.currentRequestId || "",
+      },
+    });
+  }, [state.currentRequestId]);
+
+  const clearHistory = useCallback(() => {
+    dispatch({ type: "CLEAR_ACTIONS" });
+  }, []);
+
+  const reset = useCallback(() => {
+    abortControllerRef.current?.abort();
+    dispatch({ type: "RESET" });
+  }, []);
+
+  const setFiles = useCallback((files: Record<string, FileData>) => {
+    dispatch({ type: "UPDATE_CONTEXT", payload: { files } });
+  }, []);
+
+  const setActiveFile = useCallback((path: string | null) => {
+    dispatch({ type: "UPDATE_CONTEXT", payload: { activeFile: path } });
+  }, []);
+
+  const addMessage = useCallback(
+    (message: Message) => {
+      dispatch({
+        type: "UPDATE_CONTEXT",
+        payload: {
+          messages: [...state.context.messages, message],
+        },
+      });
+    },
+    [state.context.messages],
+  );
+
+  return {
+    context: state.context,
+    isProcessing: state.isProcessing,
+    currentRequestId: state.currentRequestId,
+    actionQueue: state.actionQueue,
+    executionHistory: state.executionHistory,
+    error: state.error,
+    executionMode: state.executionMode,
+    processMessage,
+    updateContext,
+    updateProjectState,
+    setExecutionMode,
+    cancelProcessing,
+    clearHistory,
+    reset,
+    setFiles,
+    setActiveFile,
+    addMessage,
+  };
+}
+
+// Helper functions
+function buildContextPrompt(context: AgentContext, message: string): string {
+  const fileList = Object.keys(context.files).join(", ") || "No files";
+  const recentMessages = context.messages
+    .slice(-5)
+    .map((m) => `${m.role}: ${m.content.substring(0, 100)}`)
+    .join("\n");
+
+  return `
+Project: ${context.projectState.name}
+Status: ${context.projectState.status}
+Technologies: ${context.projectState.technologies.join(", ") || "Not specified"}
+Files: ${fileList}
+Active File: ${context.activeFile || "None"}
+
+Recent Context:
+${recentMessages}
+
+User Request: ${message}
+`;
+}
+
+async function simulateAIProcessing(
+  prompt: string,
+  apiKey: string,
+  modelId: string,
+  signal: AbortSignal,
+): Promise<{ text: string; tokenUsage: { prompt: number; response: number } }> {
+  // In real implementation, this would call the actual AI service
+  await new Promise((resolve, reject) => {
+    const timeout = setTimeout(resolve, 1000);
+    signal.addEventListener("abort", () => {
+      clearTimeout(timeout);
+      reject(new Error("Aborted"));
+    });
+  });
+
+  return {
+    text: `I'll help you with that request. Based on the context provided, here's my response...`,
+    tokenUsage: { prompt: Math.ceil(prompt.length / 4), response: 50 },
+  };
+}
+
+function parseActionsFromResponse(response: string): AgentAction[] {
+  // In real implementation, parse structured actions from AI response
+  return [];
+}
+
+async function executeActions(
+  actions: AgentAction[],
+  files: Record<string, FileData>,
+  signal: AbortSignal,
+): Promise<AgentAction[]> {
+  const executed: AgentAction[] = [];
+
+  for (const action of actions) {
+    if (signal.aborted) break;
+
+    const executedAction: AgentAction = {
+      ...action,
+      status: "completed",
+      timestamp: Date.now(),
+    };
+
+    executed.push(executedAction);
+  }
+
+  return executed;
+}
+
+// Context
+const AgentOrchestratorContext =
+  createContext<UseAgentOrchestratorReturn | null>(null);
+
+interface AgentOrchestratorProviderProps {
+  children: ReactNode;
+}
+
+export const AgentOrchestratorProvider: React.FC<
+  AgentOrchestratorProviderProps
+> = ({ children }) => {
+  const orchestrator = useAgentOrchestrator();
+  return (
+    <AgentOrchestratorContext.Provider value={orchestrator}>
+      {children}
+    </AgentOrchestratorContext.Provider>
+  );
+};
+
+export const useAgentOrchestratorContext = (): UseAgentOrchestratorReturn => {
+  const context = useContext(AgentOrchestratorContext);
+  if (!context) {
+    throw new Error(
+      "useAgentOrchestratorContext must be used within an AgentOrchestratorProvider",
+    );
+  }
+  return context;
+};
+
+// Backward compatibility - static interface
+export const AgentOrchestrator = {
+  processUserMessage: async (
+    message: string,
+    apiKey: string,
+    modelId: string,
+    currentFiles: Record<string, FileData>,
+    history: Message[],
+    requestId?: string,
+  ): Promise<ProcessingResult> => {
+    // This is a simplified static version for backward compatibility
+    const prompt = `User: ${message}`;
+
+    return {
+      response:
+        "Please use the useAgentOrchestrator hook for full functionality.",
+      actions: [],
+      tokenUsage: { prompt: 0, response: 0 },
+    };
+  },
+};
+
+export default useAgentOrchestrator;

@@ -1,0 +1,58 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="geminiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4285F4;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#34A853;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FBBC05;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#EA4335;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9C27B0;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="shine" cx="50%" cy="30%" r="50%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#geminiGradient)" />
+  
+  <!-- Shine effect -->
+  <ellipse cx="256" cy="180" rx="180" ry="120" fill="url(#shine)" />
+  
+  <!-- Gemini star/sparkle pattern -->
+  <g transform="translate(256, 256)">
+    <!-- Main star -->
+    <path d="M 0,-80 L 15,-25 L 70,-25 L 25,5 L 40,60 L 0,30 L -40,60 L -25,5 L -70,-25 L -15,-25 Z" 
+          fill="#FFFFFF" opacity="0.95" />
+    
+    <!-- Smaller stars around -->
+    <g transform="translate(120, -80) scale(0.4)">
+      <path d="M 0,-30 L 6,-10 L 25,-10 L 10,2 L 15,25 L 0,12 L -15,25 L -10,2 L -25,-10 L -6,-10 Z" 
+            fill="#FFFFFF" opacity="0.8" />
+    </g>
+    
+    <g transform="translate(-120, 80) scale(0.4)">
+      <path d="M 0,-30 L 6,-10 L 25,-10 L 10,2 L 15,25 L 0,12 L -15,25 L -10,2 L -25,-10 L -6,-10 Z" 
+            fill="#FFFFFF" opacity="0.8" />
+    </g>
+    
+    <g transform="translate(100, 100) scale(0.35)">
+      <path d="M 0,-30 L 6,-10 L 25,-10 L 10,2 L 15,25 L 0,12 L -15,25 L -10,2 L -25,-10 L -6,-10 Z" 
+            fill="#FFFFFF" opacity="0.7" />
+    </g>
+    
+    <g transform="translate(-100, -100) scale(0.35)">
+      <path d="M 0,-30 L 6,-10 L 25,-10 L 10,2 L 15,25 L 0,12 L -15,25 L -10,2 L -25,-10 L -6,-10 Z" 
+            fill="#FFFFFF" opacity="0.7" />
+    </g>
+    
+    <!-- Sparkle dots -->
+    <circle cx="0" cy="-140" r="4" fill="#FFFFFF" opacity="0.9" />
+    <circle cx="140" cy="0" r="3" fill="#FFFFFF" opacity="0.8" />
+    <circle cx="-140" cy="0" r="3" fill="#FFFFFF" opacity="0.8" />
+    <circle cx="0" cy="140" r="3" fill="#FFFFFF" opacity="0.8" />
+  </g>
+  
+  <!-- Outer glow -->
+  <circle cx="256" cy="256" r="240" fill="none" stroke="url(#geminiGradient)" stroke-width="2" opacity="0.3" />
+</svg>

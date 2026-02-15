@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - Dependency Graph</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Colors */
+            --bg-primary: #13151f;
+            --bg-secondary: #1a1d2e;
+            --bg-card: #1e2235;
+            --bg-card-hover: #252a40;
+            --border-color: #2a3048;
+            --border-active: #3b82f6;
+            
+            /* Text */
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --text-accent: #3b82f6;
+            
+            /* Accents */
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --accent-green: #10b981;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.3);
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+            transition: background var(--transition-fast);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* ==================== HEADER ==================== */
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 16px 0;
+            margin-bottom: 32px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 8px 16px 8px 8px;
+            background: var(--bg-card);
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .user-profile:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transition: transform var(--transition-normal);
+        }
+
+        .user-profile:hover .user-avatar {
+            transform: scale(1.05);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.3px;
+        }
+
+        /* ==================== MAIN LAYOUT ==================== */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* ==================== VISUALIZATION CARD ==================== */
+        .viz-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-smooth);
+        }
+
+        .viz-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: var(--shadow-lg), 0 0 40px rgba(59, 130, 246, 0.1);
+        }
+
+        .viz-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+
+        /* Grid Pattern */
+        .viz-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.8;
+        }
+
+        /* Radar Lines */
+        .radar-lines {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+        }
+
+        .radar-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            top: 50%;
+            left: 0;
+            transform-origin: center;
+        }
+
+        .radar-line:nth-child(1) { transform: rotate(0deg); }
+        .radar-line:nth-child(2) { transform: rotate(30deg); }
+        .radar-line:nth-child(3) { transform: rotate(60deg); }
+        .radar-line:nth-child(4) { transform: rotate(90deg); }
+        .radar-line:nth-child(5) { transform: rotate(120deg); }
+        .radar-line:nth-child(6) { transform: rotate(150deg); }
+
+        /* Animated Blob Visualization */
+        .blob-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            z-index: 1;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(2px);
+            mix-blend-mode: screen;
+            animation: blobFloat 8s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, var(--accent-purple) 0%, transparent 70%);
+            top: 20%;
+            left: 15%;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at 70% 30%, var(--accent-blue) 0%, transparent 70%);
+            top: 10%;
+            right: 20%;
+            animation-delay: -2s;
+        }
+
+        .blob-3 {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle at 50% 70%, var(--accent-pink) 0%, transparent 70%);
+            bottom: 20%;
+            left: 25%;
+            animation-delay: -4s;
+        }
+
+        .blob-4 {
+            width: 110px;
+            height: 110px;
+            background: radial-gradient(circle at 60% 40%, var(--accent-cyan) 0%, transparent 70%);
+            bottom: 25%;
+            right: 15%;
+            animation-delay: -6s;
+        }
+
+        .blob-5 {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 50% 50%, var(--accent-orange) 0%, transparent 70%);
+            top: 40%;
+            left: 40%;
+            animation-delay: -1s;
+        }
+
+        @keyframes blobFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(10px, -15px) scale(1.05); }
+            50% { transform: translate(-5px, 10px) scale(0.95); }
+            75% { transform: translate(-10px, -5px) scale(1.02); }
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 28px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-ring {
+            position: relative;
+            width: 56px;
+            height: 56px;
+        }
+
+        .stat-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .stat-ring-bg {
+            fill: none;
+            stroke: var(--bg-secondary);
+            stroke-width: 4;
+        }
+
+        .stat-ring-progress {
+            fill: none;
+            stroke-width: 4;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-ring-1 .stat-ring-progress { stroke: var(--accent-cyan); }
+        .stat-ring-2 .stat-ring-progress { stroke: var(--accent-purple); }
+        .stat-ring-3 .stat-ring-progress { stroke: var(--accent-orange); }
+
+        .stat-value {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        /* Progress Bars */
+        .progress-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .progress-track {
+            height: 6px;
+            background: var(--bg-secondary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-fill-1 { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue)); }
+        .progress-fill-2 { background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); }
+
+        /* ==================== DEPENDENCY GRAPH ==================== */
+        .dependency-graph {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* SVG Connections */
+        .connections-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .connection-path {
+            fill: none;
+            stroke: var(--accent-blue);
+            stroke-width: 2;
+            stroke-linecap: round;
+            opacity: 0.6;
+            transition: opacity var(--transition-normal), stroke var(--transition-normal);
+        }
+
+        .connection-path.active {
+            opacity: 1;
+            stroke: var(--accent-cyan);
+            filter: drop-shadow(0 0 6px var(--accent-cyan));
+        }
+
+        /* Graph Columns */
+        .graph-columns {
+            display: grid;
+            grid-template-columns: 280px 280px;
+            gap: 120px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .graph-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .column-right {
+            margin-top: 40px;
+        }
+
+        /* Node Card */
+        .node-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all var(--transition-smooth);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .node-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-md), var(--shadow-glow);
+            transform: translateX(4px);
+        }
+
+        .node-card.expanded {
+            border-color: var(--accent-blue);
+        }
+
+        /* Node Header (Clickable) */
+        .node-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            cursor: pointer;
+            user-select: none;
+            transition: background var(--transition-fast);
+        }
+
+        .node-header:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .node-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .node-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform var(--transition-smooth);
+        }
+
+        .node-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--accent-blue);
+            transition: fill var(--transition-fast);
+        }
+
+        .node-card:hover .node-icon svg {
+            fill: var(--accent-cyan);
+        }
+
+        .node-card.expanded .node-icon {
+            transform: rotate(90deg);
+        }
+
+        .node-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .node-expand-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: transform var(--transition-smooth), color var(--transition-fast);
+        }
+
+        .node-card.expanded .node-expand-icon {
+            transform: rotate(180deg);
+            color: var(--accent-blue);
+        }
+
+        /* Node Content (Drawer) */
+        .node-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-smooth);
+        }
+
+        .node-card.expanded .node-content {
+            max-height: 500px;
+        }
+
+        .node-inner {
+            padding: 0 18px 18px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all var(--transition-smooth);
+        }
+
+        .node-card.expanded .node-inner {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 100ms;
+        }
+
+        /* Node Fields */
+        .node-field {
+            margin-bottom: 14px;
+        }
+
+        .node-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .field-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 4px;
+        }
+
+        .field-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.3px;
+        }
+
+        .field-value.mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+
+        /* Tags */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--accent-blue);
+            transition: all var(--transition-fast);
+        }
+
+        .tag:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--accent-blue);
+            transform: translateY(-1px);
+        }
+
+        /* Toggle Switch */
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .toggle-row:first-of-type {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .toggle-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background var(--transition-normal);
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Add Button */
+        .add-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--accent-blue);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-top: 12px;
+        }
+
+        .add-btn:hover {
+            background: var(--accent-purple);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .add-btn:active {
+            transform: scale(0.95);
+        }
+
+        .add-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
+
+        /* Connection Dots */
+        .connection-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+            z-index: 2;
+            transition: all var(--transition-fast);
+        }
+
+        .connection-dot.left {
+            left: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .connection-dot.right {
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .node-card:hover .connection-dot {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        /* ==================== BREADCRUMB ==================== */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 24px 0;
+            margin-top: 40px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .breadcrumb-item {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .breadcrumb-item:hover {
+            color: var(--text-secondary);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--accent-blue);
+        }
+
+        .breadcrumb-separator {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .graph-columns {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .column-right {
+                margin-top: 0;
+            }
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .node-card {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .node-card:nth-child(1) { animation-delay: 0.1s; }
+        .node-card:nth-child(2) { animation-delay: 0.2s; }
+        .node-card:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="user-profile">
+                <div class="user-avatar">RA</div>
+                <div class="user-info">
+                    <span class="user-label">User</span>
+                    <span class="user-name">Raphael Aleds</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard-grid">
+            <!-- Left: Visualization Card -->
+            <aside class="viz-card">
+                <div class="viz-container">
+                    <div class="viz-grid"></div>
+                    <div class="radar-lines">
+                        <div class="radar-line"></div>
+                        <div class="radar-line"></div>
+                        <div class="radar-line"></div>
+                        <div class="radar-line"></div>
+                        <div class="radar-line"></div>
+                        <div class="radar-line"></div>
+                    </div>
+                    <div class="blob-container">
+                        <div class="blob blob-1"></div>
+                        <div class="blob blob-2"></div>
+                        <div class="blob blob-3"></div>
+                        <div class="blob blob-4"></div>
+                        <div class="blob blob-5"></div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <div class="stat-ring stat-ring-1">
+                            <svg viewBox="0 0 36 36">
+                                <circle class="stat-ring-bg" cx="18" cy="18" r="15.5"></circle>
+                                <circle class="stat-ring-progress" cx="18" cy="18" r="15.5" 
+                                    stroke-dasharray="97.4" stroke-dashoffset="24.35"></circle>
+                            </svg>
+                            <span class="stat-value">80</span>
+                        </div>
+                        <span class="stat-label">Views</span>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-ring stat-ring-2">
+                            <svg viewBox="0 0 36 36">
+                                <circle class="stat-ring-bg" cx="18" cy="18" r="15.5"></circle>
+                                <circle class="stat-ring-progress" cx="18" cy="18" r="15.5" 
+                                    stroke-dasharray="97.4" stroke-dashoffset="33.12"></circle>
+                            </svg>
+                            <span class="stat-value">66</span>
+                        </div>
+                        <span class="stat-label">Clicks</span>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-ring stat-ring-3">
+                            <svg viewBox="0 0 36 36">
+                                <circle class="stat-ring-bg" cx="18" cy="18" r="15.5"></circle>
+                                <circle class="stat-ring-progress" cx="18" cy="18" r="15.5" 
+                                    stroke-dasharray="97.4" stroke-dashoffset="48.7"></circle>
+                            </svg>
+                            <span class="stat-value">50</span>
+                        </div>
+                        <span class="stat-label">Sales</span>
+                    </div>
+                </div>
+
+                <!-- Progress Bars -->
+                <div class="progress-section">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Revenue</span>
+                            <span class="progress-value">65%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill progress-fill-1" style="width: 65%;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Growth</span>
+                            <span class="progress-value">82%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill progress-fill-2" style="width: 82%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right: Dependency Graph -->
+            <section class="dependency-graph">
+                <svg class="connections-svg" id="connectionsSvg">
+                    <!-- Paths will be drawn by JavaScript -->
+                </svg>
+
+                <div class="graph-columns">
+                    <!-- Left Column -->
+                    <div class="graph-column column-left">
+                        <!-- Dimensions Node -->
+                        <div class="node-card expanded" data-node="dimensions">
+                            <div class="node-header">
+                                <div class="node-header-left">
+                                    <div class="node-icon">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </div>
+                                    <span class="node-title">Dimensions</span>
+                                </div>
+                                <div class="node-expand-icon">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="node-content">
+                                <div class="node-inner">
+                                    <div class="node-field">
+                                        <div class="field-value">Regional Sales</div>
+                                    </div>
+                                    <div class="node-field">
+                                        <div class="field-value" style="color: var(--text-secondary);">Yearly</div>
+                                    </div>
+                                    <button class="add-btn">
+                                        <svg viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="connection-dot right"></div>
+                        </div>
+
+                        <!-- Filters Node -->
+                        <div class="node-card" data-node="filters">
+                            <div class="node-header">
+                                <div class="node-header-left">
+                                    <div class="node-icon">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </div>
+                                    <span class="node-title">Filters</span>
+                                </div>
+                                <div class="node-expand-icon">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="node-content">
+                                <div class="node-inner">
+                                    <div class="node-field">
+                                        <div class="tags-container">
+                                            <span class="tag">{ > 1000,000 }</span>
+                                            <span class="tag">= { 2011 - 2018 }</span>
+                                        </div>
+                                    </div>
+                                    <button class="add-btn">
+                                        <svg viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="connection-dot right"></div>
+                        </div>
+
+                        <!-- Theme Node -->
+                        <div class="node-card" data-node="theme">
+                            <div class="node-header">
+                                <div class="node-header-left">
+                                    <div class="node-icon">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </div>
+                                    <span class="node-title">Theme</span>
+                                </div>
+                                <div class="node-expand-icon">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="node-content">
+                                <div class="node-inner">
+                                    <div class="node-field">
+                                        <div class="field-label">Color Scheme</div>
+                                        <div class="field-value">PastelCompact</div>
+                                    </div>
+                                    <div class="node-field">
+                                        <div class="field-label">Font Family</div>
+                                        <div class="field-value mono">Open Sans</div>
+                                    </div>
+                                    <div class="toggle-row">
+                                        <span class="toggle-label">Mobile Enabled</span>
+                                        <div class="toggle-switch active" data-toggle="mobile"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="connection-dot right"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="graph-column column-right">
+                        <!-- Dashboard Node -->
+                        <div class="node-card expanded" data-node="dashboard">
+                            <div class="connection-dot left"></div>
+                            <div class="node-header">
+                                <div class="node-header-left">
+                                    <div class="node-icon">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </div>
+                                    <span class="node-title">Dashboard</span>
+                                </div>
+                                <div class="node-expand-icon">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="node-content">
+                                <div class="node-inner">
+                                    <div class="node-field">
+                                        <div class="field-label">Layout</div>
+                                        <div class="field-value mono">Basic 3 X 3</div>
+                                    </div>
+                                    <div class="node-field">
+                                        <div class="field-label">Category</div>
+                                        <div class="field-value">Sales Trend</div>
+                                    </div>
+                                    <div class="toggle-row">
+                                        <span class="toggle-label">Visible</span>
+                                        <div class="toggle-switch active" data-toggle="visible"></div>
+                                    </div>
+                                    <div class="toggle-row">
+                                        <span class="toggle-label">Auto Width</span>
+                                        <div class="toggle-switch active" data-toggle="autowidth"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Node -->
+                        <div class="node-card" data-node="user">
+                            <div class="connection-dot left"></div>
+                            <div class="node-header">
+                                <div class="node-header-left">
+                                    <div class="node-icon">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </div>
+                                    <span class="node-title">User</span>
+                                </div>
+                                <div class="node-expand-icon">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="node-content">
+                                <div class="node-inner">
+                                    <div class="node-field">
+                                        <div class="field-label">Role</div>
+                                        <div class="field-value">Administrator</div>
+                                    </div>
+                                    <div class="node-field">
+                                        <div class="field-label">Category</div>
+                                        <div class="field-value">Marketing</div>
+                                    </div>
+                                    <div class="toggle-row">
+                                        <span class="toggle-label">Visible to All</span>
+                                        <div class="toggle-switch active" data-toggle="visibleall"></div>
+                                    </div>
+                                    <div class="toggle-row">
+                                        <span class="toggle-label">Editable for All</span>
+                                        <div class="toggle-switch" data-toggle="editableall"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="#" class="breadcrumb-item">Dashboards</a>
+            <span class="breadcrumb-separator">›</span>
+            <a href="#" class="breadcrumb-item">Sales and Marketing</a>
+            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-item active">New Sales 2019</span>
+        </nav>
+    </div>
+
+    <script>
+        // ==================== DRAWER TOGGLE FUNCTIONALITY ====================
+        class DependencyGraph {
+            constructor() {
+                this.nodeCards = document.querySelectorAll('.node-card');
+                this.toggleSwitches = document.querySelectorAll('.toggle-switch');
+                this.connectionsSvg = document.getElementById('connectionsSvg');
+                
+                this.init();
+            }
+
+            init() {
+                this.bindNodeToggle();
+                this.bindToggleSwitches();
+                this.drawConnections();
+                
+                // Redraw connections on window resize
+                window.addEventListener('resize', () => this.drawConnections());
+                
+                // Animate stats on load
+                this.animateStats();
+            }
+
+            // Toggle node drawer open/close
+            bindNodeToggle() {
+                this.nodeCards.forEach(card => {
+                    const header = card.querySelector('.node-header');
+                    
+                    header.addEventListener('click', (e) => {
+                        // Don't toggle if clicking on toggle switch
+                        if (e.target.closest('.toggle-switch')) return;
+                        
+                        const isExpanded = card.classList.contains('expanded');
+                        
+                        // Toggle with smooth animation
+                        if (isExpanded) {
+                            this.collapseNode(card);
+                        } else {
+                            this.expandNode(card);
+                        }
+                        
+                        // Redraw connections after animation
+                        setTimeout(() => this.drawConnections(), 400);
+                    });
+                });
+            }
+
+            expandNode(card) {
+                card.classList.add('expanded');
+                
+                // Add ripple effect
+                this.createRipple(card);
+            }
+
+            collapseNode(card) {
+                card.classList.remove('expanded');
+            }
+
+            // Create ripple effect on expand
+            createRipple(element) {
+                const ripple = document.createElement('div');
+                ripple.style.cssText = `
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 0;
+                    height: 0;
+                    background: rgba(59, 130, 246, 0.1);
+                    border-radius: 50%;
+                    transform: translate(-50%, -50%);
+                    pointer-events: none;
+                    z-index: 0;
+                `;
+                
+                element.style.position = 'relative';
+                element.appendChild(ripple);
+                
+                // Animate ripple
+                ripple.animate([
+                    { width: '0', height: '0', opacity: 1 },
+                    { width: '300px', height: '300px', opacity: 0 }
+                ], {
+                    duration: 600,
+                    easing: 'ease-out'
+                }).onfinish = () => ripple.remove();
+            }
+
+            // Toggle switches
+            bindToggleSwitches() {
+                this.toggleSwitches.forEach(toggle => {
+                    toggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggle.classList.toggle('active');
+                        
+                        // Emit custom event for external handling
+                        const event = new CustomEvent('toggleChange', {
+                            detail: {
+                                toggle: toggle.dataset.toggle,
+                                active: toggle.classList.contains('active')
+                            }
+                        });
+                        document.dispatchEvent(event);
+                    });
+                });
+            }
+
+            // Draw SVG connection paths between nodes
+            drawConnections() {
+                const svg = this.connectionsSvg;
+                const graphRect = svg.parentElement.getBoundingClientRect();
+                
+                // Clear existing paths
+                svg.innerHTML = '';
+                
+                // Define connections: [fromNode, toNode]
+                const connections = [
+                    ['dimensions', 'dashboard'],
+                    ['filters', 'dashboard'],
+                    ['theme', 'user']
+                ];
+
+                connections.forEach(([from, to]) => {
+                    const fromCard = document.querySelector(`[data-node="${from}"]`);
+                    const toCard = document.querySelector(`[data-node="${to}"]`);
+                    
+                    if (!fromCard || !toCard) return;
+                    
+                    const fromDot = fromCard.querySelector('.connection-dot.right');
+                    const toDot = toCard.querySelector('.connection-dot.left');
+                    
+                    if (!fromDot || !toDot) return;
+                    
+                    const fromRect = fromDot.getBoundingClientRect();
+                    const toRect = toDot.getBoundingClientRect();
+                    
+                    // Calculate positions relative to SVG
+                    const x1 = fromRect.left + fromRect.width / 2 - graphRect.left;
+                    const y1 = fromRect.top + fromRect.height / 2 - graphRect.top;
+                    const x2 = toRect.left + toRect.width / 2 - graphRect.left;
+                    const y2 = toRect.top + toRect.height / 2 - graphRect.top;
+                    
+                    // Create curved path
+                    const path = this.createCurvedPath(x1, y1, x2, y2);
+                    svg.appendChild(path);
+                });
+            }
+
+            createCurvedPath(x1, y1, x2, y2) {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                
+                // Calculate control points for smooth curve
+                const midX = (x1 + x2) / 2;
+                const cp1x = midX;
+                const cp1y = y1;
+                const cp2x = midX;
+                const cp2y = y2;
+                
+                const d = `M ${x1} ${y1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x2} ${y2}`;
+                
+                path.setAttribute('d', d);
+                path.setAttribute('class', 'connection-path');
+                
+                // Animate path drawing
+                const length = path.getTotalLength ? path.getTotalLength() : 200;
+                path.style.strokeDasharray = length;
+                path.style.strokeDashoffset = length;
+                
+                requestAnimationFrame(() => {
+                    path.style.transition = 'stroke-dashoffset 0.8s ease-out';
+                    path.style.strokeDashoffset = '0';
+                });
+                
+                return path;
+            }
+
+            // Animate stat rings on page load
+            animateStats() {
+                const rings = document.querySelectorAll('.stat-ring-progress');
+                
+                rings.forEach((ring, index) => {
+                    const finalOffset = ring.getAttribute('stroke-dashoffset');
+                    ring.style.strokeDashoffset = '97.4'; // Start from 0%
+                    
+                    setTimeout(() => {
+                        ring.style.strokeDashoffset = finalOffset;
+                    }, 300 + (index * 150));
+                });
+            }
+        }
+
+        // ==================== INITIALIZE ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            const graph = new DependencyGraph();
+            
+            // Listen for toggle changes
+            document.addEventListener('toggleChange', (e) => {
+                console.log('Toggle changed:', e.detail);
+            });
+            
+            // Add button click handlers
+            document.querySelectorAll('.add-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    
+                    // Button animation
+                    btn.style.transform = 'scale(0.9)';
+                    setTimeout(() => {
+                        btn.style.transform = '';
+                    }, 150);
+                    
+                    const nodeName = btn.closest('.node-card').dataset.node;
+                    console.log('Add clicked in:', nodeName);
+                });
+            });
+
+            // Expand all / Collapse all with keyboard
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'e' && e.ctrlKey) {
+                    e.preventDefault();
+                    document.querySelectorAll('.node-card').forEach(card => {
+                        card.classList.add('expanded');
+                    });
+                    graph.drawConnections();
+                }
+                
+                if (e.key === 'c' && e.ctrlKey && e.shiftKey) {
+                    e.preventDefault();
+                    document.querySelectorAll('.node-card').forEach(card => {
+                        card.classList.remove('expanded');
+                    });
+                    graph.drawConnections();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+{
+  "project": "g-studio",
+  "version": "2.0.0",
+  "type": "Electron + React SPA with optional desktop shell",
+  "entryPoints": {
+    "web": "index.tsx -> src/components/app/App.tsx",
+    "electron": "electron/main.cjs"
+  },
+  "techStack": {
+    "runtime": "Vite 6, React 18",
+    "language": "TypeScript 5.9",
+    "state": "Zustand",
+    "editor": "Monaco Editor",
+    "ai": "@google/genai, @google/generative-ai",
+    "build": "Vite, esbuild",
+    "test": "Vitest, Testing Library",
+    "style": "Tailwind, PostCSS"
+  },
+  "paths": {
+    "@": "src",
+    "@components": "src/components",
+    "@services": "src/services",
+    "@hooks": "src/hooks",
+    "@stores": "src/stores",
+    "@llm": "src/llm",
+    "@config": "src/config"
+  },
+  "coreModules": {
+    "app": "src/components/app",
+    "chat": "src/components/chat",
+    "editor": "src/components/editor",
+    "layout": "src/components/layout",
+    "ribbon": "src/components/ribbon",
+    "panels": "src/components/panels"
+  },
+  "services": {
+    "ai": "geminiService, mcpService, agentOrchestrator, multiAgentService",
+    "code": "codeIntelligence, sandboxManager, filesystemAdapter",
+    "infra": "databaseService, contextManager, secureStorage, errorHandler",
+    "network": "circuitBreaker, rateLimitService, networkReliabilityService",
+    "security": "toolValidator, policyEngine, runtimeGuardrails"
+  },
+  "stores": [
+    "appStore",
+    "conversationStore",
+    "projectStore",
+    "settingsStore",
+    "codeIntelligenceStore"
+  ],
+  "integrations": {
+    "ai": "Google Gemini API",
+    "voice": "Web Speech API, Vosk (optional Electron)",
+    "mcp": "Model Context Protocol, file operations"
+  },
+  "governance": "governance/ (policyEngine, capabilityResolver, RFCs)",
+  "constraints": [
+    "CSP in index.html restricts connect-src",
+    "Electron IPC for fs/context in desktop mode",
+    "IndexedDB (idb) for persistence",
+    "Strict TypeScript"
+  ]
+}

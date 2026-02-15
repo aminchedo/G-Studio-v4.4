@@ -1,0 +1,44 @@
+﻿
+> {
+    "total_files": 643,
+    "unused_candidates": 164,
+    "unwired_candidates": 0,
+    "duplicate_clusters": 16,
+    "import_conflicts": 0,
+    "archive_candidates": 0,
+    "risk_distribution": {
+      "LOW": 459,
+      "MEDIUM": 136,
+      "HIGH": 28,
+      "CRITICAL": 20
+    },
+    "category_distribution": {
+      "CONFIGURATION": 30,
+      "TEST": 51,
+      "ASSET": 7,
+      "CORE_LOGIC": 151,
+      "UI_COMPONENT": 114,
+      "PAGE_OR_ROUTE": 4,
+      "STORE_OR_STATE": 11,
+      "SERVICE": 146,
+      "TYPE_DEFINITION": 28,
+      "SCRIPT": 16,
+      "CONSTANTS": 2,
+      "BARREL_EXPORT": 26,
+      "CONTEXT": 14,
+      "UTILITY": 9,
+      "CUSTOM_HOOK": 34
+    },
+    "quality_metrics": {
+      "avg_stability": 4.290139968895801,
+      "type_safety_score": 96.99046445667938,
+      "avg_complexity": 30.127527216174183,
+      "test_coverage_estimate": 4.213938411669368,
+      "total_files": 643,
+      "total_lines": 311676,
+      "typescript_percentage": 74.18351477449455
+    },
+    "report_folder": "C:\\project\\G-studio\\G-Studio-v4.4_1-Integratedzi\\reports\\20260211_062542"
+  }
+
+

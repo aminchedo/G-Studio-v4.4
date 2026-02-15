@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Models Checker — Real Access Tester</title>
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+           RESET & VARIABLES
+           ═══════════════════════════════════════════════════════════════ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-app: #08090c;
+            --bg-surface: #0e1118;
+            --bg-card: #141921;
+            --bg-card-hover: #1a222f;
+            --bg-input: #0a0d12;
+            --bg-code: #0d1117;
+            --border: #1e2936;
+            --border-focus: #4285f4;
+            --text: #e8ecf2;
+            --text-secondary: #8b95b0;
+            --text-muted: #4a5468;
+            --blue: #4285f4;
+            --blue-bg: rgba(66,133,244,0.1);
+            --green: #34d399;
+            --green-bg: rgba(52,211,153,0.1);
+            --red: #ef4444;
+            --red-bg: rgba(239,68,68,0.1);
+            --yellow: #fbbf24;
+            --yellow-bg: rgba(251,191,36,0.1);
+            --purple: #a78bfa;
+            --purple-bg: rgba(167,139,250,0.1);
+            --cyan: #22d3ee;
+            --cyan-bg: rgba(34,211,238,0.1);
+            --orange: #fb923c;
+            --orange-bg: rgba(251,146,60,0.1);
+            --shadow: 0 4px 24px rgba(0,0,0,0.3);
+            --radius: 12px;
+            --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, system-ui, sans-serif;
+            background: var(--bg-app);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 800px 600px at 20% 15%, rgba(66,133,244,0.06), transparent 70%),
+                radial-gradient(ellipse 700px 500px at 80% 80%, rgba(167,139,250,0.05), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           LAYOUT
+           ═══════════════════════════════════════════════════════════════ */
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════════════════════════ */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--blue-bg), var(--purple-bg));
+            border: 1px solid rgba(66,133,244,0.15);
+            border-radius: 18px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4285f4, #a78bfa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           PANEL (API INPUT)
+           ═══════════════════════════════════════════════════════════════ */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .input-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: color var(--transition);
+        }
+
+        .input-wrap input {
+            width: 100%;
+            height: 48px;
+            padding: 0 48px 0 44px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: 'Consolas', 'Fira Code', monospace;
+            outline: none;
+            transition: all var(--transition);
+        }
+
+        .input-wrap input::placeholder {
+            color: var(--text-muted);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .input-wrap input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(66,133,244,0.12);
+        }
+
+        .input-wrap input:focus ~ .input-icon {
+            color: var(--blue);
+        }
+
+        .btn-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            display: flex;
+            transition: all var(--transition);
+        }
+
+        .btn-toggle:hover {
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .btn-primary {
+            height: 48px;
+            padding: 0 28px;
+            background: linear-gradient(135deg, #4285f4, #5a9cf6);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all var(--transition);
+            box-shadow: 0 4px 16px rgba(66,133,244,0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(66,133,244,0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .panel-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .panel-footer a {
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        .panel-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-label input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--blue);
+            cursor: pointer;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           STATUS BAR
+           ═══════════════════════════════════════════════════════════════ */
+        .status {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status.info    { display: flex; background: var(--blue-bg);   border: 1px solid rgba(66,133,244,0.2);  color: var(--blue); }
+        .status.success { display: flex; background: var(--green-bg);  border: 1px solid rgba(52,211,153,0.2);  color: var(--green); }
+        .status.error   { display: flex; background: var(--red-bg);    border: 1px solid rgba(239,68,68,0.2);   color: var(--red); }
+        .status.warning { display: flex; background: var(--yellow-bg); border: 1px solid rgba(251,191,36,0.2);  color: var(--yellow); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           PROGRESS
+           ═══════════════════════════════════════════════════════════════ */
+        .progress-wrap {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .progress-wrap.visible { display: block; }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4285f4, #34d399);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           TOOLBAR
+           ═══════════════════════════════════════════════════════════════ */
+        .toolbar {
+            display: none;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .toolbar.visible { display: flex; }
+
+        .stats {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .stat-badge:hover {
+            border-color: var(--blue);
+            transform: translateY(-1px);
+        }
+
+        .stat-badge.active {
+            background: var(--blue-bg);
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .stat-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .stat-badge.total .dot     { background: var(--blue); }
+        .stat-badge.working .dot   { background: var(--green); }
+        .stat-badge.blocked .dot   { background: var(--red); }
+        .stat-badge.quota .dot     { background: var(--yellow); }
+        .stat-badge.gen .dot       { background: var(--purple); }
+        .stat-badge.emb .dot       { background: var(--cyan); }
+
+        .toolbar-right {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+            align-items: center;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-wrap input {
+            height: 38px;
+            width: 220px;
+            padding: 0 12px 0 36px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.85rem;
+            outline: none;
+            transition: all var(--transition);
+        }
+
+        .search-wrap input:focus {
+            border-color: var(--blue);
+            width: 280px;
+        }
+
+        .search-wrap svg {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .btn-export {
+            height: 38px;
+            padding: 0 16px;
+            background: var(--green-bg);
+            border: 1px solid rgba(52,211,153,0.2);
+            border-radius: 10px;
+            color: var(--green);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all var(--transition);
+        }
+
+        .btn-export:hover {
+            background: rgba(52,211,153,0.18);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           MODEL CARDS
+           ═══════════════════════════════════════════════════════════════ */
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all var(--transition);
+            animation: cardIn 0.35s ease both;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card:hover {
+            border-color: rgba(66,133,244,0.3);
+            box-shadow: var(--shadow);
+        }
+
+        .card.working { border-left: 4px solid var(--green); }
+        .card.blocked { border-left: 4px solid var(--red); }
+        .card.quota   { border-left: 4px solid var(--yellow); }
+
+        .card-body {
+            padding: 18px 20px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .type-icon {
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .type-icon.gen { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+        .type-icon.emb { background: var(--cyan-bg);   color: var(--cyan);   border: 1px solid rgba(34,211,238,0.2); }
+        .type-icon.oth { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(251,146,60,0.2); }
+
+        .card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            word-break: break-word;
+        }
+
+        .card-id {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'Consolas', monospace;
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 14px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-badge.working  { background: var(--green-bg);  color: var(--green); }
+        .status-badge.blocked  { background: var(--red-bg);    color: var(--red); }
+        .status-badge.quota    { background: var(--yellow-bg); color: var(--yellow); }
+        .status-badge.untested { background: rgba(74,84,104,0.15); color: var(--text-muted); }
+
+        .status-badge .pulse {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-badge.working .pulse {
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .card-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 9px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .tag.method { background: var(--blue-bg);   color: var(--blue); }
+        .tag.input  { background: var(--green-bg);  color: var(--green); }
+        .tag.output { background: var(--purple-bg); color: var(--purple); }
+        .tag.temp   { background: var(--yellow-bg); color: var(--yellow); }
+
+        .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+
+        .card-meta span {
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           EXPANDABLE DETAILS
+           ═══════════════════════════════════════════════════════════════ */
+        .card-expand {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255,255,255,0.02);
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all var(--transition);
+        }
+
+        .card-expand:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-secondary);
+        }
+
+        .card-expand svg {
+            transition: transform var(--transition);
+        }
+
+        .card-expand.open svg {
+            transform: rotate(180deg);
+        }
+
+        .card-details {
+            display: none;
+            padding: 0 20px 20px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card-details.open {
+            display: block;
+        }
+
+        .detail-section {
+            margin-bottom: 16px;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+        }
+
+        .detail-item {
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border-radius: 8px;
+            font-size: 0.78rem;
+        }
+
+        .detail-item .label {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            margin-bottom: 2px;
+        }
+
+        .detail-item .value {
+            color: var(--text);
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        .error-box {
+            padding: 10px 14px;
+            background: var(--red-bg);
+            border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 8px;
+            font-size: 0.78rem;
+            color: var(--red);
+            font-family: 'Consolas', monospace;
+            word-break: break-word;
+        }
+
+        .latency-visual {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .latency-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .latency-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .latency-fill.fast   { background: var(--green); }
+        .latency-fill.medium { background: var(--yellow); }
+        .latency-fill.slow   { background: var(--orange); }
+        .latency-fill.vslow  { background: var(--red); }
+
+        .latency-text {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           CODE BLOCK
+           ═══════════════════════════════════════════════════════════════ */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-lang {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-copy {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all var(--transition);
+        }
+
+        .btn-copy:hover {
+            color: var(--blue);
+            background: var(--blue-bg);
+        }
+
+        .btn-copy.copied {
+            color: var(--green);
+        }
+
+        .code-body {
+            padding: 14px;
+            overflow-x: auto;
+            font-size: 0.78rem;
+            line-height: 1.6;
+            font-family: 'Consolas', 'Fira Code', 'JetBrains Mono', monospace;
+        }
+
+        .code-body .kw  { color: #c792ea; }
+        .code-body .fn  { color: #82aaff; }
+        .code-body .str { color: #c3e88d; }
+        .code-body .cm  { color: #546e7a; }
+        .code-body .num { color: #f78c6c; }
+        .code-body .op  { color: #89ddff; }
+        .code-body .var { color: #ffcb6b; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           EMPTY STATE
+           ═══════════════════════════════════════════════════════════════ */
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty svg {
+            margin-bottom: 16px;
+            opacity: 0.35;
+        }
+
+        .empty h3 {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .empty p {
+            font-size: 0.88rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .app { padding: 16px 12px 40px; }
+            .input-group { flex-direction: column; }
+            .toolbar-right { margin-left: 0; width: 100%; }
+            .search-wrap { flex: 1; }
+            .search-wrap input { width: 100%; }
+            .search-wrap input:focus { width: 100%; }
+            .detail-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+
+    <!-- ═══ HEADER ═══ -->
+    <div class="header">
+        <div class="header-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#4285f4"/>
+                        <stop offset="50%" style="stop-color:#a78bfa"/>
+                        <stop offset="100%" style="stop-color:#34d399"/>
+                    </linearGradient>
+                </defs>
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+            </svg>
+        </div>
+        <h1>Gemini Models Checker</h1>
+        <p>Real access testing — Discover which models actually work from your network, with quotas, latency analysis, and ready-to-use TypeScript/JavaScript code.</p>
+    </div>
+
+    <!-- ═══ API INPUT ═══ -->
+    <div class="panel">
+        <div class="panel-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            API Configuration
+        </div>
+        <div class="input-group">
+            <div class="input-wrap">
+                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                <input type="password" id="apiKey" placeholder="Paste your Gemini API key (AIza...)" autocomplete="off" spellcheck="false" />
+                <button class="btn-toggle" id="btnToggle">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="eyeIcon">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </button>
+            </div>
+            <button class="btn-primary" id="btnRun">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                <span>Test All Models</span>
+            </button>
+        </div>
+        <div class="panel-footer">
+            <span>Get API key → <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a></span>
+            <label class="checkbox-label">
+                <input type="checkbox" id="chkTest" checked />
+                Perform real API tests (recommended)
+            </label>
+        </div>
+    </div>
+
+    <!-- ═══ STATUS ═══ -->
+    <div class="status" id="status"></div>
+
+    <!-- ═══ PROGRESS ═══ -->
+    <div class="progress-wrap" id="progress">
+        <div class="progress-info">
+            <span id="progressLabel">Testing models...</span>
+            <span id="progressCount">0/0</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <!-- ═══ TOOLBAR ═══ -->
+    <div class="toolbar" id="toolbar">
+        <div class="stats" id="stats"></div>
+        <div class="toolbar-right">
+            <div class="search-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="search" placeholder="Search models..." />
+            </div>
+            <button class="btn-export" id="btnExport">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export JSON
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══ GRID ═══ -->
+    <div class="grid" id="grid">
+        <div class="empty">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <h3>Ready to discover models</h3>
+            <p>Enter your API key and click "Test All Models" to see which models are actually accessible from your network.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════
+let models = [];
+let filter = 'all';
+
+const BASE = 'https://generativelanguage.googleapis.com/v1beta';
+
+// ═══════════════════════════════════════════════════════════════════════
+// DOM
+// ═══════════════════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const apiKeyEl   = $('apiKey');
+const btnToggle  = $('btnToggle');
+const eyeIcon    = $('eyeIcon');
+const btnRun     = $('btnRun');
+const chkTest    = $('chkTest');
+const statusEl   = $('status');
+const progressEl = $('progress');
+const progressLabel = $('progressLabel');
+const progressCount = $('progressCount');
+const progressFill  = $('progressFill');
+const toolbarEl  = $('toolbar');
+const statsEl    = $('stats');
+const searchEl   = $('search');
+const btnExport  = $('btnExport');
+const gridEl     = $('grid');
+
+// ═══════════════════════════════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════════════════════════════
+btnToggle.onclick = () => {
+    const show = apiKeyEl.type === 'password';
+    apiKeyEl.type = show ? 'text' : 'password';
+    eyeIcon.innerHTML = show
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+};
+
+apiKeyEl.onkeydown = e => { if (e.key === 'Enter') run(); };
+btnRun.onclick = run;
+searchEl.oninput = render;
+btnExport.onclick = exportData;
+
+// ═══════════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════════
+const esc = s => { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+const fmt = n => n == null ? '—' : n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'K' : n+'';
+const isGen = m => (m.supportedGenerationMethods||[]).some(x => x.includes('generateContent'));
+const isEmb = m => (m.supportedGenerationMethods||[]).some(x => x.includes('embedContent') || x.includes('batchEmbedContents'));
+const cat = m => isGen(m) ? 'gen' : isEmb(m) ? 'emb' : 'oth';
+
+function showStatus(type, msg) { statusEl.className = `status ${type}`; statusEl.innerHTML = msg; }
+function setLoading(on) {
+    btnRun.disabled = on;
+    btnRun.innerHTML = on
+        ? '<div class="spinner"></div><span>Testing...</span>'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span>Test All Models</span>';
+}
+
+function showProgress(cur, tot) {
+    progressEl.classList.add('visible');
+    progressLabel.textContent = `Testing model ${cur} of ${tot}...`;
+    progressCount.textContent = `${cur}/${tot}`;
+    progressFill.style.width = `${(cur/tot)*100}%`;
+}
+
+function hideProgress() { progressEl.classList.remove('visible'); }
+
+// ═══════════════════════════════════════════════════════════════════════
+// MAIN FLOW
+// ═══════════════════════════════════════════════════════════════════════
+async function run() {
+    const key = apiKeyEl.value.trim();
+    if (!key) { showStatus('error', '⚠️ Enter a valid API key.'); apiKeyEl.focus(); return; }
+
+    setLoading(true);
+    showStatus('info', '🔄 Fetching model list...');
+    models = [];
+    filter = 'all';
+    toolbarEl.classList.remove('visible');
+    gridEl.innerHTML = '';
+
+    try {
+        // Fetch list
+        const res = await fetch(`${BASE}/models?key=${key}&pageSize=1000`);
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err?.error?.message || `HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        const raw = data.models || [];
+        if (!raw.length) { showStatus('error', '⚠️ No models returned.'); setLoading(false); return; }
+
+        models = raw.map(m => ({
+            ...m,
+            _id: (m.name||'').replace('models/',''),
+            _cat: cat(m),
+            _status: 'untested',
+            _latency: null,
+            _error: null,
+            _headers: {}
+        }));
+
+        models.sort((a,b) => {
+            const order = { gen:0, emb:1, oth:2 };
+            return (order[a._cat]||9) - (order[b._cat]||9) || a._id.localeCompare(b._id);
+        });
+
+        showStatus('info', `📋 Found ${models.length} models. ${chkTest.checked ? 'Starting tests...' : ''}`);
+        updateStats();
+        toolbarEl.classList.add('visible');
+        render();
+
+        // Test each
+        if (chkTest.checked) {
+            for (let i = 0; i < models.length; i++) {
+                showProgress(i + 1, models.length);
+                await testModel(models[i], key);
+                render();
+            }
+            hideProgress();
+
+            const working = models.filter(m => m._status === 'working').length;
+            const blocked = models.filter(m => m._status === 'blocked').length;
+            const quota   = models.filter(m => m._status === 'quota').length;
+
+            showStatus('success', `✅ Complete! <strong>${working}</strong> working, <strong>${blocked}</strong> blocked, <strong>${quota}</strong> quota-limited.`);
+        } else {
+            showStatus('success', `✅ Found <strong>${models.length}</strong> models. Enable testing to verify access.`);
+        }
+
+        updateStats();
+        render();
+
+    } catch (err) {
+        showStatus('error', `❌ ${esc(err.message)}`);
+    }
+
+    setLoading(false);
+    hideProgress();
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// TEST MODEL
+// ═══════════════════════════════════════════════════════════════════════
+async function testModel(m, key) {
+    const start = performance.now();
+    const name = m.name;
+
+    try {
+        let res;
+
+        if (isGen(m)) {
+            res = await fetch(`${BASE}/${name}:generateContent?key=${key}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: 'Hi' }] }],
+                    generationConfig: { maxOutputTokens: 1 }
+                })
+            });
+        } else if (isEmb(m)) {
+            res = await fetch(`${BASE}/${name}:embedContent?key=${key}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: { parts: [{ text: 'test' }] } })
+            });
+        } else {
+            res = await fetch(`${BASE}/${name}:countTokens?key=${key}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: 'test' }] }] })
+            });
+        }
+
+        m._latency = Math.round(performance.now() - start);
+
+        // Capture headers
+        for (const [k, v] of res.headers.entries()) {
+            if (k.startsWith('x-ratelimit') || k.includes('quota') || k.includes('retry')) {
+                m._headers[k] = v;
+            }
+        }
+
+        if (res.ok) {
+            m._status = 'working';
+        } else {
+            const err = await res.json().catch(() => ({}));
+            const code = err?.error?.code || res.status;
+            const status = err?.error?.status || '';
+            const msg = err?.error?.message || '';
+
+            m._error = { code, status, message: msg };
+
+            if (code === 429 || status === 'RESOURCE_EXHAUSTED') {
+                m._status = 'quota';
+            } else {
+                m._status = 'blocked';
+            }
+        }
+
+    } catch (err) {
+        m._latency = Math.round(performance.now() - start);
+        m._status = 'blocked';
+        m._error = { code: 0, status: 'NETWORK_ERROR', message: err.message };
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════════════════════
+function updateStats() {
+    const total = models.length;
+    const working = models.filter(m => m._status === 'working').length;
+    const blocked = models.filter(m => m._status === 'blocked').length;
+    const quota = models.filter(m => m._status === 'quota').length;
+    const gen = models.filter(m => m._cat === 'gen').length;
+    const emb = models.filter(m => m._cat === 'emb').length;
+
+    const badges = [
+        { key: 'all',     cls: 'total',   label: `${total} Total` },
+        { key: 'working', cls: 'working', label: `${working} Working` },
+        { key: 'blocked', cls: 'blocked', label: `${blocked} Blocked` },
+        { key: 'gen',     cls: 'gen',     label: `${gen} Generative` },
+        { key: 'emb',     cls: 'emb',     label: `${emb} Embedding` },
+    ];
+
+    if (quota > 0) badges.splice(3, 0, { key: 'quota', cls: 'quota', label: `${quota} Quota` });
+
+    statsEl.innerHTML = badges.map(b =>
+        `<div class="stat-badge ${b.cls} ${filter === b.key ? 'active' : ''}" data-filter="${b.key}">
+            <span class="dot"></span>${b.label}
+        </div>`
+    ).join('');
+
+    statsEl.querySelectorAll('.stat-badge').forEach(el => {
+        el.onclick = () => {
+            filter = el.dataset.filter;
+            updateStats();
+            render();
+        };
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════════════
+function render() {
+    const query = searchEl.value.toLowerCase().trim();
+
+    const filtered = models.filter(m => {
+        if (filter === 'working' && m._status !== 'working') return false;
+        if (filter === 'blocked' && m._status !== 'blocked') return false;
+        if (filter === 'quota' && m._status !== 'quota') return false;
+        if (filter === 'gen' && m._cat !== 'gen') return false;
+        if (filter === 'emb' && m._cat !== 'emb') return false;
+
+        if (query) {
+            const hay = [m.name, m.displayName, m.description, ...(m.supportedGenerationMethods||[])].join(' ').toLowerCase();
+            if (!hay.includes(query)) return false;
+        }
+
+        return true;
+    });
+
+    if (!filtered.length) {
+        gridEl.innerHTML = `<div class="empty">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <h3>No matching models</h3><p>Try a different filter or search.</p>
+        </div>`;
+        return;
+    }
+
+    gridEl.innerHTML = filtered.map((m, i) => {
+        const catLabel = { gen: 'GEN', emb: 'EMB', oth: 'OTH' }[m._cat];
+        const statusLabel = { working: 'Working', blocked: 'Blocked', quota: 'Quota', untested: 'Untested' }[m._status];
+
+        let tags = '';
+        (m.supportedGenerationMethods||[]).forEach(x => {
+            const short = x.replace('streamGenerateContent','stream').replace('generateContent','gen').replace('embedContent','embed').replace('batchEmbedContents','batch').replace('countTokens','tokens');
+            tags += `<span class="tag method">${short}</span>`;
+        });
+        if (m.inputTokenLimit)  tags += `<span class="tag input">↓ ${fmt(m.inputTokenLimit)}</span>`;
+        if (m.outputTokenLimit) tags += `<span class="tag output">↑ ${fmt(m.outputTokenLimit)}</span>`;
+        if (m.temperature != null) tags += `<span class="tag temp">🌡${m.temperature}</span>`;
+
+        let meta = '';
+        if (m.version) meta += `<div>Version: <span>${esc(m.version)}</span></div>`;
+        if (m.topP != null) meta += `<div>Top-P: <span>${m.topP}</span></div>`;
+        if (m.topK != null) meta += `<div>Top-K: <span>${m.topK}</span></div>`;
+
+        let latencyHtml = '';
+        if (m._latency != null) {
+            const pct = Math.min(m._latency / 5000 * 100, 100);
+            const cls = m._latency < 800 ? 'fast' : m._latency < 2000 ? 'medium' : m._latency < 4000 ? 'slow' : 'vslow';
+            latencyHtml = `
+                <div class="detail-section">
+                    <div class="detail-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Latency
+                    </div>
+                    <div class="latency-visual">
+                        <div class="latency-bar"><div class="latency-fill ${cls}" style="width:${pct}%"></div></div>
+                        <span class="latency-text">${m._latency}ms</span>
+                    </div>
+                </div>`;
+        }
+
+        let headersHtml = '';
+        if (Object.keys(m._headers).length) {
+            headersHtml = `
+                <div class="detail-section">
+                    <div class="detail-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                        Rate Limits & Quotas
+                    </div>
+                    <div class="detail-grid">
+                        ${Object.entries(m._headers).map(([k,v]) =>
+                            `<div class="detail-item"><div class="label">${esc(k)}</div><div class="value">${esc(v)}</div></div>`
+                        ).join('')}
+                    </div>
+                </div>`;
+        }
+
+        let errorHtml = '';
+        if (m._error) {
+            errorHtml = `
+                <div class="detail-section">
+                    <div class="detail-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Error Details
+                    </div>
+                    <div class="error-box">
+                        <strong>${m._error.code} ${m._error.status}</strong><br/>
+                        ${esc(m._error.message)}
+                    </div>
+                </div>`;
+        }
+
+        const jsCode = genJS(m);
+        const tsCode = genTS(m);
+
+        const uid = `card-${i}`;
+
+        return `
+        <div class="card ${m._status}" style="animation-delay:${Math.min(i*0.02,0.6)}s">
+            <div class="card-body">
+                <div class="card-header">
+                    <div class="type-icon ${m._cat}">${catLabel}</div>
+                    <div class="card-info">
+                        <div class="card-name">${esc(m.displayName || m._id)}</div>
+                        <div class="card-id">${esc(m._id)}</div>
+                    </div>
+                    <div class="status-badge ${m._status}">
+                        <span class="pulse"></span>
+                        ${statusLabel}
+                    </div>
+                </div>
+                <div class="card-desc">${esc(m.description)}</div>
+                <div class="card-tags">${tags}</div>
+                ${meta ? `<div class="card-meta">${meta}</div>` : ''}
+            </div>
+            <button class="card-expand" onclick="toggle('${uid}', this)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                Configuration, Quotas &amp; Code
+            </button>
+            <div class="card-details" id="${uid}">
+                <div class="detail-section">
+                    <div class="detail-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m5.66-13.66l-4.24 4.24m0 6l-4.24 4.24M23 12h-6m-6 0H5m13.66 5.66l-4.24-4.24m0-6l-4.24-4.24"/></svg>
+                        Model Configuration
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item"><div class="label">Full Name</div><div class="value">${esc(m.name)}</div></div>
+                        <div class="detail-item"><div class="label">Version</div><div class="value">${esc(m.version||'—')}</div></div>
+                        <div class="detail-item"><div class="label">Input Tokens</div><div class="value">${m.inputTokenLimit ? m.inputTokenLimit.toLocaleString() : '—'}</div></div>
+                        <div class="detail-item"><div class="label">Output Tokens</div><div class="value">${m.outputTokenLimit ? m.outputTokenLimit.toLocaleString() : '—'}</div></div>
+                        <div class="detail-item"><div class="label">Temperature</div><div class="value">${m.temperature??'—'}</div></div>
+                        <div class="detail-item"><div class="label">Top-P</div><div class="value">${m.topP??'—'}</div></div>
+                        <div class="detail-item"><div class="label">Top-K</div><div class="value">${m.topK??'—'}</div></div>
+                        <div class="detail-item"><div class="label">Methods</div><div class="value">${(m.supportedGenerationMethods||[]).join(', ')||'—'}</div></div>
+                    </div>
+                </div>
+                ${latencyHtml}
+                ${headersHtml}
+                ${errorHtml}
+                <div class="detail-section">
+                    <div class="detail-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        JavaScript Usage
+                    </div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">JavaScript</span>
+                            <button class="btn-copy" onclick="copy(this, \`${jsCode.replace(/`/g,'\\`')}\`)">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <div class="code-body">${highlight(jsCode)}</div>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        TypeScript Usage
+                    </div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">TypeScript</span>
+                            <button class="btn-copy" onclick="copy(this, \`${tsCode.replace(/`/g,'\\`')}\`)">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                Copy
+                            </button>
+                        </div>
+                        <div class="code-body">${highlight(tsCode)}</div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CODE GENERATION
+// ═══════════════════════════════════════════════════════════════════════
+function genJS(m) {
+    if (isGen(m)) {
+        return `// ${m.displayName || m._id} — Generative Model
+const API_KEY = 'YOUR_API_KEY';
+const MODEL = '${m.name}';
+
+async function generate(prompt) {
+  const res = await fetch(
+    \`https://generativelanguage.googleapis.com/v1beta/\${MODEL}:generateContent?key=\${API_KEY}\`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: ${m.temperature ?? 1},
+          topP: ${m.topP ?? 0.95},
+          topK: ${m.topK ?? 40},
+          maxOutputTokens: ${Math.min(m.outputTokenLimit || 8192, 8192)}
+        }
+      })
+    }
+  );
+  
+  if (!res.ok) throw new Error(await res.text());
+  
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text;
+}
+
+// Usage
+generate('Explain quantum computing').then(console.log);`;
+
+    } else if (isEmb(m)) {
+        return `// ${m.displayName || m._id} — Embedding Model
+const API_KEY = 'YOUR_API_KEY';
+const MODEL = '${m.name}';
+
+async function embed(text) {
+  const res = await fetch(
+    \`https://generativelanguage.googleapis.com/v1beta/\${MODEL}:embedContent?key=\${API_KEY}\`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: { parts: [{ text }] }
+      })
+    }
+  );
+  
+  if (!res.ok) throw new Error(await res.text());
+  
+  const data = await res.json();
+  return data.embedding?.values;
+}
+
+// Usage
+embed('Hello world').then(console.log);`;
+    }
+
+    return `// ${m.displayName || m._id}
+const API_KEY = 'YOUR_API_KEY';
+const MODEL = '${m.name}';
+
+// This model may require specific usage patterns
+// Check official documentation for details`;
+}
+
+function genTS(m) {
+    if (isGen(m)) {
+        return `// ${m.displayName || m._id} — Generative Model
+interface GenerateConfig {
+  temperature?: number;
+  topP?: number;
+  topK?: number;
+  maxOutputTokens?: number;
+}
+
+interface GenerateResponse {
+  candidates?: Array<{
+    content?: {
+      parts?: Array<{ text?: string }>;
+    };
+  }>;
+}
+
+const API_KEY = 'YOUR_API_KEY';
+const MODEL = '${m.name}';
+
+async function generate(
+  prompt: string,
+  config?: GenerateConfig
+): Promise<string> {
+  const res = await fetch(
+    \`https://generativelanguage.googleapis.com/v1beta/\${MODEL}:generateContent?key=\${API_KEY}\`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: ${m.temperature ?? 1},
+          topP: ${m.topP ?? 0.95},
+          topK: ${m.topK ?? 40},
+          maxOutputTokens: ${Math.min(m.outputTokenLimit || 8192, 8192)},
+          ...config
+        }
+      })
+    }
+  );
+  
+  if (!res.ok) {
+    throw new Error(\`HTTP \${res.status}: \${await res.text()}\`);
+  }
+  
+  const data: GenerateResponse = await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+// Usage
+generate('Explain quantum computing').then(console.log);`;
+
+    } else if (isEmb(m)) {
+        return `// ${m.displayName || m._id} — Embedding Model
+interface EmbedResponse {
+  embedding?: {
+    values?: number[];
+  };
+}
+
+const API_KEY = 'YOUR_API_KEY';
+const MODEL = '${m.name}';
+
+async function embed(text: string): Promise<number[]> {
+  const res = await fetch(
+    \`https://generativelanguage.googleapis.com/v1beta/\${MODEL}:embedContent?key=\${API_KEY}\`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: { parts: [{ text }] }
+      })
+    }
+  );
+  
+  if (!res.ok) {
+    throw new Error(\`HTTP \${res.status}: \${await res.text()}\`);
+  }
+  
+  const data: EmbedResponse = await res.json();
+  return data.embedding?.values || [];
+}
+
+// Usage
+embed('Hello world').then(console.log);`;
+    }
+
+    return `// ${m.displayName || m._id}
+const API_KEY: string = 'YOUR_API_KEY';
+const MODEL: string = '${m.name}';
+
+// This model may require specific usage patterns
+// Check official documentation for details`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SYNTAX HIGHLIGHT
+// ═══════════════════════════════════════════════════════════════════════
+function highlight(code) {
+    return esc(code)
+        .replace(/\b(const|let|var|async|await|function|return|if|throw|new|interface|type|Promise|Array)\b/g, '<span class="kw">$1</span>')
+        .replace(/\b(fetch|console|log|JSON|stringify|parse)\b/g, '<span class="fn">$1</span>')
+        .replace(/('.*?'|".*?")/g, '<span class="str">$1</span>')
+        .replace(/(\/\/.*)/g, '<span class="cm">$1</span>')
+        .replace(/\b(\d+)\b/g, '<span class="num">$1</span>')
+        .replace(/([{}()\[\]:;,])/g, '<span class="op">$1</span>')
+        .replace(/\b(API_KEY|MODEL|prompt|text|res|data|config)\b/g, '<span class="var">$1</span>');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// TOGGLE EXPAND
+// ═══════════════════════════════════════════════════════════════════════
+function toggle(id, btn) {
+    const details = $(id);
+    const isOpen = details.classList.contains('open');
+    details.classList.toggle('open');
+    btn.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// COPY CODE
+// ═══════════════════════════════════════════════════════════════════════
+function copy(btn, code) {
+    navigator.clipboard.writeText(code).then(() => {
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Copied';
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';
+        }, 2000);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════════════
+function exportData() {
+    const report = {
+        timestamp: new Date().toISOString(),
+        summary: {
+            total: models.length,
+            working: models.filter(m => m._status === 'working').length,
+            blocked: models.filter(m => m._status === 'blocked').length,
+            quota: models.filter(m => m._status === 'quota').length
+        },
+        models: models.map(m => ({
+            name: m.name,
+            displayName: m.displayName,
+            status: m._status,
+            latency: m._latency,
+            error: m._error,
+            headers: m._headers,
+            config: {
+                inputTokenLimit: m.inputTokenLimit,
+                outputTokenLimit: m.outputTokenLimit,
+                temperature: m.temperature,
+                topP: m.topP,
+                topK: m.topK,
+                methods: m.supportedGenerationMethods
+            }
+        }))
+    };
+
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `gemini-models-report-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

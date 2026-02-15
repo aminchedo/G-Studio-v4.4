@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini API Model Tester - Production Ready</title>
+    <style>
+        /* ============================================ */
+        /* RESET & BASE STYLES */
+        /* ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --success: #0f9d58;
+            --warning: #f9ab00;
+            --danger: #ea4335;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e8eaed;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --border: #dadce0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-hover: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            --radius: 8px;
+            --transition: all 0.2s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 16px;
+        }
+
+        /* ============================================ */
+        /* CONTAINER */
+        /* ============================================ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ============================================ */
+        /* HEADER */
+        /* ============================================ */
+        .header {
+            background: var(--bg-primary);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* ============================================ */
+        /* GRID LAYOUT */
+        /* ============================================ */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ============================================ */
+        /* FORM ELEMENTS */
+        /* ============================================ */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--border);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ============================================ */
+        /* STATUS INDICATORS */
+        /* ============================================ */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-safe {
+            background: rgba(15, 157, 88, 0.1);
+            color: var(--success);
+        }
+
+        .status-warning {
+            background: rgba(249, 171, 0, 0.1);
+            color: var(--warning);
+        }
+
+        .status-danger {
+            background: rgba(234, 67, 53, 0.1);
+            color: var(--danger);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ============================================ */
+        /* NETWORK STATUS */
+        /* ============================================ */
+        .network-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .network-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .network-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .network-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ============================================ */
+        /* RATE LIMIT MONITOR */
+        /* ============================================ */
+        .rate-limit-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .rate-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .rate-bar-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+
+        .rate-bar-label {
+            color: var(--text-secondary);
+        }
+
+        .rate-bar-value {
+            font-weight: 600;
+        }
+
+        .rate-bar-track {
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .rate-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        .rate-bar-fill.warning {
+            background: var(--warning);
+        }
+
+        .rate-bar-fill.danger {
+            background: var(--danger);
+        }
+
+        /* ============================================ */
+        /* STATS */
+        /* ============================================ */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-success { color: var(--success); }
+        .stat-danger { color: var(--danger); }
+        .stat-warning { color: var(--warning); }
+
+        /* ============================================ */
+        /* MODEL RESULTS */
+        /* ============================================ */
+        .model-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .model-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius);
+            padding: 16px;
+            border-left: 4px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .model-card.testing {
+            border-left-color: var(--primary);
+            background: rgba(26, 115, 232, 0.02);
+        }
+
+        .model-card.success {
+            border-left-color: var(--success);
+        }
+
+        .model-card.failed {
+            border-left-color: var(--danger);
+        }
+
+        .model-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .model-name {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .model-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .model-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .model-response {
+            margin-top: 8px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            max-height: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .model-error {
+            margin-top: 8px;
+            padding: 12px;
+            background: rgba(234, 67, 53, 0.05);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--danger);
+        }
+
+        /* ============================================ */
+        /* PROGRESS BAR */
+        /* ============================================ */
+        .progress-container {
+            margin-top: 12px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* ============================================ */
+        /* LOG */
+        /* ============================================ */
+        .log-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: var(--radius);
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .log-time {
+            color: #858585;
+        }
+
+        .log-info { color: #4fc3f7; }
+        .log-success { color: #81c784; }
+        .log-warning { color: #ffb74d; }
+        .log-error { color: #e57373; }
+
+        /* ============================================ */
+        /* SVG ICONS */
+        /* ============================================ */
+        .icon {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .icon-sm {
+            width: 16px;
+            height: 16px;
+        }
+
+        .icon-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ============================================ */
+        /* SCROLLBAR */
+        /* ============================================ */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* ============================================ */
+        /* RESPONSIVE */
+        /* ============================================ */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* ============================================ */
+        /* EMPTY STATE */
+        /* ============================================ */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                Gemini API Model Tester
+            </h1>
+            <p>Real access testing with rate limiting, VPN detection, and production-ready code examples</p>
+        </div>
+
+        <!-- Grid: Network Status & Rate Limit -->
+        <div class="grid">
+            <!-- Network Status -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Network Status
+                    </div>
+                    <span id="networkStatus" class="status-indicator status-safe">
+                        <span class="status-dot"></span>
+                        Checking...
+                    </span>
+                </div>
+                <div class="network-info">
+                    <div class="network-item">
+                        <div class="network-label">IP Address</div>
+                        <div class="network-value" id="networkIP">—</div>
+                    </div>
+                    <div class="network-item">
+                        <div class="network-label">Location</div>
+                        <div class="network-value" id="networkLocation">—</div>
+                    </div>
+                    <div class="network-item">
+                        <div class="network-label">VPN Status</div>
+                        <div class="network-value" id="networkVPN">—</div>
+                    </div>
+                    <div class="network-item">
+                        <div class="network-label">Latency</div>
+                        <div class="network-value" id="networkLatency">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rate Limit Monitor -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Rate Limit Monitor
+                    </div>
+                    <span id="rateLimitStatus" class="status-indicator status-safe">
+                        <span class="status-dot"></span>
+                        SAFE
+                    </span>
+                </div>
+                <div class="rate-limit-bars">
+                    <div class="rate-bar">
+                        <div class="rate-bar-header">
+                            <span class="rate-bar-label">Requests/Min</span>
+                            <span class="rate-bar-value" id="requestsValue">0 / 15</span>
+                        </div>
+                        <div class="rate-bar-track">
+                            <div id="requestsBar" class="rate-bar-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="rate-bar">
+                        <div class="rate-bar-header">
+                            <span class="rate-bar-label">Tokens/Min</span>
+                            <span class="rate-bar-value" id="tokensValue">0 / 1M</span>
+                        </div>
+                        <div class="rate-bar-track">
+                            <div id="tokensBar" class="rate-bar-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Configuration -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    API Configuration
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="apiKey">API Key</label>
+                <input type="password" id="apiKey" placeholder="Enter your Gemini API key">
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+                    Get your API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--primary);">Google AI Studio</a>
+                </p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-primary" id="testAllBtn" onclick="testAllModels()">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Test All Models
+                </button>
+                <button class="btn-secondary" onclick="clearResults()">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress & Stats -->
+        <div class="card" id="progressCard" style="display: none;">
+            <div class="card-title">Testing Progress</div>
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span id="progressText">Preparing...</span>
+                    <span id="progressCount">0 / 0</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value stat-success" id="statTotal">0</div>
+                    <div class="stat-label">Total Found</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value stat-success" id="statWorking">0</div>
+                    <div class="stat-label">Working ✓</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value stat-danger" id="statFailed">0</div>
+                    <div class="stat-label">Failed ✗</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value stat-warning" id="statTesting">0</div>
+                    <div class="stat-label">Testing…</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Results -->
+        <div class="card">
+            <div class="card-title">Model Test Results</div>
+            <div id="modelResults" class="model-list">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h3>Ready to Test</h3>
+                    <p>Enter your API key and click "Test All Models" to discover which models are accessible from your network.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Log -->
+        <div class="card">
+            <div class="card-title">Live Log</div>
+            <div id="liveLog" class="log-container">
+                <div class="log-entry">
+                    <span class="log-time">[00:00:00]</span>
+                    <span class="log-info">System ready. Waiting for API key...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // GLOBAL STATE
+        // ============================================
+        let rateLimiter = null;
+        let networkMonitor = null;
+        let testResults = [];
+
+        // ============================================
+        // RATE LIMITER CLASS
+        // ============================================
+        class RateLimiter {
+            constructor(config = {}) {
+                this.requestsPerMinute = config.requestsPerMinute || 15;
+                this.tokensPerMinute = config.tokensPerMinute || 1000000;
+                this.requestCount = 0;
+                this.tokenCount = 0;
+                this.resetTime = Date.now() + 60000;
+                this.activeRequests = 0;
+                this.maxConcurrent = 3;
+            }
+
+            async execute(fn, estimatedTokens = 1000) {
+                await this.waitForSlot(estimatedTokens);
+                
+                this.activeRequests++;
+                this.requestCount++;
+                this.tokenCount += estimatedTokens;
+                this.updateUI();
+
+                try {
+                    return await this.executeWithRetry(fn);
+                } finally {
+                    this.activeRequests--;
+                }
+            }
+
+            async waitForSlot(estimatedTokens) {
+                this.resetCountersIfNeeded();
+
+                // Wait for concurrent limit
+                while (this.activeRequests >= this.maxConcurrent) {
+                    await this.sleep(100);
+                }
+
+                // Check minute limits
+                if (this.requestCount >= this.requestsPerMinute || 
+                    this.tokenCount + estimatedTokens > this.tokensPerMinute) {
+                    const waitTime = this.resetTime - Date.now();
+                    if (waitTime > 0) {
+                        addLog(`Rate limit reached. Waiting ${Math.ceil(waitTime/1000)}s...`, 'warning');
+                        await this.sleep(waitTime);
+                        this.resetCountersIfNeeded();
+                    }
+                }
+            }
+
+            async executeWithRetry(fn, maxAttempts = 5) {
+                let attempt = 0;
+
+                while (attempt < maxAttempts) {
+                    try {
+                        return await fn();
+                    } catch (error) {
+                        if (error.status === 429) {
+                            attempt++;
+                            const waitTime = Math.pow(2, attempt) * 1000;
+                            addLog(`429 Error. Retry ${attempt}/${maxAttempts} after ${waitTime}ms`, 'warning');
+                            await this.sleep(waitTime);
+                        } else {
+                            throw error;
+                        }
+                    }
+                }
+
+                throw new Error(`Failed after ${maxAttempts} attempts`);
+            }
+
+            resetCountersIfNeeded() {
+                const now = Date.now();
+                if (now >= this.resetTime) {
+                    this.requestCount = 0;
+                    this.tokenCount = 0;
+                    this.resetTime = now + 60000;
+                    this.updateUI();
+                }
+            }
+
+            updateUI() {
+                const requestsPercent = (this.requestCount / this.requestsPerMinute) * 100;
+                const tokensPercent = (this.tokenCount / this.tokensPerMinute) * 100;
+
+                document.getElementById('requestsValue').textContent = 
+                    `${this.requestCount} / ${this.requestsPerMinute}`;
+                document.getElementById('tokensValue').textContent = 
+                    `${this.formatNumber(this.tokenCount)} / ${this.formatNumber(this.tokensPerMinute)}`;
+
+                const requestsBar = document.getElementById('requestsBar');
+                const tokensBar = document.getElementById('tokensBar');
+
+                requestsBar.style.width = `${requestsPercent}%`;
+                tokensBar.style.width = `${tokensPercent}%`;
+
+                // Update colors
+                requestsBar.className = 'rate-bar-fill';
+                tokensBar.className = 'rate-bar-fill';
+
+                if (requestsPercent > 80 || tokensPercent > 80) {
+                    requestsBar.classList.add('danger');
+                    tokensBar.classList.add('danger');
+                    this.updateStatus('danger', 'DANGER');
+                } else if (requestsPercent > 60 || tokensPercent > 60) {
+                    requestsBar.classList.add('warning');
+                    tokensBar.classList.add('warning');
+                    this.updateStatus('warning', 'WARNING');
+                } else {
+                    this.updateStatus('safe', 'SAFE');
+                }
+            }
+
+            updateStatus(status, text) {
+                const statusEl = document.getElementById('rateLimitStatus');
+                statusEl.className = `status-indicator status-${status}`;
+                statusEl.innerHTML = `<span class="status-dot"></span>${text}`;
+            }
+
+            formatNumber(num) {
+                if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+                if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+                return num.toString();
+            }
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // ============================================
+        // NETWORK MONITOR CLASS
+        // ============================================
+        class NetworkMonitor {
+            constructor() {
+                this.cachedInfo = null;
+                this.cacheTime = 0;
+                this.cacheDuration = 300000; // 5 minutes
+            }
+
+            async getNetworkInfo() {
+                if (this.cachedInfo && Date.now() - this.cacheTime < this.cacheDuration) {
+                    return this.cachedInfo;
+                }
+
+                try {
+                    const [ipInfo, latency] = await Promise.all([
+                        this.fetchIPInfo(),
+                        this.measureLatency()
+                    ]);
+
+                    this.cachedInfo = {
+                        ip: ipInfo.ip,
+                        country: ipInfo.country_name || 'Unknown',
+                        city: ipInfo.city || 'Unknown',
+                        isVPN: this.detectVPN(ipInfo),
+                        latency,
+                        provider: ipInfo.org || 'Unknown'
+                    };
+
+                    this.cacheTime = Date.now();
+                    this.updateUI();
+                    return this.cachedInfo;
+                } catch (error) {
+                    addLog('Failed to get network info: ' + error.message, 'error');
+                    return null;
+                }
+            }
+
+            async fetchIPInfo() {
+                const response = await fetch('https://ipapi.co/json/', {
+                    signal: AbortSignal.timeout(5000)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch IP info');
+                }
+
+                return response.json();
+            }
+
+            async measureLatency() {
+                const start = performance.now();
+
+                try {
+                    await fetch('https://generativelanguage.googleapis.com/v1beta/models', {
+                        method: 'HEAD',
+                        signal: AbortSignal.timeout(5000)
+                    });
+
+                    return Math.round(performance.now() - start);
+                } catch {
+                    return -1;
+                }
+            }
+
+            detectVPN(ipInfo) {
+                const vpnIndicators = ['vpn', 'proxy', 'hosting', 'datacenter', 'cloud', 'virtual'];
+                const org = (ipInfo.org || '').toLowerCase();
+                const asn = (ipInfo.asn || '').toLowerCase();
+
+                return vpnIndicators.some(indicator => 
+                    org.includes(indicator) || asn.includes(indicator)
+                );
+            }
+
+            updateUI() {
+                if (!this.cachedInfo) return;
+
+                document.getElementById('networkIP').textContent = this.cachedInfo.ip;
+                document.getElementById('networkLocation').textContent = 
+                    `${this.cachedInfo.city}, ${this.cachedInfo.country}`;
+                document.getElementById('networkVPN').textContent = 
+                    this.cachedInfo.isVPN ? '🔒 VPN Detected' : '✓ Direct';
+                document.getElementById('networkLatency').textContent = 
+                    this.cachedInfo.latency > 0 ? `${this.cachedInfo.latency}ms` : 'N/A';
+
+                const statusEl = document.getElementById('networkStatus');
+                if (this.cachedInfo.isVPN) {
+                    statusEl.className = 'status-indicator status-warning';
+                    statusEl.innerHTML = '<span class="status-dot"></span>VPN Active';
+                } else {
+                    statusEl.className = 'status-indicator status-safe';
+                    statusEl.innerHTML = '<span class="status-dot"></span>Connected';
+                }
+            }
+        }
+
+        // ============================================
+        // GEMINI API CLIENT
+        // ============================================
+        class GeminiClient {
+            constructor(apiKey) {
+                this.apiKey = apiKey;
+                this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
+            }
+
+            async listModels() {
+                const response = await fetch(`${this.baseUrl}/models?key=${this.apiKey}`);
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error?.message || 'Failed to list models');
+                }
+
+                const data = await response.json();
+                return (data.models || []).filter(model => 
+                    model.supportedGenerationMethods?.includes('generateContent')
+                );
+            }
+
+            async testModel(modelName, testPrompt = 'Hello') {
+                const startTime = performance.now();
+
+                try {
+                    const response = await fetch(
+                        `${this.baseUrl}/${modelName}:generateContent?key=${this.apiKey}`,
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: testPrompt }] }],
+                                generationConfig: {
+                                    maxOutputTokens: 50,
+                                    temperature: 0.1
+                                }
+                            })
+                        }
+                    );
+
+                    const latency = Math.round(performance.now() - startTime);
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error?.message || `HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+                    return {
+                        model: modelName,
+                        displayName: modelName.split('/').pop(),
+                        status: 'success',
+                        latency,
+                        responsePreview: responseText.substring(0, 100),
+                        timestamp: Date.now()
+                    };
+                } catch (error) {
+                    return {
+                        model: modelName,
+                        displayName: modelName.split('/').pop(),
+                        status: 'failed',
+                        error: error.message,
+                        timestamp: Date.now()
+                    };
+                }
+            }
+        }
+
+        // ============================================
+        // UI FUNCTIONS
+        // ============================================
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('liveLog');
+            const time = new Date().toLocaleTimeString();
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="log-time">[${time}]</span>
+                <span class="log-${type}">${message}</span>
+            `;
+            
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function updateStats() {
+            const total = testResults.length;
+            const working = testResults.filter(r => r.status === 'success').length;
+            const failed = testResults.filter(r => r.status === 'failed').length;
+            const testing = testResults.filter(r => r.status === 'testing').length;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statWorking').textContent = working;
+            document.getElementById('statFailed').textContent = failed;
+            document.getElementById('statTesting').textContent = testing;
+        }
+
+        function updateProgress(current, total, text) {
+            document.getElementById('progressCard').style.display = 'block';
+            document.getElementById('progressText').textContent = text;
+            document.getElementById('progressCount').textContent = `${current} / ${total}`;
+            
+            const percent = total > 0 ? (current / total) * 100 : 0;
+            document.getElementById('progressFill').style.width = `${percent}%`;
+        }
+
+        function renderModelCard(result) {
+            const card = document.createElement('div');
+            card.className = `model-card ${result.status}`;
+            card.id = `model-${result.model}`;
+
+            let statusIcon = '';
+            if (result.status === 'success') {
+                statusIcon = '<svg class="icon icon-sm" style="color: var(--success);" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>';
+            } else if (result.status === 'failed') {
+                statusIcon = '<svg class="icon icon-sm" style="color: var(--danger);" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+            } else {
+                statusIcon = '<svg class="icon icon-sm icon-spin" style="color: var(--primary);" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>';
+            }
+
+            let metaHtml = '';
+            if (result.latency) {
+                metaHtml += `<div class="model-meta-item">⚡ ${result.latency}ms</div>`;
+            }
+
+            card.innerHTML = `
+                <div class="model-header">
+                    <div class="model-name">
+                        ${statusIcon}
+                        ${result.displayName}
+                    </div>
+                    <div class="model-meta">${metaHtml}</div>
+                </div>
+                ${result.responsePreview ? `<div class="model-response">${result.responsePreview}</div>` : ''}
+                ${result.error ? `<div class="model-error">❌ ${result.error}</div>` : ''}
+            `;
+
+            return card;
+        }
+
+        function updateModelCard(result) {
+            const existingCard = document.getElementById(`model-${result.model}`);
+            const newCard = renderModelCard(result);
+
+            if (existingCard) {
+                existingCard.replaceWith(newCard);
+            } else {
+                const container = document.getElementById('modelResults');
+                if (container.querySelector('.empty-state')) {
+                    container.innerHTML = '';
+                }
+                container.appendChild(newCard);
+            }
+        }
+
+        function clearResults() {
+            testResults = [];
+            document.getElementById('modelResults').innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h3>Ready to Test</h3>
+                    <p>Enter your API key and click "Test All Models" to discover which models are accessible from your network.</p>
+                </div>
+            `;
+            document.getElementById('progressCard').style.display = 'none';
+            updateStats();
+            addLog('Results cleared', 'info');
+        }
+
+        // ============================================
+        // MAIN TEST FUNCTION
+        // ============================================
+        async function testAllModels() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!apiKey) {
+                alert('Please enter your API key');
+                return;
+            }
+
+            // Save API key
+            localStorage.setItem('gemini_api_key', apiKey);
+
+            // Disable button
+            const btn = document.getElementById('testAllBtn');
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="icon icon-sm icon-spin" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Testing...
+            `;
+
+            try {
+                // Initialize
+                rateLimiter = new RateLimiter();
+                const client = new GeminiClient(apiKey);
+
+                addLog('Fetching available models...', 'info');
+                const models = await client.listModels();
+                addLog(`Found ${models.length} models`, 'success');
+
+                testResults = [];
+                updateProgress(0, models.length, 'Starting tests...');
+
+                // Test each model
+                for (let i = 0; i < models.length; i++) {
+                    const model = models[i];
+                    
+                    // Add pending result
+                    const pendingResult = {
+                        model: model.name,
+                        displayName: model.displayName,
+                        status: 'testing'
+                    };
+                    testResults.push(pendingResult);
+                    updateModelCard(pendingResult);
+                    updateStats();
+
+                    addLog(`Testing ${model.displayName}...`, 'info');
+                    updateProgress(i + 1, models.length, `Testing ${model.displayName}...`);
+
+                    // Test with rate limiting
+                    const result = await rateLimiter.execute(
+                        () => client.testModel(model.name),
+                        100
+                    );
+
+                    // Update result
+                    testResults[i] = result;
+                    updateModelCard(result);
+                    updateStats();
+
+                    if (result.status === 'success') {
+                        addLog(`✓ ${result.displayName} - ${result.latency}ms`, 'success');
+                    } else {
+                        addLog(`✗ ${result.displayName} - ${result.error}`, 'error');
+                    }
+
+                    // Delay between tests
+                    if (i < models.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                    }
+                }
+
+                addLog('Testing complete!', 'success');
+                updateProgress(models.length, models.length, 'Complete!');
+
+            } catch (error) {
+                addLog(`Error: ${error.message}`, 'error');
+                alert(`Error: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Test All Models
+                `;
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Load saved API key
+            const savedApiKey = localStorage.getItem('gemini_api_key');
+            if (savedApiKey) {
+                document.getElementById('apiKey').value = savedApiKey;
+            }
+
+            // Initialize network monitor
+            networkMonitor = new NetworkMonitor();
+            addLog('Checking network status...', 'info');
+            
+            try {
+                await networkMonitor.getNetworkInfo();
+                addLog('Network status updated', 'success');
+            } catch (error) {
+                addLog('Failed to get network info', 'warning');
+            }
+
+            addLog('System ready', 'success');
+        });
+    </script>
+</body>
+</html>

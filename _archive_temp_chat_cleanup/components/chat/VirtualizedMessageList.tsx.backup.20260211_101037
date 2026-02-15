@@ -1,0 +1,532 @@
+/**
+ * G Studio v2.3.0 - Virtualized Message List
+ *
+ * High-performance message list with virtualization for handling
+ * large conversation histories smoothly
+ */
+
+import React, { memo, useCallback, useRef, useEffect, useState } from "react";
+import { FixedSizeList as List, ListChildComponentProps } from "react-window";
+import { AutoSizer } from "react-virtualized-auto-sizer";
+import {
+  User,
+  Bot,
+  Sparkles,
+  Copy,
+  Check,
+  Code,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+} from "lucide-react";
+import type { ExtendedMessage } from "@/types/additional";
+
+// ============================================================================
+// THEME HOOK (Fallback implementation)
+// ============================================================================
+
+interface ThemeContextValue {
+  effectiveTheme: "light" | "dark" | "high-contrast";
+}
+
+// Create a simple hook that reads from a context or falls back to 'dark'
+const useTheme = (): ThemeContextValue => {
+  // Try to get theme from parent context if available
+  // Fall back to checking document class or defaulting to dark
+  const [theme, setTheme] = useState<"light" | "dark" | "high-contrast">(
+    "dark",
+  );
+
+  useEffect(() => {
+    // Check if theme is set on document
+    const isDark =
+      document.documentElement.classList.contains("dark") ||
+      document.documentElement.getAttribute("data-theme") === "dark";
+    const isHighContrast =
+      document.documentElement.classList.contains("high-contrast") ||
+      document.documentElement.getAttribute("data-theme") === "high-contrast";
+
+    if (isHighContrast) {
+      setTheme("high-contrast");
+    } else if (isDark) {
+      setTheme("dark");
+    } else {
+      setTheme("light");
+    }
+  }, []);
+
+  return { effectiveTheme: theme };
+};
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+export interface VirtualizedMessageListProps {
+  messages: ExtendedMessage[];
+  isLoading?: boolean;
+  onCopyMessage?: (content: string) => void;
+  onRetryMessage?: (messageId: string) => void;
+  onEditMessage?: (messageId: string, newContent: string) => void;
+}
+
+interface MessageItemProps {
+  message: ExtendedMessage;
+  isDark: boolean;
+  onCopy?: (content: string) => void;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
+}
+
+// ============================================================================
+// CODE BLOCK COMPONENT
+// ============================================================================
+
+const CodeBlock: React.FC<{
+  code: string;
+  language?: string;
+  isDark: boolean;
+  onCopy: () => void;
+}> = memo(({ code, language = "plaintext", isDark, onCopy }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    onCopy();
+    setTimeout(() => setCopied(false), 2000);
+  }, [code, onCopy]);
+
+  return (
+    <div
+      className={`relative rounded-lg overflow-hidden my-2 ${
+        isDark ? "bg-slate-900" : "bg-gray-100"
+      }`}
+    >
+      {/* Header */}
+      <div
+        className={`flex items-center justify-between px-4 py-2 ${
+          isDark ? "bg-slate-800 text-slate-400" : "bg-gray-200 text-gray-600"
+        }`}
+      >
+        <span className="text-xs font-mono">{language}</span>
+        <button
+          onClick={handleCopy}
+          className={`p-1 rounded transition-colors ${
+            isDark ? "hover:bg-slate-700" : "hover:bg-gray-300"
+          }`}
+          title="Copy code"
+        >
+          {copied ? (
+            <Check className="w-4 h-4 text-green-500" />
+          ) : (
+            <Copy className="w-4 h-4" />
+          )}
+        </button>
+      </div>
+
+      {/* Code */}
+      <pre
+        className={`p-4 overflow-x-auto text-sm font-mono ${
+          isDark ? "text-slate-300" : "text-gray-800"
+        }`}
+      >
+        <code>{code}</code>
+      </pre>
+    </div>
+  );
+});
+
+CodeBlock.displayName = "CodeBlock";
+
+// ============================================================================
+// MESSAGE CONTENT PARSER
+// ============================================================================
+
+function parseMessageContent(
+  content: string,
+  isDark: boolean,
+  onCopy: () => void,
+): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  const codeBlockRegex = /```(\w+)?\n?([\s\S]*?)```/g;
+  let lastIndex = 0;
+  let match;
+  let key = 0;
+
+  while ((match = codeBlockRegex.exec(content)) !== null) {
+    // Add text before code block
+    if (match.index > lastIndex) {
+      const text = content.slice(lastIndex, match.index);
+      parts.push(
+        <span key={key++} className="whitespace-pre-wrap">
+          {text}
+        </span>,
+      );
+    }
+
+    // Add code block
+    const language = match[1] || "plaintext";
+    const code = match[2].trim();
+    parts.push(
+      <CodeBlock
+        key={key++}
+        code={code}
+        language={language}
+        isDark={isDark}
+        onCopy={onCopy}
+      />,
+    );
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Add remaining text
+  if (lastIndex < content.length) {
+    parts.push(
+      <span key={key++} className="whitespace-pre-wrap">
+        {content.slice(lastIndex)}
+      </span>,
+    );
+  }
+
+  return parts;
+}
+
+// ============================================================================
+// MESSAGE ITEM COMPONENT
+// ============================================================================
+
+const MessageItem: React.FC<MessageItemProps> = memo(
+  ({ message, isDark, onCopy, isExpanded, onToggleExpand }) => {
+    const isUser = message.role === "user";
+    const isSystem = message.role === "system";
+    const isLong = message.content.length > 500;
+
+    const displayContent =
+      isLong && !isExpanded
+        ? message.content.slice(0, 500) + "..."
+        : message.content;
+
+    const handleCopy = useCallback(() => {
+      onCopy?.(message.content);
+    }, [message.content, onCopy]);
+
+    // Format timestamp
+    const time = new Date(message.timestamp).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    return (
+      <div
+        className={`flex gap-3 p-4 transition-colors ${
+          isUser
+            ? isDark
+              ? "bg-blue-900/20"
+              : "bg-blue-50"
+            : isSystem
+              ? isDark
+                ? "bg-gray-800/50"
+                : "bg-gray-100"
+              : isDark
+                ? "bg-slate-800/50"
+                : "bg-white"
+        } ${message.isError ? "border-l-4 border-red-500" : ""}`}
+      >
+        {/* Avatar */}
+        <div
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+            isUser
+              ? "bg-blue-600 text-white"
+              : isSystem
+                ? isDark
+                  ? "bg-gray-600"
+                  : "bg-gray-400"
+                : "bg-gradient-to-br from-purple-500 to-pink-500 text-white"
+          }`}
+        >
+          {isUser ? (
+            <User className="w-4 h-4" />
+          ) : isSystem ? (
+            <Code className="w-4 h-4" />
+          ) : (
+            <Sparkles className="w-4 h-4" />
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-1">
+            <span
+              className={`font-medium text-sm ${
+                isDark ? "text-slate-200" : "text-gray-900"
+              }`}
+            >
+              {isUser ? "You" : isSystem ? "System" : "Assistant"}
+            </span>
+            <span
+              className={`text-xs ${
+                isDark ? "text-slate-500" : "text-gray-400"
+              }`}
+            >
+              {time}
+            </span>
+            {message.isLoading && (
+              <Loader2 className="w-3 h-3 animate-spin text-blue-500" />
+            )}
+          </div>
+
+          {/* Message content */}
+          <div
+            className={`text-sm leading-relaxed ${
+              isDark ? "text-slate-300" : "text-gray-700"
+            } ${message.isError ? "text-red-400" : ""}`}
+          >
+            {parseMessageContent(displayContent, isDark, handleCopy)}
+          </div>
+
+          {/* Expand/collapse button for long messages */}
+          {isLong && (
+            <button
+              onClick={onToggleExpand}
+              className={`flex items-center gap-1 mt-2 text-xs ${
+                isDark
+                  ? "text-blue-400 hover:text-blue-300"
+                  : "text-blue-600 hover:text-blue-500"
+              }`}
+            >
+              {isExpanded ? (
+                <>
+                  <ChevronUp className="w-3 h-3" />
+                  Show less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-3 h-3" />
+                  Show more ({message.content.length} characters)
+                </>
+              )}
+            </button>
+          )}
+
+          {/* Tool calls indicator */}
+          {message.toolCalls && message.toolCalls.length > 0 && (
+            <div className={`mt-2 flex flex-wrap gap-1`}>
+              {message.toolCalls.map((tool, idx) => (
+                <span
+                  key={idx}
+                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs ${
+                    isDark
+                      ? "bg-purple-900/30 text-purple-300"
+                      : "bg-purple-100 text-purple-700"
+                  }`}
+                >
+                  <Code className="w-3 h-3" />
+                  {tool.name}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Copy button */}
+        <button
+          onClick={handleCopy}
+          className={`flex-shrink-0 p-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity ${
+            isDark
+              ? "hover:bg-slate-700 text-slate-400"
+              : "hover:bg-gray-200 text-gray-500"
+          }`}
+          title="Copy message"
+        >
+          <Copy className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  },
+);
+
+MessageItem.displayName = "MessageItem";
+
+// ============================================================================
+// LOADING INDICATOR
+// ============================================================================
+
+const LoadingIndicator: React.FC<{ isDark: boolean }> = memo(({ isDark }) => (
+  <div className={`flex gap-3 p-4 ${isDark ? "bg-slate-800/50" : "bg-white"}`}>
+    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+      <Sparkles className="w-4 h-4 text-white" />
+    </div>
+    <div className="flex-1">
+      <div
+        className={`font-medium text-sm mb-2 ${isDark ? "text-slate-200" : "text-gray-900"}`}
+      >
+        Assistant
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="flex gap-1">
+          <div
+            className={`w-2 h-2 rounded-full animate-bounce ${isDark ? "bg-blue-400" : "bg-blue-500"}`}
+            style={{ animationDelay: "0ms" }}
+          />
+          <div
+            className={`w-2 h-2 rounded-full animate-bounce ${isDark ? "bg-blue-400" : "bg-blue-500"}`}
+            style={{ animationDelay: "150ms" }}
+          />
+          <div
+            className={`w-2 h-2 rounded-full animate-bounce ${isDark ? "bg-blue-400" : "bg-blue-500"}`}
+            style={{ animationDelay: "300ms" }}
+          />
+        </div>
+        <span
+          className={`text-sm ${isDark ? "text-slate-400" : "text-gray-500"}`}
+        >
+          Thinking...
+        </span>
+      </div>
+    </div>
+  </div>
+));
+
+LoadingIndicator.displayName = "LoadingIndicator";
+
+// ============================================================================
+// VIRTUALIZED MESSAGE LIST COMPONENT
+// ============================================================================
+
+export const VirtualizedMessageList: React.FC<VirtualizedMessageListProps> =
+  memo(({ messages, isLoading = false, onCopyMessage }) => {
+    const { effectiveTheme } = useTheme();
+    const isDark =
+      effectiveTheme === "dark" || effectiveTheme === "high-contrast";
+    const listRef = useRef<any>(null);
+    const [expandedMessages, setExpandedMessages] = useState<Set<string>>(
+      new Set(),
+    );
+
+    // Scroll to bottom when new messages arrive
+    useEffect(() => {
+      if (listRef.current && messages.length > 0) {
+        listRef.current.scrollToItem(messages.length - 1, "end");
+      }
+    }, [messages.length]);
+
+    // Toggle message expansion
+    const toggleExpand = useCallback((messageId: string) => {
+      setExpandedMessages((prev) => {
+        const next = new Set(prev);
+        if (next.has(messageId)) {
+          next.delete(messageId);
+        } else {
+          next.add(messageId);
+        }
+        return next;
+      });
+    }, []);
+
+    // Estimate item height based on content
+    const getItemSize = useCallback(
+      (index: number) => {
+        const message = messages[index];
+        const baseHeight = 80;
+        const contentLength = message.content.length;
+        const isExpanded = expandedMessages.has(message.id);
+
+        // Estimate based on content length
+        if (isExpanded || contentLength <= 500) {
+          const lines = Math.ceil(contentLength / 80);
+          const codeBlocks = (message.content.match(/```/g) || []).length / 2;
+          return baseHeight + lines * 20 + codeBlocks * 100;
+        }
+
+        return baseHeight + 100; // Collapsed height
+      },
+      [messages, expandedMessages],
+    );
+
+    // Row renderer
+    const Row = useCallback(
+      ({ index, style }: ListChildComponentProps) => {
+        const message = messages[index];
+        const isExpanded = expandedMessages.has(message.id);
+
+        return (
+          <div style={style} className="group">
+            <MessageItem
+              message={message}
+              isDark={isDark}
+              onCopy={onCopyMessage}
+              isExpanded={isExpanded}
+              onToggleExpand={() => toggleExpand(message.id)}
+            />
+          </div>
+        );
+      },
+      [messages, isDark, onCopyMessage, expandedMessages, toggleExpand],
+    );
+
+    // Empty state
+    if (messages.length === 0 && !isLoading) {
+      return (
+        <div
+          className={`flex-1 flex items-center justify-center p-8 ${
+            isDark ? "bg-slate-900" : "bg-gray-50"
+          }`}
+        >
+          <div className="text-center max-w-md">
+            <div
+              className={`w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center ${
+                isDark
+                  ? "bg-gradient-to-br from-purple-500/20 to-pink-500/20"
+                  : "bg-gradient-to-br from-purple-100 to-pink-100"
+              }`}
+            >
+              <Sparkles
+                className={`w-8 h-8 ${isDark ? "text-purple-400" : "text-purple-500"}`}
+              />
+            </div>
+            <h3
+              className={`text-lg font-semibold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}
+            >
+              Start a Conversation
+            </h3>
+            <p
+              className={`text-sm ${isDark ? "text-slate-400" : "text-gray-500"}`}
+            >
+              Ask me to create files, analyze code, or help with any coding
+              task. I can write, edit, and manage your project through
+              conversation.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className={`flex-1 ${isDark ? "bg-slate-900" : "bg-gray-50"}`}>
+        <AutoSizer>
+          {({ height, width }: { height: number; width: number }) => (
+            <List
+              ref={listRef}
+              height={height}
+              width={width}
+              itemCount={messages.length}
+              itemSize={getItemSize}
+              overscanCount={5}
+            >
+              {Row}
+            </List>
+          )}
+        </AutoSizer>
+
+        {/* Loading indicator */}
+        {isLoading && <LoadingIndicator isDark={isDark} />}
+      </div>
+    );
+  });
+
+VirtualizedMessageList.displayName = "VirtualizedMessageList";
+
+export default VirtualizedMessageList;

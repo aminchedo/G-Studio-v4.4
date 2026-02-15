@@ -1,0 +1,44 @@
+{
+  "name": "g-studio-code-intelligence",
+  "displayName": "G Studio Code Intelligence",
+  "description": "Passive code intelligence monitoring for G Studio",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codeIntelligence.showStatus",
+        "title": "Show Code Intelligence Status"
+      },
+      {
+        "command": "codeIntelligence.analyze",
+        "title": "Analyze Current File"
+      }
+    ],
+    "statusBar": {
+      "id": "codeIntelligence.status",
+      "name": "Code Intelligence",
+      "alignment": "right",
+      "priority": 100
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.130",
+    "@types/vscode": "^1.108.1",
+    "typescript": "^5.9.3"
+  }
+}

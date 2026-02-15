@@ -1,0 +1,17 @@
+Name,Path,Layer,Score,Reasons,Suggested Location
+ModalContext,src\contexts\ModalContext.tsx,contexts,85,+25 MCP integration; +20 Voice capabilities; +15 Complexity; +10 Well-typed; +5 Name: ModalContext; +5 319 lines; +5 6 hooks,src/App.tsx or AppProvider (wrap in provider)
+useSpeechRecognition,src\hooks\useSpeechRecognition.tsx,types,52,+20 Voice capabilities; +12 Complexity; +10 Well-typed; +5 282 lines; +5 4 hooks,App.tsx or appropriate parent component
+index,src\services\index.ts,services,45,+25 MCP integration; +20 Voice capabilities,src/services/index.ts (add to barrel export)
+sandboxIntegration,src\services\sandboxIntegration.tsx,types,40,+25 MCP integration; +10 Well-typed; +5 363 lines,App.tsx or appropriate parent component
+AppStateContext,src\contexts\AppStateContext.tsx,contexts,35,+15 Complexity; +10 Well-typed; +5 356 lines; +5 9 hooks,src/App.tsx or AppProvider (wrap in provider)
+monitoring,src\utils\monitoring.tsx,types,35,+15 Complexity; +10 Well-typed; +5 482 lines; +5 5 hooks,App.tsx or appropriate parent component
+EnhancedSettingsPanel,src\features\ai\EnhancedSettingsPanel.tsx,components,34,+9 Complexity; +10 Well-typed; +10 Name: EnhancedSettingsPanel; +5 298 lines,MainLayout or relevant feature
+CodeIntelligenceDashboard,src\features\code-intelligence\CodeIntelligenceDashboard.tsx,components,34,+9 Complexity; +10 Well-typed; +10 Name: CodeIntelligenceDashboard; +5 1068 lines,App.tsx or appropriate parent component
+DebuggingTools,src\components\features\DebuggingTools.tsx,components,32,+12 Complexity; +10 Well-typed; +5 714 lines; +5 4 hooks,App.tsx or appropriate parent component
+accessibility,src\components\ui\accessibility.tsx,components,32,+12 Complexity; +10 Well-typed; +5 404 lines; +5 4 hooks,App.tsx or appropriate parent component
+useCodeEditor,src\hooks\useCodeEditor.tsx,types,32,+12 Complexity; +10 Well-typed; +5 267 lines; +5 4 hooks,App.tsx or appropriate parent component
+useLMStudio,src\hooks\ai\useLMStudio.tsx,types,32,+12 Complexity; +10 Well-typed; +5 418 lines; +5 4 hooks,App.tsx or appropriate parent component
+useLocalAI,src\hooks\ai\useLocalAI.tsx,types,32,+12 Complexity; +10 Well-typed; +5 541 lines; +5 4 hooks,App.tsx or appropriate parent component
+useCache,src\hooks\utils\useCache.tsx,types,32,+12 Complexity; +10 Well-typed; +5 366 lines; +5 4 hooks,App.tsx or appropriate parent component
+useTelemetry,src\hooks\utils\useTelemetry.tsx,types,32,+12 Complexity; +10 Well-typed; +5 372 lines; +5 4 hooks,App.tsx or appropriate parent component
+SystemStatusDashboard,src\components\panels\SystemStatusDashboard.tsx,components,31,+6 Complexity; +10 Well-typed; +10 Name: SystemStatusDashboard; +5 362 lines,App.tsx or appropriate parent component

@@ -1,0 +1,188 @@
+/**
+ * Gemini Tester - Main Export
+ * 
+ * Public API for the Gemini Model Tester module
+ * 
+ * This module provides a comprehensive testing suite for Google Gemini AI models.
+ * It includes model discovery, testing, result analysis, and recommendations.
+ * 
+ * @module gemini-tester
+ */
+
+import React, { Suspense, lazy } from 'react';
+import { Loader2 } from 'lucide-react';
+
+// ============================================================================
+// LAZY LOADED COMPONENTS
+// ============================================================================
+
+/**
+ * Lazy load the main component for better performance
+ * This ensures the component is only loaded when actually used
+ */
+const GeminiTesterCoreLazy = lazy(() => 
+  import('./GeminiTesterCore').then(module => ({ 
+    default: module.GeminiTesterCore 
+  }))
+);
+
+const GeminiTesterStandaloneLazy = lazy(() => 
+  import('./GeminiTesterCore').then(module => ({ 
+    default: module.GeminiTesterStandalone 
+  }))
+);
+
+// ============================================================================
+// LOADING COMPONENT
+// ============================================================================
+
+const LoadingFallback: React.FC = () => (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div className="bg-slate-900 rounded-xl p-8 border border-slate-800 shadow-2xl">
+      <div className="flex flex-col items-center gap-4">
+        <Loader2 className="w-12 h-12 text-blue-400 animate-spin" />
+        <p className="text-white font-medium">Loading Gemini Tester...</p>
+        <p className="text-sm text-slate-400">Please wait a moment</p>
+      </div>
+    </div>
+  </div>
+);
+
+// ============================================================================
+// WRAPPED COMPONENTS WITH SUSPENSE
+// ============================================================================
+
+export interface GeminiTesterProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+/**
+ * Main Gemini Tester Component (Modal Version)
+ * 
+ * This is the primary export for the Gemini Model Tester.
+ * It renders as a modal overlay with full testing capabilities.
+ * 
+ * Features:
+ * - Model discovery across all API endpoints
+ * - Comprehensive model testing
+ * - Performance metrics and statistics
+ * - Recommendations for best models
+ * - Result export (JSON/CSV)
+ * - Caching for faster subsequent tests
+ * 
+ * @example
+ * ```tsx
+ * import GeminiTester from './components/gemini-tester';
+ * 
+ * function App() {
+ *   const [isOpen, setIsOpen] = useState(false);
+ *   
+ *   return (
+ *     <>
+ *       <button onClick={() => setIsOpen(true)}>
+ *         Test Gemini Models
+ *       </button>
+ *       
+ *       <GeminiTester 
+ *         isOpen={isOpen} 
+ *         onClose={() => setIsOpen(false)} 
+ *       />
+ *     </>
+ *   );
+ * }
+ * ```
+ */
+export const GeminiTester: React.FC<GeminiTesterProps> = (props) => {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <GeminiTesterCoreLazy {...props} />
+    </Suspense>
+  );
+};
+
+/**
+ * Standalone Gemini Tester Component (No Modal)
+ * 
+ * Use this version when you want to embed the tester directly
+ * in your page without the modal overlay.
+ * 
+ * @example
+ * ```tsx
+ * import { GeminiTesterStandalone } from './components/gemini-tester';
+ * 
+ * function TestPage() {
+ *   return (
+ *     <div className="h-screen">
+ *       <GeminiTesterStandalone />
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
+export const GeminiTesterStandalone: React.FC = () => {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <GeminiTesterStandaloneLazy />
+    </Suspense>
+  );
+};
+
+// ============================================================================
+// TYPE EXPORTS
+// ============================================================================
+
+export type {
+  TestResult,
+  TestProgress,
+  ModelInfo,
+  ModelRecommendations,
+  ModelCategories,
+  LogEntry,
+  LogType
+} from './GeminiTesterTypes';
+
+// ============================================================================
+// UTILITY EXPORTS (for advanced usage)
+// ============================================================================
+
+export {
+  ModelTesterService
+} from './GeminiTesterService';
+
+export {
+  Logger,
+  RobustAPIClient,
+  ModelCacheManager,
+  TokenUsageTracker,
+  RateLimiter,
+  GeographicalConstraintChecker,
+  APIKeyValidator,
+  ErrorCategorizer
+} from './GeminiTesterUtils';
+
+export {
+  CONFIG
+} from './GeminiTesterConfig';
+
+// ============================================================================
+// CONTEXT EXPORTS (for custom implementations)
+// ============================================================================
+
+export {
+  GeminiTesterProvider,
+  useGeminiTester,
+  useTestResults,
+  useTestControls,
+  useLogs,
+  useConfig
+} from './GeminiTesterContext';
+
+// ============================================================================
+// DEFAULT EXPORT
+// ============================================================================
+
+/**
+ * Default export - Main modal version
+ */
+export default GeminiTester;

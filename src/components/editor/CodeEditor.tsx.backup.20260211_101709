@@ -1,0 +1,156 @@
+import React, { useRef, useEffect, useState } from 'react';
+import Editor, { Monaco } from '@monaco-editor/react';
+import type { editor } from 'monaco-editor';
+import { useAppStore } from '@/stores/appStore';
+import type { FileData } from '@/types/types';
+
+interface CodeEditorProps {
+  value?: string;
+  language?: string;
+  /** When provided, value and language are derived from file */
+  file?: FileData;
+  onChange?: (value: string) => void;
+  onSave?: (value: string) => void;
+  readOnly?: boolean;
+  height?: string;
+  minimapEnabled?: boolean;
+  theme?: 'dark' | 'light';
+}
+
+export const CodeEditor: React.FC<CodeEditorProps> = ({
+  value: valueProp,
+  language: languageProp,
+  file,
+  onChange,
+  onSave,
+  readOnly = false,
+  height = '100%',
+  minimapEnabled = true,
+  theme: themeProp,
+}) => {
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<Monaco | null>(null);
+  const [isReady, setIsReady] = useState(false);
+
+  const value = file?.content ?? valueProp ?? '';
+  const language = file?.language ?? languageProp ?? 'plaintext';
+
+  const ui = useAppStore(state => state.ui);
+  const themeFromStore = ui.isDarkMode ? 'dark' : 'light';
+  const theme = themeProp ?? themeFromStore;
+  const editorSettings = {
+    tabSize: 2,
+    insertSpaces: true,
+    wordWrap: false,
+    minimap: minimapEnabled,
+    lineNumbers: true,
+    autoCloseBrackets: true,
+    formatOnSave: false,
+  };
+
+  const resolvedTheme = theme === 'dark' ? 'vs-dark' : 'vs';
+
+  const handleEditorDidMount = (
+    editor: editor.IStandaloneCodeEditor,
+    monaco: Monaco
+  ) => {
+    editorRef.current = editor;
+    monacoRef.current = monaco;
+    setIsReady(true);
+
+    // Configure editor
+    editor.updateOptions({
+      fontSize: 14,
+      tabSize: editorSettings.tabSize,
+      insertSpaces: editorSettings.insertSpaces,
+      wordWrap: editorSettings.wordWrap ? 'on' : 'off',
+      minimap: { enabled: minimapEnabled && editorSettings.minimap },
+      lineNumbers: editorSettings.lineNumbers ? 'on' : 'off',
+      autoClosingBrackets: editorSettings.autoCloseBrackets ? 'always' : 'never',
+      formatOnPaste: true,
+      formatOnType: true,
+      readOnly,
+    });
+
+    // Add save keyboard shortcut
+    editor.addAction({
+      id: 'save-file',
+      label: 'Save File',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
+      run: (ed) => {
+        if (onSave) {
+          const content = ed.getValue();
+          onSave(content);
+        }
+      },
+    });
+
+    // Add format keyboard shortcut
+    editor.addAction({
+      id: 'format-document',
+      label: 'Format Document',
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF,
+      ],
+      run: (ed) => {
+        ed.getAction('editor.action.formatDocument')?.run();
+      },
+    });
+
+    // Focus editor
+    editor.focus();
+  };
+
+  const handleEditorChange = (newValue: string | undefined) => {
+    if (onChange && newValue !== undefined) {
+      onChange(newValue);
+    }
+  };
+
+  // Format on save if enabled
+  useEffect(() => {
+    if (editorSettings.formatOnSave && editorRef.current && monacoRef.current) {
+      const editor = editorRef.current;
+      const originalOnSave = onSave;
+
+      if (originalOnSave) {
+        const wrappedOnSave = async (content: string) => {
+          // Format first
+          await editor.getAction('editor.action.formatDocument')?.run();
+          // Then save
+          const formattedContent = editor.getValue();
+          originalOnSave(formattedContent);
+        };
+
+        // This is just a demonstration - actual implementation would be in onSave callback
+      }
+    }
+  }, [editorSettings.formatOnSave, onSave]);
+
+  return (
+    <div className="code-editor-container" style={{ height, width: '100%' }}>
+      <Editor
+        height={height}
+        defaultLanguage={language}
+        language={language}
+        value={value}
+        theme={resolvedTheme}
+        onChange={handleEditorChange}
+        onMount={handleEditorDidMount}
+        options={{
+          readOnly,
+          automaticLayout: true,
+          scrollBeyondLastLine: false,
+        }}
+        loading={
+          <div className="editor-loading">
+            <div className="loading-spinner">
+              <div className="spinner"></div>
+            </div>
+            <p>Loading editor...</p>
+          </div>
+        }
+      />
+    </div>
+  );
+};

@@ -1,0 +1,14 @@
+// Central barrel for UI components
+export * from './app';
+export * from './chat';
+export * from './chat/message-list';
+export * from './conversation';
+export * from './editor';
+export * from './features';
+export * from './layout/Sidebar';
+export * from './sidebar/file-tree';
+export * from './ui';
+export { EditorTabs } from './EditorTabs'
+export { ErrorBoundary } from './ErrorBoundary'
+export { InputArea } from './InputArea'
+export { MessageList } from './MessageList'

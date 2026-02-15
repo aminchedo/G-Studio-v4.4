@@ -1,0 +1,47 @@
+ENHANCEMENT PLAN FOR MAIN-FIXER-9.V2
+=====================================
+
+CURRENT STATE ASSESSMENT:
+✅ HTML dashboard generation exists
+✅ Unused/unwired component detection exists
+✅ Duplicate detection exists
+✅ Timestamped report folders exist (reports/YYYYMMDD_HHMMSS/)
+✅ JSON and CSV output exists
+✅ Multiple analysis phases exist
+
+ENHANCEMENTS TO ADD:
+====================
+
+1. INTERACTIVE HTML FEATURES
+   - ✅ Already has: styled sections, cards, metrics
+   - ➕ ADD: Collapsible sections with expand/collapse buttons
+   - ➕ ADD: Sortable tables for file lists
+   - ➕ ADD: Search/filter functionality for files
+   - ➕ ADD: Interactive charts (risk distribution, category breakdown)
+   - ➕ ADD: Click-to-expand details for each file/component
+
+2. ENHANCED UNUSED COMPONENT DETECTION
+   - ✅ Already has: basic unused file detection
+   - ➕ ADD: Confidence scoring for unused detection
+   - ➕ ADD: Reason classification (never imported, exported but unused, etc.)
+   - ➕ ADD: Suggestions for each unused component
+
+3. COMPONENT WIRING ANALYSIS
+   - ✅ Already has: unwired feature detection
+   - ➕ IMPROVE: More detailed wiring status per component
+   - ➕ ADD: Visual dependency tree/graph
+
+4. REPORT ORGANIZATION
+   - ✅ Already has: reports/YYYYMMDD_HHMMSS/ structure
+   - ➕ ADD: Index page listing all reports
+   - ➕ ADD: Comparison view between reports
+
+IMPLEMENTATION STEPS:
+1. Enhance HTML with collapsible sections
+2. Add sortable tables JavaScript
+3. Add search/filter functionality
+4. Improve unused component analysis
+5. Generate report index page
+6. Test and validate
+
+NON-DESTRUCTIVE: All changes additive, no code deletion

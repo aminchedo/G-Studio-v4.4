@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gemini Models Checker — Real Access Tester</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0a0d12;
+      color: #e0e4ec;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* ─── Header ─── */
+    .header {
+      background: linear-gradient(135deg, #0f1923 0%, #141c2b 100%);
+      border-bottom: 1px solid #1e293b;
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #4f8cff, #6c5ce7);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .header-text h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.3px;
+    }
+
+    .header-text p {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* ─── Main Container ─── */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* ─── API Key Section ─── */
+    .api-section {
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .api-section label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-row input {
+      flex: 1;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-family: 'Consolas', 'Fira Code', monospace;
+      border-radius: 8px;
+      border: 1px solid #2a3548;
+      background: #0d1117;
+      color: #e2e8f0;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-row input:focus {
+      border-color: #4f8cff;
+    }
+
+    .input-row input::placeholder {
+      color: #475569;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f8cff, #3b6de0);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #3b6de0, #2d5bc7);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 140, 255, 0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+    }
+
+    .btn-secondary:hover {
+      background: #334155;
+      color: #e2e8f0;
+    }
+
+    /* ─── Stats Bar ─── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-card .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .stat-card .stat-label {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+
+    .stat-total .stat-value { color: #4f8cff; }
+    .stat-working .stat-value { color: #22c55e; }
+    .stat-failed .stat-value { color: #ef4444; }
+    .stat-testing .stat-value { color: #f59e0b; }
+
+    /* ─── Progress ─── */
+    .progress-section {
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .progress-section.visible {
+      display: block;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4f8cff, #22c55e);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .progress-text {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* ─── Filter Tabs ─── */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tab {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 20px;
+      border: 1px solid #2a3548;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-tab:hover {
+      border-color: #4f8cff;
+      color: #4f8cff;
+    }
+
+    .filter-tab.active {
+      background: #4f8cff;
+      border-color: #4f8cff;
+      color: #fff;
+    }
+
+    /* ─── Model Cards ─── */
+    .models-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .model-card {
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.2s;
+    }
+
+    .model-card:hover {
+      border-color: #334155;
+      background: #151d2e;
+    }
+
+    .model-card.status-working {
+      border-left: 3px solid #22c55e;
+    }
+
+    .model-card.status-failed {
+      border-left: 3px solid #ef4444;
+      opacity: 0.7;
+    }
+
+    .model-card.status-testing {
+      border-left: 3px solid #f59e0b;
+    }
+
+    .model-card.status-pending {
+      border-left: 3px solid #334155;
+    }
+
+    /* Status Icon */
+    .status-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .status-working .status-icon {
+      background: rgba(34, 197, 94, 0.15);
+    }
+
+    .status-failed .status-icon {
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    .status-testing .status-icon {
+      background: rgba(245, 158, 11, 0.15);
+    }
+
+    .status-pending .status-icon {
+      background: rgba(100, 116, 139, 0.15);
+    }
+
+    /* Model Info */
+    .model-info {
+      min-width: 0;
+    }
+
+    .model-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f1f5f9;
+      font-family: 'Consolas', 'Fira Code', monospace;
+      word-break: break-all;
+    }
+
+    .model-display-name {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .model-meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .meta-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #1e293b;
+      color: #94a3b8;
+    }
+
+    .meta-tag.method-generate {
+      background: rgba(79, 140, 255, 0.15);
+      color: #4f8cff;
+    }
+
+    .meta-tag.method-embed {
+      background: rgba(168, 85, 247, 0.15);
+      color: #a855f7;
+    }
+
+    .meta-tag.method-count {
+      background: rgba(20, 184, 166, 0.15);
+      color: #14b8a6;
+    }
+
+    /* Model Right Side */
+    .model-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .model-status-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-working {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+    }
+
+    .badge-failed {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    .badge-testing {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+    }
+
+    .badge-pending {
+      background: rgba(100, 116, 139, 0.15);
+      color: #64748b;
+    }
+
+    .model-latency {
+      font-size: 11px;
+      color: #475569;
+      margin-top: 4px;
+    }
+
+    /* ─── Empty State ─── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #475569;
+    }
+
+    .empty-state .icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state h3 {
+      font-size: 16px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .empty-state p {
+      font-size: 13px;
+    }
+
+    /* ─── Log Section ─── */
+    .log-section {
+      margin-top: 20px;
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .log-section.visible {
+      display: block;
+    }
+
+    .log-header {
+      padding: 12px 16px;
+      background: #0d1117;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .log-header span {
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .log-body {
+      padding: 12px 16px;
+      max-height: 250px;
+      overflow-y: auto;
+      font-family: 'Consolas', 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .log-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .log-body::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+
+    .log-entry {
+      padding: 2px 0;
+    }
+
+    .log-time {
+      color: #475569;
+    }
+
+    .log-ok {
+      color: #22c55e;
+    }
+
+    .log-err {
+      color: #ef4444;
+    }
+
+    .log-info {
+      color: #4f8cff;
+    }
+
+    .log-warn {
+      color: #f59e0b;
+    }
+
+    /* ─── Spinner ─── */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(245, 158, 11, 0.3);
+      border-top-color: #f59e0b;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 640px) {
+      .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .model-card {
+        grid-template-columns: auto 1fr;
+      }
+
+      .model-right {
+        grid-column: 1 / -1;
+        text-align: left;
+        margin-top: 4px;
+      }
+
+      .input-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── Header ─── -->
+  <div class="header">
+    <div class="header-icon">🔍</div>
+    <div class="header-text">
+      <h1>Gemini Models Checker</h1>
+      <p>Real access tester — verify which models actually work with your API key & network</p>
+    </div>
+  </div>
+
+  <!-- ─── Main ─── -->
+  <div class="container">
+
+    <!-- API Key Input -->
+    <div class="api-section">
+      <label>Google AI (Gemini) API Key</label>
+      <div class="input-row">
+        <input
+          id="apiKey"
+          type="password"
+          placeholder="AIzaSy..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="btn btn-primary" id="btnCheck" onclick="startCheck()">
+          🚀 Check Models
+        </button>
+        <button class="btn btn-secondary" id="btnExport" onclick="exportResults()" style="display:none;">
+          📋 Export
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar" id="statsBar" style="display:none;">
+      <div class="stat-card stat-total">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">Total Found</div>
+      </div>
+      <div class="stat-card stat-working">
+        <div class="stat-value" id="statWorking">0</div>
+        <div class="stat-label">Working ✓</div>
+      </div>
+      <div class="stat-card stat-failed">
+        <div class="stat-value" id="statFailed">0</div>
+        <div class="stat-label">Failed ✗</div>
+      </div>
+      <div class="stat-card stat-testing">
+        <div class="stat-value" id="statTesting">0</div>
+        <div class="stat-label">Testing…</div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-section" id="progressSection">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text" id="progressText">Preparing…</div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-bar" id="filterBar" style="display:none;">
+      <button class="filter-tab active" data-filter="all" onclick="setFilter('all', this)">All</button>
+      <button class="filter-tab" data-filter="working" onclick="setFilter('working', this)">✓ Working</button>
+      <button class="filter-tab" data-filter="failed" onclick="setFilter('failed', this)">✗ Failed</button>
+      <button class="filter-tab" data-filter="generate" onclick="setFilter('generate', this)">💬 Generate</button>
+      <button class="filter-tab" data-filter="embed" onclick="setFilter('embed', this)">📐 Embed</button>
+    </div>
+
+    <!-- Models Grid -->
+    <div class="models-grid" id="modelsGrid">
+      <div class="empty-state">
+        <div class="icon">🔑</div>
+        <h3>Enter your API key to begin</h3>
+        <p>We'll list all models, then <strong>actually test each one</strong> to verify real access.</p>
+      </div>
+    </div>
+
+    <!-- Log Section -->
+    <div class="log-section" id="logSection">
+      <div class="log-header">
+        <span>📋 Live Log</span>
+        <button class="btn btn-secondary" onclick="clearLog()" style="padding:4px 10px;font-size:11px;">Clear</button>
+      </div>
+      <div class="log-body" id="logBody"></div>
+    </div>
+
+  </div>
+
+  <script>
+    // ─── State ───
+    let allModels = [];
+    let currentFilter = "all";
+
+    const BASE_URL = "https://generativelanguage.googleapis.com";
+
+    // ─── Utilities ───
+    function getApiKey() {
+      return document.getElementById("apiKey").value.trim();
+    }
+
+    function log(msg, type = "info") {
+      const logBody = document.getElementById("logBody");
+      const time = new Date().toLocaleTimeString();
+      const cls = { info: "log-info", ok: "log-ok", err: "log-err", warn: "log-warn" }[type] || "log-info";
+      logBody.innerHTML += `<div class="log-entry"><span class="log-time">[${time}]</span> <span class="${cls}">${msg}</span></div>`;
+      logBody.scrollTop = logBody.scrollHeight;
+    }
+
+    function clearLog() {
+      document.getElementById("logBody").innerHTML = "";
+    }
+
+    function updateStats() {
+      const total = allModels.length;
+      const working = allModels.filter(m => m.status === "working").length;
+      const failed = allModels.filter(m => m.status === "failed").length;
+      const testing = allModels.filter(m => m.status === "testing").length;
+
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("statWorking").textContent = working;
+      document.getElementById("statFailed").textContent = failed;
+      document.getElementById("statTesting").textContent = testing;
+
+      const done = working + failed;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      document.getElementById("progressFill").style.width = pct + "%";
+      document.getElementById("progressText").textContent =
+        `Testing: ${done} / ${total} (${pct}%)`;
+    }
+
+    // ─── Render ───
+    function renderModels() {
+      const grid = document.getElementById("modelsGrid");
+
+      let filtered = allModels;
+      if (currentFilter === "working") {
+        filtered = allModels.filter(m => m.status === "working");
+      } else if (currentFilter === "failed") {
+        filtered = allModels.filter(m => m.status === "failed");
+      } else if (currentFilter === "generate") {
+        filtered = allModels.filter(m =>
+          m.methods.some(method => method.includes("generate"))
+        );
+      } else if (currentFilter === "embed") {
+        filtered = allModels.filter(m =>
+          m.methods.some(method => method.includes("embed"))
+        );
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">📭</div>
+            <h3>No models match this filter</h3>
+            <p>Try a different filter.</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(m => {
+        const statusClass = `status-${m.status}`;
+        const badgeClass = `badge-${m.status}`;
+        const statusLabel = {
+          working: "WORKING",
+          failed: "FAILED",
+          testing: "TESTING",
+          pending: "PENDING"
+        }[m.status];
+
+        const statusIconHTML = {
+          working: "✅",
+          failed: "❌",
+          testing: `<div class="spinner"></div>`,
+          pending: "⏳"
+        }[m.status];
+
+        const methodTags = m.methods.map(method => {
+          let cls = "meta-tag";
+          if (method.includes("generate")) cls += " method-generate";
+          else if (method.includes("embed")) cls += " method-embed";
+          else if (method.includes("count")) cls += " method-count";
+          return `<span class="${cls}">${method}</span>`;
+        }).join("");
+
+        const tokenInfo = m.inputTokens
+          ? `<span class="meta-tag">In: ${(m.inputTokens).toLocaleString()}</span>
+             <span class="meta-tag">Out: ${(m.outputTokens).toLocaleString()}</span>`
+          : "";
+
+        const latencyHTML = m.latency
+          ? `<div class="model-latency">⚡ ${m.latency}ms</div>`
+          : m.errorMsg
+            ? `<div class="model-latency" style="color:#ef4444;" title="${escapeHtml(m.errorMsg)}">⚠ ${truncate(m.errorMsg, 50)}</div>`
+            : "";
+
+        return `
+          <div class="model-card ${statusClass}">
+            <div class="status-icon">${statusIconHTML}</div>
+            <div class="model-info">
+              <div class="model-name">${escapeHtml(m.name)}</div>
+              <div class="model-display-name">${escapeHtml(m.displayName || "")}</div>
+              <div class="model-meta">
+                ${methodTags}
+                ${tokenInfo}
+              </div>
+            </div>
+            <div class="model-right">
+              <div class="model-status-badge ${badgeClass}">${statusLabel}</div>
+              ${latencyHTML}
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function truncate(str, len) {
+      return str.length > len ? str.substring(0, len) + "…" : str;
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+      btn.classList.add("active");
+      renderModels();
+    }
+
+    // ─── Fetch Models List ───
+    async function fetchModelsList(apiKey) {
+      log("Fetching models list from API…", "info");
+
+      const res = await fetch(`${BASE_URL}/v1beta/models?key=${apiKey}`);
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status}: ${text}`);
+      }
+
+      const data = await res.json();
+
+      if (!data.models || data.models.length === 0) {
+        throw new Error("No models returned. Check your API key.");
+      }
+
+      log(`Found ${data.models.length} models in your account.`, "ok");
+      return data.models;
+    }
+
+    // ─── Real Test: Actually Call Each Model ───
+    async function testModel(model, apiKey) {
+      const name = model.name; // e.g. "models/gemini-1.5-flash"
+      const methods = model.supportedGenerationMethods || [];
+
+      const start = performance.now();
+
+      try {
+        // ── Test generateContent models ──
+        if (methods.includes("generateContent")) {
+          const url = `${BASE_URL}/v1beta/${name}:generateContent?key=${apiKey}`;
+          const body = {
+            contents: [{
+              parts: [{ text: "Say OK" }]
+            }],
+            generationConfig: {
+              maxOutputTokens: 5
+            }
+          };
+
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+
+          const latency = Math.round(performance.now() - start);
+
+          if (res.ok) {
+            const data = await res.json();
+            // Check if we actually got a response
+            const hasContent = data.candidates &&
+              data.candidates.length > 0 &&
+              data.candidates[0].content;
+
+            if (hasContent) {
+              return { status: "working", latency, errorMsg: null };
+            } else {
+              // Got 200 but no actual content (might be blocked)
+              const reason = data.candidates?.[0]?.finishReason || "no content";
+              return { status: "working", latency, errorMsg: `Response: ${reason}` };
+            }
+          } else {
+            const errText = await res.text();
+            let parsed = "";
+            try {
+              parsed = JSON.parse(errText).error?.message || errText;
+            } catch {
+              parsed = errText;
+            }
+            return { status: "failed", latency, errorMsg: `${res.status}: ${parsed}` };
+          }
+        }
+
+        // ── Test embedContent models ──
+        if (methods.includes("embedContent")) {
+          const url = `${BASE_URL}/v1beta/${name}:embedContent?key=${apiKey}`;
+          const body = {
+            content: {
+              parts: [{ text: "test" }]
+            }
+          };
+
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+
+          const latency = Math.round(performance.now() - start);
+
+          if (res.ok) {
+            return { status: "working", latency, errorMsg: null };
+          } else {
+            const errText = await res.text();
+            let parsed = "";
+            try {
+              parsed = JSON.parse(errText).error?.message || errText;
+            } catch {
+              parsed = errText;
+            }
+            return { status: "failed", latency, errorMsg: `${res.status}: ${parsed}` };
+          }
+        }
+
+        // ── Test countTokens (fallback) ──
+        if (methods.includes("countTokens")) {
+          const url = `${BASE_URL}/v1beta/${name}:countTokens?key=${apiKey}`;
+          const body = {
+            contents: [{
+              parts: [{ text: "test" }]
+            }]
+          };
+
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+
+          const latency = Math.round(performance.now() - start);
+
+          if (res.ok) {
+            return { status: "working", latency, errorMsg: null };
+          } else {
+            const errText = await res.text();
+            let parsed = "";
+            try {
+              parsed = JSON.parse(errText).error?.message || errText;
+            } catch {
+              parsed = errText;
+            }
+            return { status: "failed", latency, errorMsg: `${res.status}: ${parsed}` };
+          }
+        }
+
+        // No known method to test
+        return { status: "failed", latency: 0, errorMsg: "No testable method" };
+
+      } catch (err) {
+        const latency = Math.round(performance.now() - start);
+        return { status: "failed", latency, errorMsg: err.message };
+      }
+    }
+
+    // ─── Main Check Flow ───
+    async function startCheck() {
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        alert("Please enter your API key.");
+        return;
+      }
+
+      // Reset
+      allModels = [];
+      currentFilter = "all";
+      document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+      document.querySelector('[data-filter="all"]').classList.add("active");
+
+      const btnCheck = document.getElementById("btnCheck");
+      const btnExport = document.getElementById("btnExport");
+      btnCheck.disabled = true;
+      btnCheck.innerHTML = "⏳ Checking…";
+      btnExport.style.display = "none";
+
+      document.getElementById("statsBar").style.display = "grid";
+      document.getElementById("progressSection").classList.add("visible");
+      document.getElementById("logSection").classList.add("visible");
+      document.getElementById("filterBar").style.display = "flex";
+      clearLog();
+
+      try {
+        // Step 1: Fetch model list
+        const rawModels = await fetchModelsList(apiKey);
+
+        // Step 2: Build state
+        allModels = rawModels.map(m => ({
+          name: m.name,
+          displayName: m.displayName || "",
+          description: m.description || "",
+          methods: m.supportedGenerationMethods || [],
+          inputTokens: m.inputTokenLimit || 0,
+          outputTokens: m.outputTokenLimit || 0,
+          status: "pending",
+          latency: null,
+          errorMsg: null
+        }));
+
+        updateStats();
+        renderModels();
+
+        // Step 3: Test each model (2 concurrent to avoid rate limits)
+        const concurrency = 2;
+        let index = 0;
+
+        async function processNext() {
+          while (index < allModels.length) {
+            const i = index++;
+            const model = allModels[i];
+            model.status = "testing";
+            updateStats();
+            renderModels();
+
+            log(`Testing ${model.name}…`, "warn");
+
+            const result = await testModel(
+              { name: model.name, supportedGenerationMethods: model.methods },
+              apiKey
+            );
+
+            model.status = result.status;
+            model.latency = result.latency;
+            model.errorMsg = result.errorMsg;
+
+            if (result.status === "working") {
+              log(`✓ ${model.name} — ${result.latency}ms`, "ok");
+            } else {
+              log(`✗ ${model.name} — ${result.errorMsg || "unknown error"}`, "err");
+            }
+
+            updateStats();
+            renderModels();
+          }
+        }
+
+        // Run concurrent workers
+        const workers = [];
+        for (let w = 0; w < concurrency; w++) {
+          workers.push(processNext());
+        }
+        await Promise.all(workers);
+
+        // Done
+        const working = allModels.filter(m => m.status === "working").length;
+        log(`\n━━━ Done! ${working} / ${allModels.length} models are actually working. ━━━`, "ok");
+
+        document.getElementById("progressText").textContent =
+          `Complete: ${working} working out of ${allModels.length} total`;
+
+        btnExport.style.display = "flex";
+
+      } catch (err) {
+        log(`FATAL: ${err.message}`, "err");
+        document.getElementById("modelsGrid").innerHTML = `
+          <div class="empty-state">
+            <div class="icon">💥</div>
+            <h3>Error</h3>
+            <p>${escapeHtml(err.message)}</p>
+          </div>`;
+      } finally {
+        btnCheck.disabled = false;
+        btnCheck.innerHTML = "🚀 Check Models";
+      }
+    }
+
+    // ─── Export Results ───
+    function exportResults() {
+      const working = allModels.filter(m => m.status === "working");
+      const failed = allModels.filter(m => m.status === "failed");
+
+      const report = {
+        timestamp: new Date().toISOString(),
+        summary: {
+          total: allModels.length,
+          working: working.length,
+          failed: failed.length
+        },
+        workingModels: working.map(m => ({
+          name: m.name,
+          displayName: m.displayName,
+          methods: m.methods,
+          latency: m.latency + "ms",
+          inputTokens: m.inputTokens,
+          outputTokens: m.outputTokens
+        })),
+        failedModels: failed.map(m => ({
+          name: m.name,
+          error: m.errorMsg
+        }))
+      };
+
+      const json = JSON.stringify(report, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `gemini-models-report-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      log("Report exported!", "ok");
+    }
+
+    // ─── Enter key support ───
+    document.getElementById("apiKey").addEventListener("keydown", e => {
+      if (e.key === "Enter") startCheck();
+    });
+  </script>
+</body>
+</html>

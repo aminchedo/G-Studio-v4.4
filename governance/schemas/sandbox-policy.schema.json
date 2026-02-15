@@ -1,0 +1,427 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://system.local/schemas/sandbox-policy.schema.json",
+  "title": "Sandbox Policy Schema",
+  "description": "Schema for sandbox isolation policies",
+  "type": "object",
+  "definitions": {
+    "SandboxPolicy": {
+      "type": "object",
+      "required": [
+        "isolationLevel",
+        "filesystem",
+        "process",
+        "network",
+        "resources",
+        "syscalls"
+      ],
+      "properties": {
+        "isolationLevel": {
+          "type": "string",
+          "enum": ["LEVEL_0", "LEVEL_1", "LEVEL_2"],
+          "description": "Isolation level"
+        },
+        "filesystem": {
+          "$ref": "#/definitions/FilesystemPolicy"
+        },
+        "process": {
+          "$ref": "#/definitions/ProcessPolicy"
+        },
+        "network": {
+          "$ref": "#/definitions/NetworkPolicy"
+        },
+        "resources": {
+          "$ref": "#/definitions/ResourcePolicy"
+        },
+        "syscalls": {
+          "$ref": "#/definitions/SyscallPolicy"
+        }
+      },
+      "additionalProperties": false
+    },
+    "FilesystemPolicy": {
+      "type": "object",
+      "required": [
+        "rootPath",
+        "readOnlyPaths",
+        "readWritePaths",
+        "deniedPaths",
+        "maxFileSize",
+        "maxTotalSize"
+      ],
+      "properties": {
+        "rootPath": {
+          "type": "string",
+          "description": "Sandbox root directory"
+        },
+        "readOnlyPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Read-only mount points"
+        },
+        "readWritePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Read-write mount points"
+        },
+        "deniedPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicitly denied paths"
+        },
+        "maxFileSize": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1073741824,
+          "description": "Maximum file size in bytes"
+        },
+        "maxTotalSize": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10737418240,
+          "description": "Maximum total storage in bytes"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProcessPolicy": {
+      "type": "object",
+      "required": [
+        "maxProcesses",
+        "allowFork",
+        "allowExec",
+        "allowedExecutables"
+      ],
+      "properties": {
+        "maxProcesses": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum concurrent processes"
+        },
+        "allowFork": {
+          "type": "boolean",
+          "description": "Allow process forking"
+        },
+        "allowExec": {
+          "type": "boolean",
+          "description": "Allow exec syscalls"
+        },
+        "allowedExecutables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Whitelist of executables"
+        }
+      },
+      "additionalProperties": false
+    },
+    "NetworkPolicy": {
+      "type": "object",
+      "required": [
+        "allowNetwork",
+        "allowedHosts",
+        "allowedPorts",
+        "maxConnections"
+      ],
+      "properties": {
+        "allowNetwork": {
+          "type": "boolean",
+          "description": "Allow network access"
+        },
+        "allowedHosts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Whitelist of hosts (glob patterns)"
+        },
+        "allowedPorts": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "description": "Whitelist of ports"
+        },
+        "maxConnections": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Maximum concurrent connections"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResourcePolicy": {
+      "type": "object",
+      "required": [
+        "maxCPU",
+        "maxMemory",
+        "maxFileDescriptors",
+        "maxThreads"
+      ],
+      "properties": {
+        "maxCPU": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300000,
+          "description": "Maximum CPU time in milliseconds"
+        },
+        "maxMemory": {
+          "type": "integer",
+          "minimum": 1048576,
+          "maximum": 1073741824,
+          "description": "Maximum memory in bytes"
+        },
+        "maxFileDescriptors": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Maximum open files"
+        },
+        "maxThreads": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum threads"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SyscallPolicy": {
+      "type": "object",
+      "required": [
+        "mode",
+        "syscalls"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["WHITELIST", "BLACKLIST"],
+          "description": "Syscall filtering mode"
+        },
+        "syscalls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "description": "Allowed or denied syscalls"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Sandbox": {
+      "type": "object",
+      "required": [
+        "id",
+        "rootPath",
+        "namespaces",
+        "policy",
+        "createdAt"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique sandbox identifier"
+        },
+        "rootPath": {
+          "type": "string",
+          "description": "Sandbox root directory"
+        },
+        "namespaces": {
+          "type": "object",
+          "properties": {
+            "pid": {
+              "type": "boolean"
+            },
+            "mount": {
+              "type": "boolean"
+            },
+            "network": {
+              "type": "boolean"
+            },
+            "ipc": {
+              "type": "boolean"
+            },
+            "uts": {
+              "type": "boolean"
+            }
+          },
+          "description": "Active namespaces"
+        },
+        "policy": {
+          "$ref": "#/definitions/SandboxPolicy"
+        },
+        "createdAt": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Creation timestamp (Unix ms)"
+        },
+        "destroyedAt": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Destruction timestamp (Unix ms)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "EscapeIndicator": {
+      "type": "object",
+      "required": [
+        "type",
+        "severity",
+        "description",
+        "timestamp"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["FILESYSTEM", "PROCESS", "NETWORK", "SYSCALL"],
+          "description": "Indicator type"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+          "description": "Severity level"
+        },
+        "description": {
+          "type": "string",
+          "description": "Indicator description"
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Detection timestamp (Unix ms)"
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Additional details"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SandboxAuditEvent": {
+      "type": "object",
+      "required": [
+        "eventId",
+        "sandboxId",
+        "timestamp",
+        "event",
+        "details"
+      ],
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sandboxId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event": {
+          "type": "string",
+          "enum": [
+            "SANDBOX_CREATED",
+            "SANDBOX_ENTERED",
+            "SANDBOX_EXITED",
+            "SANDBOX_DESTROYED",
+            "POLICY_VIOLATION",
+            "ESCAPE_ATTEMPT",
+            "RESOURCE_LIMIT_EXCEEDED",
+            "SYSCALL_BLOCKED"
+          ]
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResourceUsage": {
+      "type": "object",
+      "required": [
+        "sandboxId",
+        "timestamp",
+        "cpu",
+        "memory",
+        "io"
+      ],
+      "properties": {
+        "sandboxId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cpu": {
+          "type": "object",
+          "required": ["usage", "limit"],
+          "properties": {
+            "usage": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "CPU time used (ms)"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "CPU time limit (ms)"
+            }
+          }
+        },
+        "memory": {
+          "type": "object",
+          "required": ["usage", "limit"],
+          "properties": {
+            "usage": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Memory used (bytes)"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Memory limit (bytes)"
+            }
+          }
+        },
+        "io": {
+          "type": "object",
+          "required": ["read", "write"],
+          "properties": {
+            "read": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Bytes read"
+            },
+            "write": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Bytes written"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

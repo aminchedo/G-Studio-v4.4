@@ -1,0 +1,701 @@
+/**
+ * useMcp - Refactored from class McpService
+ * 
+ * Provides MCP (Model Context Protocol) operations via React hooks
+ * Handles file operations, tool execution, and connection management
+ */
+
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  ReactNode,
+  useMemo,
+} from 'react';
+
+// Types
+export interface FileData {
+  content: string;
+  language: string;
+  path?: string;
+}
+
+export interface McpToolResult {
+  success: boolean;
+  message: string;
+  data?: unknown;
+  error?: string;
+}
+
+export interface McpConnection {
+  id: string;
+  name: string;
+  status: 'connected' | 'disconnected' | 'connecting' | 'error';
+  endpoint?: string;
+  lastPing?: number;
+}
+
+export interface McpToolCallbacks {
+  setFiles: (updater: (prev: Record<string, FileData>) => Record<string, FileData>) => void;
+  setOpenFiles: (updater: (prev: string[]) => string[]) => void;
+  setActiveFile: (file: string | null) => void;
+  getActiveFile: () => string | null;
+  getOpenFiles: () => string[];
+  getTokenUsage?: () => { prompt: number; response: number };
+  getSelectedModel?: () => string;
+}
+
+export interface McpState {
+  connections: McpConnection[];
+  isExecuting: boolean;
+  lastResult: McpToolResult | null;
+  executionHistory: Array<{
+    tool: string;
+    args: Record<string, unknown>;
+    result: McpToolResult;
+    timestamp: number;
+  }>;
+}
+
+export interface UseMcpReturn {
+  // State
+  connections: McpConnection[];
+  isExecuting: boolean;
+  lastResult: McpToolResult | null;
+  executionHistory: McpState['executionHistory'];
+  // Connection Management
+  connect: (endpoint: string, name?: string) => Promise<McpConnection>;
+  disconnect: (connectionId: string) => Promise<void>;
+  reconnect: (connectionId: string) => Promise<void>;
+  getConnectionStatus: (connectionId: string) => McpConnection | undefined;
+  // Tool Execution
+  executeTool: (
+    tool: string,
+    args: Record<string, unknown>,
+    files: Record<string, FileData>,
+    callbacks: McpToolCallbacks
+  ) => Promise<McpToolResult>;
+  // File Operations
+  createFile: (path: string, content: string, language: string, callbacks: McpToolCallbacks) => Promise<McpToolResult>;
+  readFile: (path: string, files: Record<string, FileData>) => Promise<McpToolResult>;
+  writeCode: (path: string, code: string, files: Record<string, FileData>, callbacks: McpToolCallbacks) => Promise<McpToolResult>;
+  editFile: (path: string, edits: string, files: Record<string, FileData>, callbacks: McpToolCallbacks) => Promise<McpToolResult>;
+  deleteFile: (path: string, files: Record<string, FileData>, callbacks: McpToolCallbacks) => Promise<McpToolResult>;
+  moveFile: (from: string, to: string, files: Record<string, FileData>, callbacks: McpToolCallbacks) => Promise<McpToolResult>;
+  searchFiles: (query: string, files: Record<string, FileData>) => Promise<McpToolResult>;
+  // Utilities
+  clearHistory: () => void;
+}
+
+// Generate connection ID
+const generateConnectionId = (): string =>
+  `mcp_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+// Detect language from file path
+const detectLanguage = (path: string): string => {
+  const ext = path.split('.').pop()?.toLowerCase() || '';
+  const languageMap: Record<string, string> = {
+    ts: 'typescript',
+    tsx: 'typescript',
+    js: 'javascript',
+    jsx: 'javascript',
+    py: 'python',
+    rb: 'ruby',
+    go: 'go',
+    rs: 'rust',
+    java: 'java',
+    c: 'c',
+    cpp: 'cpp',
+    h: 'c',
+    hpp: 'cpp',
+    css: 'css',
+    scss: 'scss',
+    less: 'less',
+    html: 'html',
+    json: 'json',
+    yaml: 'yaml',
+    yml: 'yaml',
+    xml: 'xml',
+    md: 'markdown',
+    sql: 'sql',
+    sh: 'bash',
+    bash: 'bash',
+    zsh: 'bash',
+  };
+  return languageMap[ext] || 'plaintext';
+};
+
+/**
+ * MCP operations factory (for non-React contexts)
+ */
+export const createMcpOperations = () => {
+  const connections = new Map<string, McpConnection>();
+
+  const createFile = async (
+    path: string,
+    content: string,
+    language: string,
+    files: Record<string, FileData>,
+    callbacks: McpToolCallbacks
+  ): Promise<McpToolResult> => {
+    if (files[path]) {
+      return {
+        success: false,
+        message: `File already exists: ${path}`,
+        error: 'FILE_EXISTS',
+      };
+    }
+
+    const newFile: FileData = {
+      content,
+      language: language || detectLanguage(path),
+      path,
+    };
+
+    callbacks.setFiles((prev) => ({ ...prev, [path]: newFile }));
+    callbacks.setOpenFiles((prev) => (prev.includes(path) ? prev : [...prev, path]));
+    callbacks.setActiveFile(path);
+
+    return {
+      success: true,
+      message: `Created file: ${path}`,
+      data: { path, language: newFile.language },
+    };
+  };
+
+  const readFile = async (
+    path: string,
+    files: Record<string, FileData>
+  ): Promise<McpToolResult> => {
+    const file = files[path];
+    if (!file) {
+      return {
+        success: false,
+        message: `File not found: ${path}`,
+        error: 'FILE_NOT_FOUND',
+      };
+    }
+
+    return {
+      success: true,
+      message: `Read file: ${path}`,
+      data: {
+        path,
+        content: file.content,
+        language: file.language,
+        lines: file.content.split('\n').length,
+      },
+    };
+  };
+
+  const writeCode = async (
+    path: string,
+    code: string,
+    files: Record<string, FileData>,
+    callbacks: McpToolCallbacks
+  ): Promise<McpToolResult> => {
+    const existingFile = files[path];
+    const language = existingFile?.language || detectLanguage(path);
+
+    callbacks.setFiles((prev) => ({
+      ...prev,
+      [path]: { content: code, language, path },
+    }));
+
+    if (!existingFile) {
+      callbacks.setOpenFiles((prev) => (prev.includes(path) ? prev : [...prev, path]));
+    }
+
+    return {
+      success: true,
+      message: existingFile ? `Updated file: ${path}` : `Created file: ${path}`,
+      data: { path, language, lines: code.split('\n').length },
+    };
+  };
+
+  const editFile = async (
+    path: string,
+    edits: string,
+    files: Record<string, FileData>,
+    callbacks: McpToolCallbacks
+  ): Promise<McpToolResult> => {
+    const file = files[path];
+    if (!file) {
+      return {
+        success: false,
+        message: `File not found: ${path}`,
+        error: 'FILE_NOT_FOUND',
+      };
+    }
+
+    // Apply edits (simplified - in real implementation, parse edit instructions)
+    const updatedContent = edits;
+
+    callbacks.setFiles((prev) => ({
+      ...prev,
+      [path]: { ...file, content: updatedContent },
+    }));
+
+    return {
+      success: true,
+      message: `Edited file: ${path}`,
+      data: { path, lines: updatedContent.split('\n').length },
+    };
+  };
+
+  const deleteFile = async (
+    path: string,
+    files: Record<string, FileData>,
+    callbacks: McpToolCallbacks
+  ): Promise<McpToolResult> => {
+    if (!files[path]) {
+      return {
+        success: false,
+        message: `File not found: ${path}`,
+        error: 'FILE_NOT_FOUND',
+      };
+    }
+
+    callbacks.setFiles((prev) => {
+      const updated = { ...prev };
+      delete updated[path];
+      return updated;
+    });
+
+    callbacks.setOpenFiles((prev) => prev.filter((f) => f !== path));
+
+    if (callbacks.getActiveFile() === path) {
+      const openFiles = callbacks.getOpenFiles().filter((f) => f !== path);
+      callbacks.setActiveFile(openFiles[0] || null);
+    }
+
+    return {
+      success: true,
+      message: `Deleted file: ${path}`,
+    };
+  };
+
+  const moveFile = async (
+    from: string,
+    to: string,
+    files: Record<string, FileData>,
+    callbacks: McpToolCallbacks
+  ): Promise<McpToolResult> => {
+    const file = files[from];
+    if (!file) {
+      return {
+        success: false,
+        message: `Source file not found: ${from}`,
+        error: 'FILE_NOT_FOUND',
+      };
+    }
+
+    if (files[to]) {
+      return {
+        success: false,
+        message: `Destination already exists: ${to}`,
+        error: 'FILE_EXISTS',
+      };
+    }
+
+    callbacks.setFiles((prev) => {
+      const updated = { ...prev };
+      delete updated[from];
+      updated[to] = { ...file, path: to };
+      return updated;
+    });
+
+    callbacks.setOpenFiles((prev) =>
+      prev.map((f) => (f === from ? to : f))
+    );
+
+    if (callbacks.getActiveFile() === from) {
+      callbacks.setActiveFile(to);
+    }
+
+    return {
+      success: true,
+      message: `Moved file from ${from} to ${to}`,
+      data: { from, to },
+    };
+  };
+
+  const searchFiles = async (
+    query: string,
+    files: Record<string, FileData>
+  ): Promise<McpToolResult> => {
+    const results: Array<{ path: string; line: number; content: string }> = [];
+    const lowerQuery = query.toLowerCase();
+
+    Object.entries(files).forEach(([path, file]) => {
+      const lines = file.content.split('\n');
+      lines.forEach((line, index) => {
+        if (line.toLowerCase().includes(lowerQuery)) {
+          results.push({
+            path,
+            line: index + 1,
+            content: line.trim(),
+          });
+        }
+      });
+    });
+
+    return {
+      success: true,
+      message: `Found ${results.length} matches for "${query}"`,
+      data: { query, matches: results },
+    };
+  };
+
+  return {
+    connections,
+    createFile,
+    readFile,
+    writeCode,
+    editFile,
+    deleteFile,
+    moveFile,
+    searchFiles,
+  };
+};
+
+/**
+ * useMcp hook
+ */
+export function useMcp(): UseMcpReturn {
+  const [state, setState] = useState<McpState>({
+    connections: [],
+    isExecuting: false,
+    lastResult: null,
+    executionHistory: [],
+  });
+
+  const operationsRef = useRef(createMcpOperations());
+
+  // Connection management
+  const connect = useCallback(
+    async (endpoint: string, name?: string): Promise<McpConnection> => {
+      const connection: McpConnection = {
+        id: generateConnectionId(),
+        name: name || endpoint,
+        status: 'connecting',
+        endpoint,
+      };
+
+      setState((prev) => ({
+        ...prev,
+        connections: [...prev.connections, connection],
+      }));
+
+      // Simulate connection (in real implementation, establish WebSocket/HTTP connection)
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      const connectedState: McpConnection = {
+        ...connection,
+        status: 'connected',
+        lastPing: Date.now(),
+      };
+
+      setState((prev) => ({
+        ...prev,
+        connections: prev.connections.map((c) =>
+          c.id === connection.id ? connectedState : c
+        ),
+      }));
+
+      operationsRef.current.connections.set(connection.id, connectedState);
+
+      return connectedState;
+    },
+    []
+  );
+
+  const disconnect = useCallback(async (connectionId: string): Promise<void> => {
+    setState((prev) => ({
+      ...prev,
+      connections: prev.connections.map((c) =>
+        c.id === connectionId ? { ...c, status: 'disconnected' } : c
+      ),
+    }));
+
+    operationsRef.current.connections.delete(connectionId);
+  }, []);
+
+  const reconnect = useCallback(
+    async (connectionId: string): Promise<void> => {
+      const connection = state.connections.find((c) => c.id === connectionId);
+      if (!connection?.endpoint) return;
+
+      await disconnect(connectionId);
+      await connect(connection.endpoint, connection.name);
+    },
+    [state.connections, connect, disconnect]
+  );
+
+  const getConnectionStatus = useCallback(
+    (connectionId: string): McpConnection | undefined => {
+      return state.connections.find((c) => c.id === connectionId);
+    },
+    [state.connections]
+  );
+
+  // Tool execution
+  const executeTool = useCallback(
+    async (
+      tool: string,
+      args: Record<string, unknown>,
+      files: Record<string, FileData>,
+      callbacks: McpToolCallbacks
+    ): Promise<McpToolResult> => {
+      setState((prev) => ({ ...prev, isExecuting: true }));
+
+      const startTime = Date.now();
+      let result: McpToolResult;
+
+      try {
+        const ops = operationsRef.current;
+
+        switch (tool) {
+          case 'create_file':
+            result = await ops.createFile(
+              args['path'] as string,
+              args['content'] as string,
+              args['language'] as string,
+              files,
+              callbacks
+            );
+            break;
+          case 'read_file':
+            result = await ops.readFile(args['path'] as string, files);
+            break;
+          case 'write_code':
+            result = await ops.writeCode(
+              args['path'] as string,
+              args['code'] as string,
+              files,
+              callbacks
+            );
+            break;
+          case 'edit_file':
+            result = await ops.editFile(
+              args['path'] as string,
+              args['edits'] as string,
+              files,
+              callbacks
+            );
+            break;
+          case 'delete_file':
+            result = await ops.deleteFile(args['path'] as string, files, callbacks);
+            break;
+          case 'move_file':
+            result = await ops.moveFile(
+              args['from'] as string,
+              args['to'] as string,
+              files,
+              callbacks
+            );
+            break;
+          case 'search_files':
+            result = await ops.searchFiles(args['query'] as string, files);
+            break;
+          default:
+            result = {
+              success: false,
+              message: `Unknown tool: ${tool}`,
+              error: 'UNKNOWN_TOOL',
+            };
+        }
+      } catch (error) {
+        result = {
+          success: false,
+          message: `Tool execution failed: ${tool}`,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+
+      const historyEntry = {
+        tool,
+        args,
+        result,
+        timestamp: startTime,
+      };
+
+      setState((prev) => ({
+        ...prev,
+        isExecuting: false,
+        lastResult: result,
+        executionHistory: [...prev.executionHistory.slice(-99), historyEntry],
+      }));
+
+      return result;
+    },
+    []
+  );
+
+  // Convenience file operation methods
+  const createFile = useCallback(
+    async (
+      path: string,
+      content: string,
+      language: string,
+      callbacks: McpToolCallbacks
+    ) => executeTool('create_file', { path, content, language }, {}, callbacks),
+    [executeTool]
+  );
+
+  const readFile = useCallback(
+    async (path: string, files: Record<string, FileData>) =>
+      operationsRef.current.readFile(path, files),
+    []
+  );
+
+  const writeCode = useCallback(
+    async (
+      path: string,
+      code: string,
+      files: Record<string, FileData>,
+      callbacks: McpToolCallbacks
+    ) => executeTool('write_code', { path, code }, files, callbacks),
+    [executeTool]
+  );
+
+  const editFile = useCallback(
+    async (
+      path: string,
+      edits: string,
+      files: Record<string, FileData>,
+      callbacks: McpToolCallbacks
+    ) => executeTool('edit_file', { path, edits }, files, callbacks),
+    [executeTool]
+  );
+
+  const deleteFile = useCallback(
+    async (
+      path: string,
+      files: Record<string, FileData>,
+      callbacks: McpToolCallbacks
+    ) => executeTool('delete_file', { path }, files, callbacks),
+    [executeTool]
+  );
+
+  const moveFile = useCallback(
+    async (
+      from: string,
+      to: string,
+      files: Record<string, FileData>,
+      callbacks: McpToolCallbacks
+    ) => executeTool('move_file', { from, to }, files, callbacks),
+    [executeTool]
+  );
+
+  const searchFiles = useCallback(
+    async (query: string, files: Record<string, FileData>) =>
+      operationsRef.current.searchFiles(query, files),
+    []
+  );
+
+  const clearHistory = useCallback(() => {
+    setState((prev) => ({ ...prev, executionHistory: [] }));
+  }, []);
+
+  return {
+    connections: state.connections,
+    isExecuting: state.isExecuting,
+    lastResult: state.lastResult,
+    executionHistory: state.executionHistory,
+    connect,
+    disconnect,
+    reconnect,
+    getConnectionStatus,
+    executeTool,
+    createFile,
+    readFile,
+    writeCode,
+    editFile,
+    deleteFile,
+    moveFile,
+    searchFiles,
+    clearHistory,
+  };
+}
+
+// Context
+const McpContext = createContext<UseMcpReturn | null>(null);
+
+interface McpProviderProps {
+  children: ReactNode;
+  onError?: (error: Error) => void;
+}
+
+export const McpProvider: React.FC<McpProviderProps> = ({ children, onError: _onError }) => {
+  const mcp = useMcp();
+  return <McpContext.Provider value={mcp}>{children}</McpContext.Provider>;
+};
+
+export const useMcpContext = (): UseMcpReturn => {
+  const context = useContext(McpContext);
+  if (!context) {
+    throw new Error('useMcpContext must be used within an McpProvider');
+  }
+  return context;
+};
+
+// Backward compatibility - static methods
+export const McpService = {
+  executeTool: async (
+    tool: string,
+    args: Record<string, unknown>,
+    files: Record<string, FileData>,
+    callbacks: McpToolCallbacks
+  ): Promise<McpToolResult> => {
+    const ops = createMcpOperations();
+    switch (tool) {
+      case 'create_file':
+        return ops.createFile(
+          args['path'] as string,
+          args['content'] as string,
+          args['language'] as string,
+          files,
+          callbacks
+        );
+      case 'read_file':
+        return ops.readFile(args['path'] as string, files);
+      case 'write_code':
+        return ops.writeCode(
+          args['path'] as string,
+          args['code'] as string,
+          files,
+          callbacks
+        );
+      case 'edit_file':
+        return ops.editFile(
+          args['path'] as string,
+          args['edits'] as string,
+          files,
+          callbacks
+        );
+      case 'delete_file':
+        return ops.deleteFile(args['path'] as string, files, callbacks);
+      case 'move_file':
+        return ops.moveFile(
+          args['from'] as string,
+          args['to'] as string,
+          files,
+          callbacks
+        );
+      case 'search_files':
+        return ops.searchFiles(args['query'] as string, files);
+      default:
+        return {
+          success: false,
+          message: `Unknown tool: ${tool}`,
+          error: 'UNKNOWN_TOOL',
+        };
+    }
+  },
+};
+
+export default useMcp;

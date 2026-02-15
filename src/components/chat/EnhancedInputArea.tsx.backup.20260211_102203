@@ -1,0 +1,573 @@
+/**
+ * G Studio v2.3.0 - Enhanced Input Area
+ * 
+ * Advanced input component with:
+ * - AI-powered suggestions
+ * - Voice input support
+ * - File attachments
+ * - Command palette integration
+ * - Rich text formatting
+ */
+
+import React, { 
+  memo, 
+  useState, 
+  useCallback, 
+  useRef, 
+  useEffect,
+  forwardRef,
+  useImperativeHandle 
+} from 'react';
+import { 
+  Send, 
+  Mic, 
+  MicOff, 
+  Paperclip, 
+  X, 
+  Sparkles,
+  Command,
+  ChevronUp,
+  Image,
+  FileCode,
+  Loader2,
+  Zap
+} from 'lucide-react';
+import { useTheme } from '../../theme/themeSystem';
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+export interface EnhancedInputAreaProps {
+  value: string;
+  onChange: (value: string) => void;
+  onSend: (message: string, attachments?: File[]) => void;
+  isLoading?: boolean;
+  disabled?: boolean;
+  placeholder?: string;
+  suggestions?: string[];
+  onRequestSuggestions?: (query: string) => void;
+  showVoiceInput?: boolean;
+  onVoiceStart?: () => void;
+  onVoiceEnd?: (transcript: string) => void;
+  maxLength?: number;
+}
+
+export interface InputAreaHandle {
+  focus: () => void;
+  clear: () => void;
+  insertText: (text: string) => void;
+}
+
+interface Attachment {
+  file: File;
+  preview?: string;
+  type: 'image' | 'code' | 'document';
+}
+
+// ============================================================================
+// QUICK COMMANDS
+// ============================================================================
+
+const QUICK_COMMANDS = [
+  { label: 'Create file', command: '/create ', icon: FileCode, description: 'Create a new file' },
+  { label: 'Analyze code', command: '/analyze ', icon: Sparkles, description: 'Analyze current code' },
+  { label: 'Fix bugs', command: '/fix ', icon: Zap, description: 'Find and fix bugs' },
+  { label: 'Refactor', command: '/refactor ', icon: Command, description: 'Refactor code' },
+];
+
+// ============================================================================
+// SUGGESTION ITEM
+// ============================================================================
+
+const SuggestionItem: React.FC<{
+  suggestion: string;
+  isSelected: boolean;
+  onClick: () => void;
+  isDark: boolean;
+}> = memo(({ suggestion, isSelected, onClick, isDark }) => (
+  <button
+    onClick={onClick}
+    className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+      isSelected
+        ? isDark ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+        : isDark ? 'hover:bg-slate-700 text-slate-300' : 'hover:bg-gray-100 text-gray-700'
+    }`}
+  >
+    <Sparkles className="w-3 h-3 inline mr-2 opacity-60" />
+    {suggestion}
+  </button>
+));
+
+SuggestionItem.displayName = 'SuggestionItem';
+
+// ============================================================================
+// ATTACHMENT PREVIEW
+// ============================================================================
+
+const AttachmentPreview: React.FC<{
+  attachment: Attachment;
+  onRemove: () => void;
+  isDark: boolean;
+}> = memo(({ attachment, onRemove, isDark }) => (
+  <div className={`relative group flex items-center gap-2 px-2 py-1 rounded-lg ${
+    isDark ? 'bg-slate-700' : 'bg-gray-200'
+  }`}>
+    {attachment.type === 'image' && attachment.preview ? (
+      <img 
+        src={attachment.preview} 
+        alt={attachment.file.name}
+        className="w-8 h-8 rounded object-cover"
+      />
+    ) : (
+      <div className={`w-8 h-8 rounded flex items-center justify-center ${
+        isDark ? 'bg-slate-600' : 'bg-gray-300'
+      }`}>
+        <FileCode className="w-4 h-4" />
+      </div>
+    )}
+    <span className={`text-xs truncate max-w-[100px] ${
+      isDark ? 'text-slate-300' : 'text-gray-700'
+    }`}>
+      {attachment.file.name}
+    </span>
+    <button
+      onClick={onRemove}
+      className={`absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${
+        isDark ? 'bg-red-600 text-white' : 'bg-red-500 text-white'
+      }`}
+    >
+      <X className="w-3 h-3" />
+    </button>
+  </div>
+));
+
+AttachmentPreview.displayName = 'AttachmentPreview';
+
+// ============================================================================
+// VOICE INPUT INDICATOR
+// ============================================================================
+
+const VoiceInputIndicator: React.FC<{
+  isListening: boolean;
+  isDark: boolean;
+}> = memo(({ isListening, isDark }) => (
+  <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+    isDark ? 'bg-red-900/50 text-red-400' : 'bg-red-100 text-red-600'
+  }`}>
+    <div className="relative">
+      <Mic className="w-4 h-4" />
+      {isListening && (
+        <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+      )}
+    </div>
+    <span className="text-xs font-medium">Listening...</span>
+    <div className="flex gap-0.5">
+      {[0, 1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className={`w-1 bg-red-500 rounded-full animate-pulse`}
+          style={{
+            height: `${8 + Math.random() * 8}px`,
+            animationDelay: `${i * 100}ms`
+          }}
+        />
+      ))}
+    </div>
+  </div>
+));
+
+VoiceInputIndicator.displayName = 'VoiceInputIndicator';
+
+// ============================================================================
+// ENHANCED INPUT AREA COMPONENT
+// ============================================================================
+
+export const EnhancedInputArea = forwardRef<InputAreaHandle, EnhancedInputAreaProps>(({
+  value,
+  onChange,
+  onSend,
+  isLoading = false,
+  disabled = false,
+  placeholder = 'Type your message...',
+  suggestions = [],
+  onRequestSuggestions,
+  showVoiceInput = true,
+  onVoiceStart,
+  onVoiceEnd,
+  maxLength = 10000,
+}, ref) => {
+  const { effectiveTheme } = useTheme();
+  const isDark = effectiveTheme === 'dark' || effectiveTheme === 'high-contrast';
+  
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [isFocused, setIsFocused] = useState(false);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [isListening, setIsListening] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(0);
+  const [showCommands, setShowCommands] = useState(false);
+
+  // Expose methods via ref
+  useImperativeHandle(ref, () => ({
+    focus: () => textareaRef.current?.focus(),
+    clear: () => {
+      onChange('');
+      setAttachments([]);
+    },
+    insertText: (text: string) => {
+      const textarea = textareaRef.current;
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const newValue = value.slice(0, start) + text + value.slice(end);
+        onChange(newValue);
+        // Set cursor position after inserted text
+        setTimeout(() => {
+          textarea.selectionStart = textarea.selectionEnd = start + text.length;
+        }, 0);
+      }
+    }
+  }));
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
+    }
+  }, [value]);
+
+  // Request suggestions on input change
+  useEffect(() => {
+    if (value.length > 2 && onRequestSuggestions) {
+      const timer = setTimeout(() => {
+        onRequestSuggestions(value);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [value, onRequestSuggestions]);
+
+  // Show/hide command palette
+  useEffect(() => {
+    setShowCommands(value.startsWith('/'));
+  }, [value]);
+
+  // Handle send
+  const handleSend = useCallback(() => {
+    if (!value.trim() && attachments.length === 0) return;
+    if (isLoading || disabled) return;
+    
+    onSend(value, attachments.map(a => a.file));
+    onChange('');
+    setAttachments([]);
+    setShowSuggestions(false);
+  }, [value, attachments, isLoading, disabled, onSend, onChange]);
+
+  // Handle key down
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Send on Enter (without Shift)
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+      return;
+    }
+
+    // Navigate suggestions
+    if (showSuggestions && suggestions.length > 0) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedSuggestion(prev => (prev + 1) % suggestions.length);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedSuggestion(prev => (prev - 1 + suggestions.length) % suggestions.length);
+      } else if (e.key === 'Tab' || e.key === 'Enter') {
+        e.preventDefault();
+        onChange(suggestions[selectedSuggestion]);
+        setShowSuggestions(false);
+      } else if (e.key === 'Escape') {
+        setShowSuggestions(false);
+      }
+    }
+
+    // Navigate commands
+    if (showCommands && QUICK_COMMANDS.length > 0) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedSuggestion(prev => (prev + 1) % QUICK_COMMANDS.length);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedSuggestion(prev => (prev - 1 + QUICK_COMMANDS.length) % QUICK_COMMANDS.length);
+      } else if (e.key === 'Tab') {
+        e.preventDefault();
+        onChange(QUICK_COMMANDS[selectedSuggestion].command);
+        setShowCommands(false);
+      }
+    }
+  }, [showSuggestions, suggestions, selectedSuggestion, showCommands, handleSend, onChange]);
+
+  // Handle file selection
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    
+    const newAttachments: Attachment[] = files.map(file => {
+      const type = file.type.startsWith('image/') ? 'image' : 
+                   file.name.match(/\.(ts|tsx|js|jsx|py|java|cpp|c|h|css|html|json|md)$/) ? 'code' : 
+                   'document';
+      
+      const attachment: Attachment = { file, type };
+      
+      // Create preview for images
+      if (type === 'image') {
+        attachment.preview = URL.createObjectURL(file);
+      }
+      
+      return attachment;
+    });
+
+    setAttachments(prev => [...prev, ...newAttachments]);
+    
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, []);
+
+  // Handle voice input
+  const toggleVoiceInput = useCallback(() => {
+    if (isListening) {
+      setIsListening(false);
+      // Voice end would be called by the voice recognition system
+    } else {
+      setIsListening(true);
+      onVoiceStart?.();
+    }
+  }, [isListening, onVoiceStart]);
+
+  // Remove attachment
+  const removeAttachment = useCallback((index: number) => {
+    setAttachments(prev => {
+      const removed = prev[index];
+      if (removed.preview) {
+        URL.revokeObjectURL(removed.preview);
+      }
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
+
+  // Apply suggestion
+  const applySuggestion = useCallback((suggestion: string) => {
+    onChange(suggestion);
+    setShowSuggestions(false);
+    textareaRef.current?.focus();
+  }, [onChange]);
+
+  // Apply command
+  const applyCommand = useCallback((command: string) => {
+    onChange(command);
+    setShowCommands(false);
+    textareaRef.current?.focus();
+  }, [onChange]);
+
+  const canSend = (value.trim() || attachments.length > 0) && !isLoading && !disabled;
+
+  return (
+    <div className={`relative ${isDark ? 'bg-slate-800' : 'bg-white'}`}>
+      {/* Suggestions dropdown */}
+      {showSuggestions && suggestions.length > 0 && (
+        <div className={`absolute bottom-full left-0 right-0 mb-1 rounded-lg overflow-hidden shadow-lg border ${
+          isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
+        }`}>
+          <div className={`px-3 py-1.5 text-xs font-medium ${
+            isDark ? 'text-slate-400 bg-slate-700/50' : 'text-gray-500 bg-gray-50'
+          }`}>
+            <Sparkles className="w-3 h-3 inline mr-1" />
+            AI Suggestions
+          </div>
+          {suggestions.slice(0, 5).map((suggestion, index) => (
+            <SuggestionItem
+              key={index}
+              suggestion={suggestion}
+              isSelected={index === selectedSuggestion}
+              onClick={() => applySuggestion(suggestion)}
+              isDark={isDark}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Commands dropdown */}
+      {showCommands && (
+        <div className={`absolute bottom-full left-0 right-0 mb-1 rounded-lg overflow-hidden shadow-lg border ${
+          isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
+        }`}>
+          <div className={`px-3 py-1.5 text-xs font-medium ${
+            isDark ? 'text-slate-400 bg-slate-700/50' : 'text-gray-500 bg-gray-50'
+          }`}>
+            <Command className="w-3 h-3 inline mr-1" />
+            Quick Commands
+          </div>
+          {QUICK_COMMANDS.filter(cmd => 
+            cmd.command.toLowerCase().includes(value.toLowerCase())
+          ).map((cmd, index) => (
+            <button
+              key={cmd.command}
+              onClick={() => applyCommand(cmd.command)}
+              className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors ${
+                index === selectedSuggestion
+                  ? isDark ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white'
+                  : isDark ? 'hover:bg-slate-700 text-slate-300' : 'hover:bg-gray-100 text-gray-700'
+              }`}
+            >
+              <cmd.icon className="w-4 h-4" />
+              <div className="flex-1 text-left">
+                <div className="font-medium">{cmd.label}</div>
+                <div className="text-xs opacity-70">{cmd.description}</div>
+              </div>
+              <span className="text-xs opacity-50 font-mono">{cmd.command}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Attachments */}
+      {attachments.length > 0 && (
+        <div className={`flex flex-wrap gap-2 px-4 py-2 border-b ${
+          isDark ? 'border-slate-700' : 'border-gray-200'
+        }`}>
+          {attachments.map((attachment, index) => (
+            <AttachmentPreview
+              key={index}
+              attachment={attachment}
+              onRemove={() => removeAttachment(index)}
+              isDark={isDark}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Voice indicator */}
+      {isListening && (
+        <div className="px-4 py-2">
+          <VoiceInputIndicator isListening={isListening} isDark={isDark} />
+        </div>
+      )}
+
+      {/* Input area */}
+      <div className={`flex items-end gap-2 p-3 ${
+        isFocused ? isDark ? 'ring-2 ring-blue-500/50' : 'ring-2 ring-blue-500/30' : ''
+      }`}>
+        {/* Attach button */}
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={disabled}
+          className={`p-2 rounded-lg transition-colors ${
+            isDark 
+              ? 'hover:bg-slate-700 text-slate-400 hover:text-slate-300' 
+              : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
+          } disabled:opacity-50`}
+          title="Attach file"
+        >
+          <Paperclip className="w-5 h-5" />
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          className="hidden"
+          onChange={handleFileSelect}
+          accept="image/*,.ts,.tsx,.js,.jsx,.py,.java,.cpp,.c,.h,.css,.html,.json,.md,.txt"
+        />
+
+        {/* Textarea */}
+        <div className="flex-1 relative">
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder={placeholder}
+            disabled={disabled || isListening}
+            maxLength={maxLength}
+            rows={1}
+            className={`w-full resize-none rounded-lg px-4 py-2.5 text-sm outline-none transition-colors ${
+              isDark 
+                ? 'bg-slate-700 text-white placeholder:text-slate-500' 
+                : 'bg-gray-100 text-gray-900 placeholder:text-gray-400'
+            } disabled:opacity-50`}
+            style={{ minHeight: '44px', maxHeight: '200px' }}
+          />
+          
+          {/* Character count */}
+          {value.length > maxLength * 0.8 && (
+            <div className={`absolute bottom-1 right-2 text-xs ${
+              value.length >= maxLength ? 'text-red-500' : isDark ? 'text-slate-500' : 'text-gray-400'
+            }`}>
+              {value.length}/{maxLength}
+            </div>
+          )}
+        </div>
+
+        {/* Voice button */}
+        {showVoiceInput && (
+          <button
+            onClick={toggleVoiceInput}
+            disabled={disabled}
+            className={`p-2 rounded-lg transition-colors ${
+              isListening
+                ? 'bg-red-500 text-white'
+                : isDark 
+                  ? 'hover:bg-slate-700 text-slate-400 hover:text-slate-300' 
+                  : 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
+            } disabled:opacity-50`}
+            title={isListening ? 'Stop listening' : 'Voice input'}
+          >
+            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+          </button>
+        )}
+
+        {/* Send button */}
+        <button
+          onClick={handleSend}
+          disabled={!canSend}
+          className={`p-2 rounded-lg transition-all ${
+            canSend
+              ? 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95'
+              : isDark 
+                ? 'bg-slate-700 text-slate-500' 
+                : 'bg-gray-200 text-gray-400'
+          }`}
+          title="Send message"
+        >
+          {isLoading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Send className="w-5 h-5" />
+          )}
+        </button>
+      </div>
+
+      {/* Keyboard hint */}
+      <div className={`flex items-center justify-between px-4 py-1 text-xs ${
+        isDark ? 'text-slate-500' : 'text-gray-400'
+      }`}>
+        <span>
+          <kbd className={`px-1 py-0.5 rounded ${isDark ? 'bg-slate-700' : 'bg-gray-200'}`}>Enter</kbd> to send,{' '}
+          <kbd className={`px-1 py-0.5 rounded ${isDark ? 'bg-slate-700' : 'bg-gray-200'}`}>Shift+Enter</kbd> for new line
+        </span>
+        <span>
+          Type <kbd className={`px-1 py-0.5 rounded ${isDark ? 'bg-slate-700' : 'bg-gray-200'}`}>/</kbd> for commands
+        </span>
+      </div>
+    </div>
+  );
+});
+
+EnhancedInputArea.displayName = 'EnhancedInputArea';
+
+export default EnhancedInputArea;

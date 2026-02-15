@@ -1,0 +1,48 @@
+/**
+ * Central type exports for G-Studio v3.0.0
+ * 
+ * STRATEGY: Export both old and new types for gradual migration
+ */
+
+// ==================== CORE TYPES ====================
+export * from './core';
+export * from './conversation';
+export * from './ai';
+// preview types already exported from core -> additional
+// // preview types already exported from core -> additional
+// export * from './preview';
+export * from './editor';
+
+// Common utilities (migrated from root `types/common.ts`)
+export * from './common';
+
+// Re-export specific legacy types from types.ts for backward compatibility
+// (avoiding wildcard to prevent duplicate export conflicts)
+export type { 
+  FileData,
+  ModelId,
+  AgentConfig,
+  McpToolResult,
+  McpToolCallbacks,
+  TestResult,
+  PersonaType,
+  ResponseStyleType,
+  CodeStyleType,
+  ExecutionModeType,
+  Logger,
+  APIRequestOptions,
+  APIRequestResult,
+  APIClientStats,
+  ErrorCategory,
+  ErrorSeverity,
+  ErrorAction,
+  ErrorInfo
+} from './types';
+
+export { DEFAULT_CONFIG, categorizeError, createApiClient } from './types';
+
+// NOTE: You can still import directly from "@/types/types" for explicit access to root symbols
+export { ResponsiveTestConfig, PreviewConfig, DEVICE_PRESETS } from './preview'
+export { ExportInfo, ASTSnapshot, ImportInfo } from './codeIntelligence'
+export { format, clearConfigCache, formatWithCursor } from './prettier.d'
+export { combinePatterns, UIPatternKey, BadgeVariant } from './uiPatterns'

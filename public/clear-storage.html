@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clear G Studio Storage</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .info-box {
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    
+    .info-box h3 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    
+    .info-box p {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .stats {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .stat-label {
+      color: #666;
+    }
+    
+    .stat-value {
+      color: #333;
+      font-weight: bold;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    button {
+      flex: 1;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-secondary {
+      background: #f8f9fa;
+      color: #333;
+      border: 2px solid #e0e0e0;
+    }
+    
+    .btn-secondary:hover {
+      background: #e9ecef;
+    }
+    
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #c82333;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+    }
+    
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .success-message.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .large-keys {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    
+    .large-keys h3 {
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 14px;
+    }
+    
+    .key-item {
+      padding: 8px;
+      background: white;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .key-name {
+      color: #667eea;
+      font-weight: 600;
+    }
+    
+    .key-size {
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧹 Clear G Studio Storage</h1>
+    <p class="subtitle">پاک کردن حافظه G Studio / Manage your browser storage</p>
+    
+    <div class="info-box">
+      <h3>⚠️ توجه / Warning</h3>
+      <p>
+        پس از پاک کردن، باید دوباره API Key خود را وارد کنید.
+        <br>
+        After clearing, you'll need to re-enter your API Key.
+      </p>
+    </div>
+    
+    <div class="stats" id="stats">
+      <div class="stat-item">
+        <span class="stat-label">📊 Total Usage:</span>
+        <span class="stat-value" id="totalUsage">Calculating...</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">📦 Total Items:</span>
+        <span class="stat-value" id="totalItems">-</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">💾 Largest Item:</span>
+        <span class="stat-value" id="largestItem">-</span>
+      </div>
+    </div>
+    
+    <div class="large-keys" id="largeKeys" style="display: none;">
+      <h3>🔍 Large Items (>100KB):</h3>
+      <div id="largeKeysList"></div>
+    </div>
+    
+    <div class="button-group">
+      <button class="btn-secondary" onclick="analyzeStorage()">
+        🔍 Analyze
+      </button>
+      <button class="btn-primary" onclick="clearLargeItems()">
+        🗑️ Clear Large Items
+      </button>
+      <button class="btn-danger" onclick="clearAll()">
+        ⚠️ Clear All
+      </button>
+    </div>
+    
+    <div class="success-message" id="successMessage"></div>
+  </div>
+  
+  <script>
+    function calculateStorageUsage() {
+      let total = 0;
+      const items = [];
+      
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key) {
+          const value = localStorage.getItem(key);
+          if (value) {
+            const size = new Blob([value]).size;
+            total += size;
+            items.push({ key, size });
+          }
+        }
+      }
+      
+      items.sort((a, b) => b.size - a.size);
+      
+      return {
+        total,
+        items,
+        count: localStorage.length
+      };
+    }
+    
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+    
+    function analyzeStorage() {
+      const { total, items, count } = calculateStorageUsage();
+      
+      document.getElementById('totalUsage').textContent = formatBytes(total);
+      document.getElementById('totalItems').textContent = count;
+      
+      if (items.length > 0) {
+        const largest = items[0];
+        document.getElementById('largestItem').textContent = 
+          `${largest.key.substring(0, 30)}... (${formatBytes(largest.size)})`;
+        
+        // Show large items
+        const largeItems = items.filter(item => item.size > 100000); // >100KB
+        if (largeItems.length > 0) {
+          const largeKeysList = document.getElementById('largeKeysList');
+          largeKeysList.innerHTML = largeItems.map(item => `
+            <div class="key-item">
+              <span class="key-name">${item.key.substring(0, 40)}${item.key.length > 40 ? '...' : ''}</span>
+              <span class="key-size">${formatBytes(item.size)}</span>
+            </div>
+          `).join('');
+          document.getElementById('largeKeys').style.display = 'block';
+        }
+      }
+    }
+    
+    function clearLargeItems() {
+      if (!confirm('پاک کردن آیتم‌های بزرگ؟ / Clear large items?')) return;
+      
+      const { items } = calculateStorageUsage();
+      const largeItems = items.filter(item => item.size > 100000); // >100KB
+      
+      largeItems.forEach(item => {
+        localStorage.removeItem(item.key);
+      });
+      
+      showSuccess(`✅ ${largeItems.length} large items cleared!`);
+      analyzeStorage();
+    }
+    
+    function clearAll() {
+      if (!confirm('⚠️ پاک کردن همه داده‌ها؟ این عمل قابل بازگشت نیست!\n\nClear all data? This cannot be undone!')) return;
+      
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      showSuccess('✅ All storage cleared! Redirecting to home...');
+      
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
+    }
+    
+    function showSuccess(message) {
+      const el = document.getElementById('successMessage');
+      el.textContent = message;
+      el.classList.add('show');
+      
+      setTimeout(() => {
+        el.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Auto-analyze on load
+    window.addEventListener('load', analyzeStorage);
+  </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+// App.tsx - Main Application Entry
+import React, { Suspense, lazy, useEffect, useMemo } from "react";
+import { useAppStore } from "@/stores/appStore";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { LoadingScreen } from "./components/LoadingScreen";
+import { TitleBar } from "./components/layout/TitleBar";
+import "./App.css";
+
+// ==================== LAZY LOADED VIEWS ====================
+const ChatView = lazy(() => import("./components/chat/ChatView"));
+const EditorView = lazy(() => import("./components/editor/EditorView"));
+const SplitView = lazy(() => import("./components/layout/splitView"));
+
+// ==================== APP COMPONENT ====================
+const App: React.FC = () => {
+  // Global UI state from store
+  const viewMode = useAppStore((state) => state.ui.viewMode);
+  const isDarkMode = useAppStore((state) => state.ui.isDarkMode);
+
+  // Memoized theme string
+  const theme: "dark" | "light" = useMemo(
+    () => (isDarkMode ? "dark" : "light"),
+    [isDarkMode],
+  );
+
+  // Apply theme attribute to HTML element
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  // Memoized view renderer to prevent unnecessary re-renders
+  const renderView = useMemo(() => {
+    switch (viewMode) {
+      case "chat":
+        return <ChatView />;
+      case "editor":
+        return <EditorView />;
+      case "split":
+      default:
+        return <SplitView />;
+    }
+  }, [viewMode]);
+
+  return (
+    <ErrorBoundary
+      fallback={(error, reset) => (
+        <div style={{ padding: 20, textAlign: "center" }}>
+          <h2>⚠️ Something went wrong</h2>
+          <p>{error.message}</p>
+          <button
+            onClick={reset}
+            style={{ marginTop: 10, padding: "8px 16px" }}
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+    >
+      <div className="app">
+        <TitleBar />
+        <main className="app-main">
+          <Suspense fallback={<LoadingScreen />}>{renderView}</Suspense>
+        </main>
+      </div>
+    </ErrorBoundary>
+  );
+};
+
+export default App;

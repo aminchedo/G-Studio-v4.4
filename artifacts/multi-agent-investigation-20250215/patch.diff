@@ -1,0 +1,138 @@
+# Summary patch for multi-agent-investigation-20250215
+# Apply conceptually; exact line numbers may shift.
+
+--- src/App.tsx
++++ src/App.tsx
+@@ -516,6 +516,7 @@
+   useEffect(() => {
+     const validateApiKeyAndModels = async () => {
++      // Prevent false ERROR before config has loaded (key may not be hydrated yet)
++      if (!configReady) return;
+       if (!effectiveApiKey) {
+         setValidationComplete(false);
+         setApiStatus("ERROR");
+@@ -628,7 +629,7 @@
+     };
+
+     validateApiKeyAndModels();
+-  }, [effectiveApiKey, setApiStatus]);
++  }, [effectiveApiKey, configReady, setApiStatus]);
+
+@@ -1092,13 +1093,15 @@
+-      // API lifecycle guard: do not show "API not set" during LOADING; show friendly message
++      // API lifecycle: distinct messages for LOADING vs ERROR (no new send guard)
+       if (apiStatus !== "READY") {
+-        setMessages((prev) => [
++        const statusMessage =
++          apiStatus === "LOADING"
++            ? "Initializing AI service…"
++            : "API key is missing or invalid. Please check Settings.";
++        setMessages((prev) => [
+           ...prev,
+           { id: generateId(), role: "user", content, timestamp: Date.now() },
+           {
+             id: generateId(),
+             role: "model",
+-            content: "Initializing AI service…",
++            content: statusMessage,
+             timestamp: Date.now(),
+           },
+         ]);
+@@ -1326,10 +1329,13 @@
+         // Provider availability already checked at handleSend entry point
+         // AgentOrchestrator also has a defensive guard
+-        // ?????? ?? AgentOrchestrator
++        // Lightweight performance instrumentation (no heavy logging)
++        console.time("agent_pipeline");
+         const result = await AgentOrchestrator.processUserMessage(
+           content,
+           effectiveApiKey,
+           selectedModel,
+           files,
+           messages,
+           requestId,
+         );
++        console.timeEnd("agent_pipeline");
+
+--- src/services/agentOrchestrator.ts
++++ src/services/agentOrchestrator.ts
+@@ -182,6 +182,8 @@
+     console.log(
+       `[AgentOrchestrator][requestId=${requestId}]: Processing user message`,
+     );
++    console.time("agent_pipeline:orchestrator");
++
+     RuntimeGuardrails.guardOrchestratorEntry(message, apiKey, requestId);
+
+     this.context.files = currentFiles;
+     this.context.messages = history;
++
++    // Conditional routing: simple text → skip heavy orchestration
++    const useSimplePath = this.isSimpleMessage(message);
+
+-    // 1. Initialize context database
++    if (!useSimplePath) {
++    // 1. Initialize context database
+     try {
+       await ContextDatabaseBridge.init();
+     } catch (error) {
+@@ -191,6 +193,7 @@
+       );
+     }
++    }
+
+-    if (PromptProfessionalizer.isEnabled()) {
++    if (!useSimplePath && PromptProfessionalizer.isEnabled()) {
+       ...
+     } else {
++      if (useSimplePath) console.log("[PROMPT_OPT]: skipped (simple path)");
+       else console.log("[PROMPT_OPT]: disabled");
+     }
+
+-    let sessionId: string | null = null;
+-    try {
++    let sessionId: string | null = null;
++    if (!useSimplePath) {
++    try {
+       sessionId = await ContextDatabaseBridge.getCurrentSession();
+     } catch (error) {
+@@ -201,6 +204,7 @@
+     }
++    }
+
+-    if (sessionId && executionPlan.useLocalForContext) {
++    if (!useSimplePath && sessionId && executionPlan.useLocalForContext) {
+       ...
+     }
+
+-    if (sessionId) {
++    if (!useSimplePath && sessionId) {
+       const shouldSummarize = ...
+     }
+
+-    if (executionPlan.useCloudForResponse && sessionId) {
++    if (!useSimplePath && executionPlan.useCloudForResponse && sessionId) {
+       ... context budget ...
+     }
+
++    console.time("agent_pipeline:intent");
+     const intent = await this.detectIntent(processedMessage, apiKey, modelId);
++    console.timeEnd("agent_pipeline:intent");
+
+     ...
++    if (!useSimplePath) {
++      await this.saveToDatabase(message, response, actions);
++    }
+
++    console.timeEnd("agent_pipeline:orchestrator");
+     return { response, actions, updatedFiles, projectState, tokenUsage, aiMode, isOfflineResponse };
+   }
+
++  private static isSimpleMessage(message: string): boolean {
++    const trimmed = message.trim();
++    if (trimmed.length > 180) return false;
++    const lower = trimmed.toLowerCase();
++    const codeKeywords = [ "create project", "new project", "edit", "create file", "analyze", "optimize", "debug", ".tsx", ".ts", ... ];
++    return !codeKeywords.some((k) => lower.includes(k));
++  }
++

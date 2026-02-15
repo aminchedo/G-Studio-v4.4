@@ -1,0 +1,13 @@
+---
+description: Project architecture and structure
+alwaysApply: true
+---
+
+# G-Studio Architecture
+
+Electron+React SPA. Entry: index.tsx → src/components/app/App. Build: Vite 6, TS 5.9, Zustand.
+Paths: @/src, @components, @services, @hooks, @stores, @llm.
+Core: components/app|chat|editor|layout|ribbon|panels. Services: gemini, mcp, agentOrchestrator, codeIntelligence, databaseService, sandboxManager.
+Stores: appStore, conversationStore, projectStore, settingsStore, codeIntelligenceStore.
+AI: Google Gemini. Voice: Web Speech, Vosk (Electron). MCP: file ops.
+Full metadata: .cursor/project-intelligence.json

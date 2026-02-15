@@ -1,0 +1,460 @@
+/**
+ * Gemini Service Types
+ * 
+ * Complete type definitions for the modular Gemini service
+ */
+
+// ==================== CONFIGURATION ====================
+
+export interface GeminiConfig {
+  apiKey: string;
+  baseUrl?: string;
+  defaultModel: string;
+  timeout?: number;
+  retryConfig?: RetryConfig;
+  quotaConfig?: QuotaConfig;
+  circuitBreakerConfig?: CircuitBreakerConfig;
+}
+
+export interface RetryConfig {
+  maxAttempts: number;
+  baseDelay: number;
+  maxDelay: number;
+  backoffMultiplier: number;
+}
+
+export interface QuotaConfig {
+  maxTokensPerMinute: number;
+  maxTokensPerDay: number;
+  maxRequestsPerMinute: number;
+}
+
+export interface CircuitBreakerConfig {
+  failureThreshold: number;
+  resetTimeout: number;
+  halfOpenMaxAttempts: number;
+}
+
+// ==================== REQUEST/RESPONSE ====================
+
+export interface GeminiRequest {
+  model: string;
+  prompt: string;
+  systemInstruction?: string;
+  temperature?: number;
+  maxTokens?: number;
+  topP?: number;
+  topK?: number;
+  stream?: boolean;
+  stopSequences?: string[];
+}
+
+export interface GeminiResponse {
+  text: string;
+  model: string;
+  usage: TokenUsage;
+  finishReason: FinishReason;
+  safetyRatings?: SafetyRating[];
+}
+
+export interface TokenUsage {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+}
+
+export type FinishReason = 'stop' | 'length' | 'safety' | 'error' | 'other';
+
+export interface SafetyRating {
+  category: string;
+  probability: 'NEGLIGIBLE' | 'LOW' | 'MEDIUM' | 'HIGH';
+}
+
+export interface GeminiStreamChunk {
+  text: string;
+  done: boolean;
+  usage?: Partial<TokenUsage>;
+}
+
+// ==================== MODEL INFORMATION ====================
+
+export interface ModelInfo {
+  id: string;
+  name: string;
+  displayName: string;
+  maxTokens: number;
+  inputCostPer1kTokens: number;
+  outputCostPer1kTokens: number;
+  capabilities: ModelCapability[];
+  contextWindow: number;
+  description?: string;
+}
+
+export type ModelCapability = 
+  | 'text' 
+  | 'code' 
+  | 'vision' 
+  | 'audio' 
+  | 'long-context' 
+  | 'function-calling';
+
+export interface ModelSelectionCriteria {
+  maxTokens?: number;
+  capabilities?: ModelCapability[];
+  maxBudget?: number;
+  preferredModels?: string[];
+}
+
+// ==================== QUOTA MANAGEMENT ====================
+
+export interface QuotaStatus {
+  tokensUsedToday: number;
+  tokensRemainingToday: number;
+  tokensUsedThisMinute: number;
+  requestsThisMinute: number;
+  canMakeRequest: boolean;
+  resetTime: Date;
+}
+
+export interface QuotaRecord {
+  timestamp: Date;
+  tokens: number;
+  cost: number;
+}
+
+// ==================== CIRCUIT BREAKER ====================
+
+export type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+
+export interface CircuitBreakerStatus {
+  state: CircuitState;
+  failureCount: number;
+  lastFailureTime: Date | null;
+  nextRetryTime: Date | null;
+}
+
+// ==================== CACHE ====================
+
+export interface CacheEntry<T> {
+  key: string;
+  value: T;
+  timestamp: Date;
+  expiresAt: Date;
+  hits: number;
+}
+
+export interface CacheConfig {
+  maxSize: number;
+  defaultTTL: number;
+  cleanupInterval: number;
+}
+
+// ==================== CLIENT INTERFACE ====================
+
+export interface IGeminiClient {
+  sendRequest(request: GeminiRequest): Promise<GeminiResponse>;
+  sendStreamRequest(
+    request: GeminiRequest,
+    onChunk: (chunk: GeminiStreamChunk) => void
+  ): Promise<void>;
+}
+
+// ==================== ERROR TYPES ====================
+
+export class GeminiError extends Error {
+  constructor(
+    message: string,
+    public code: GeminiErrorCode,
+    public statusCode?: number,
+    public details?: any
+  ) {
+    super(message);
+    this.name = 'GeminiError';
+  }
+}
+
+export enum GeminiErrorCode {
+  NETWORK_ERROR = 'NETWORK_ERROR',
+  TIMEOUT = 'TIMEOUT',
+  INVALID_API_KEY = 'INVALID_API_KEY',
+  QUOTA_EXCEEDED = 'QUOTA_EXCEEDED',
+  RATE_LIMITED = 'RATE_LIMITED',
+  INVALID_REQUEST = 'INVALID_REQUEST',
+  MODEL_NOT_FOUND = 'MODEL_NOT_FOUND',
+  SAFETY_BLOCK = 'SAFETY_BLOCK',
+  UNKNOWN = 'UNKNOWN',
+}
+
+// ==================== TELEMETRY ====================
+
+export interface TelemetryEvent {
+  type: 'request' | 'response' | 'error' | 'retry';
+  timestamp: Date;
+  model: string;
+  duration?: number;
+  tokens?: number;
+  error?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface TelemetryStats {
+  totalRequests: number;
+  successfulRequests: number;
+  failedRequests: number;
+  totalTokens: number;
+  totalCost: number;
+  averageLatency: number;
+  modelUsage: Record<string, number>;
+}
+
+// ==================== APP-LEVEL TYPES (for @/types/types) ====================
+
+/** Model identifiers used across the app and AI services */
+export enum ModelId {
+  Gemini3FlashPreview = 'gemini-3-flash-preview',
+  Gemini3ProPreview = 'gemini-3-pro-preview',
+  GeminiFlashLatest = 'gemini-flash-latest',
+  GeminiFlashLiteLatest = 'gemini-flash-lite-latest',
+  Gemini2Flash = 'gemini-2.0-flash',
+  Gemini2FlashThinking = 'gemini-2.0-flash-thinking-exp',
+  Gemini15Pro = 'gemini-1.5-pro',
+  Gemini15Flash = 'gemini-1.5-flash',
+  Gemini15Flash8B = 'gemini-1.5-flash-8b',
+}
+
+export interface ModelOption {
+  id: ModelId;
+  name: string;
+  description: string;
+}
+
+export interface FileData {
+  content: string;
+  /** Language mode for editor (defaults to 'plaintext' when omitted) */
+  language?: string | undefined;
+  path?: string | undefined;
+  /** Display name for the file (e.g. filename) */
+  name?: string | undefined;
+  /** Last modified timestamp */
+  lastModified?: Date | undefined;
+  /** File size in bytes */
+  size?: number | undefined;
+  /** Character encoding */
+  encoding?: string | undefined;
+  /** Whether file has unsaved changes */
+  isModified?: boolean | undefined;
+  /** Version number for tracking changes */
+  version?: number | undefined;
+}
+
+// Re-export conversation types so @/types/types provides Message, ToolCall, ToolResult
+export type { Message, ToolCall, ToolResult } from './conversation';
+
+// Re-export AI types so components can import from @/types/types
+export type { AIConfig, AIProvider, AIModel } from './ai';
+
+// Re-export MCP types from mcpService
+export type { McpToolResult, McpToolCallbacks } from '../services/mcpService';
+
+// ==================== APPLICATION-LEVEL TYPES ====================
+
+/** Test result for API testing */
+export interface TestResult {
+  success: boolean;
+  message: string;
+  duration?: number;
+  error?: string;
+  data?: unknown;
+}
+
+/** Persona types for AI behavior */
+export type PersonaType = 
+  | 'helpful' 
+  | 'concise' 
+  | 'detailed' 
+  | 'creative' 
+  | 'professional' 
+  | 'casual'
+  | 'technical';
+
+/** Response style preferences */
+export type ResponseStyleType = 
+  | 'conversational' 
+  | 'formal' 
+  | 'bullet-points' 
+  | 'detailed' 
+  | 'concise';
+
+/** Code generation style */
+export type CodeStyleType = 
+  | 'clean' 
+  | 'documented' 
+  | 'minimal' 
+  | 'robust' 
+  | 'performant';
+
+/** Execution mode for code */
+export type ExecutionModeType = 
+  | 'memory' 
+  | 'filesystem' 
+  | 'hybrid' 
+  | 'sandboxed';
+
+// ==================== AI SETTINGS HUB TYPES ====================
+// Re-export additional types from AISettingsHub for centralized access
+
+export type {
+  AgentConfig,
+  ConnectionStatus,
+  ModelInfo as AISettingsModelInfo
+} from '../features/ai/AISettingsHub/types';
+
+export { DEFAULT_CONFIG } from '../features/ai/AISettingsHub/types';
+
+// ==================== ADDITIONAL TYPES ====================
+// Re-export comprehensive type definitions
+
+export type {
+  // Editor
+  EditorConfig,
+  EditorPosition,
+  EditorSelection,
+  // Preview
+  PreviewConfig,
+  PreviewError,
+  // Extended Message
+  ExtendedMessage,
+  // Event Bus
+  EventNames,
+  // Context Builder
+  ContextBuildOptions,
+  ContextSummary,
+  MessageRelevance,
+  // MCP Tools
+  // McpToolCallbacks, // REMOVED: Already exported from mcpService
+  CreateFileArgs,
+  ReadFileArgs,
+  WriteCodeArgs,
+  EditFileArgs,
+  DeleteFileArgs,
+  MoveFileArgs,
+  SearchFilesArgs,
+  ToolCategory,
+  // API Client - COMMENTED OUT: Use direct imports from @/utils/apiClient instead
+  // Logger,
+  // APIRequestOptions,
+  // APIRequestResult,
+  // APIClientStats,
+  // Error Handling - COMMENTED OUT: Use direct imports from @/utils/errors instead
+  // ErrorInfo,
+  // ErrorCategory,
+  // ErrorAction,
+  ModelFailureReason,
+  // Streaming
+  StreamChunk,
+  UsageMetadata,
+  // Provider Limits
+  ProviderLimitInfo,
+  // Debug
+  DebugScope,
+  // Gemini Service
+  StreamProcessor
+} from './additional';
+
+export { categorizeError, createApiClient } from './additional';
+
+// ==================== API CLIENT TYPES ====================
+
+export interface Logger {
+  log: (...args: any[]) => void;
+  error: (...args: any[]) => void;
+  warn: (...args: any[]) => void;
+  info: (...args: any[]) => void;
+  debug: (...args: any[]) => void;
+  success?: (...args: any[]) => void;
+  warning?: (...args: any[]) => void;
+}
+
+export interface APIRequestOptions {
+  timeout?: number;
+  maxRetries?: number;
+  retryDelay?: number;
+  headers?: Record<string, string>;
+  signal?: AbortSignal;
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  body?: unknown;
+  retries?: number;
+}
+
+export interface APIRequestResult<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  statusCode?: number;
+  retryCount?: number;
+  responseTime?: number;
+  attempt?: number;
+  status?: number;
+  errorInfo?: any;
+  retryable?: boolean;
+}
+
+export interface APIClientStats {
+  total: number;
+  success: number;
+  failed: number;
+  retries: number;
+  averageLatency?: number;
+  successRate?: number;
+}
+
+// ==================== ERROR HANDLING TYPES ====================
+
+export type ErrorCategory = 
+  | 'network'
+  | 'authentication'
+  | 'validation'
+  | 'rate_limit'
+  | 'server'
+  | 'client'
+  | 'timeout'
+  | 'unknown'
+  | 'not_found'
+  | 'server_error'
+  | 'invalid_request'
+  | 'model_error'
+  | 'api'
+  | 'authorization';
+
+export type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';
+
+export type ErrorAction = 
+  | 'retry'
+  | 'fallback'
+  | 'notify'
+  | 'ignore'
+  | 'abort'
+  | 'retry_with_backoff'
+  | 'retry_with_exponential_backoff'
+  | 'contact_support'
+  | 'check_credentials'
+  | 'check_model_availability'
+  | 'none'
+  | 'report'
+  | 'fail';
+
+export interface ErrorInfo {
+  category: ErrorCategory;
+  severity: ErrorSeverity;
+  action: ErrorAction;
+  message: string;
+  retryable: boolean;
+  retryAfter?: number;
+  originalError?: Error | any;
+  type?: string;
+  suggestedFix?: string;
+  code?: string;
+  details?: unknown;
+  timestamp?: Date;
+  stack?: string;
+}

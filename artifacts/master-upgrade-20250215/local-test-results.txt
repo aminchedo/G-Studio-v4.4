@@ -1,0 +1,17 @@
+# Local test results — master-upgrade integration 20250215
+
+## TypeScript (tsc --noEmit)
+- Exit code: 2 (pre-existing errors in codebase)
+- New/edited files (voiceStore.ts, ThinkingEngine.ts, VoiceChatModal.tsx, useSpeechRecognition.tsx, stores/index.ts): **no errors**
+- All reported errors are in other modules (ultimate-gemini-tester-asli, InputArea.ts, InspectorPanel, Ribbon, MCP, preview, Settings, etc.). None introduced by this merge.
+
+## ESLint (npm run lint)
+- Lint ran; warnings are pre-existing (unused vars, console, any types in App-REFERENCE and others).
+- No new lint errors in: src/stores/voiceStore.ts, src/services/ai/ThinkingEngine.ts, src/components/modals/VoiceChatModal.tsx, src/hooks/useSpeechRecognition.tsx, src/stores/index.ts.
+
+## Tests
+- No new tests were run. Project has __tests__/ (e.g. geminiService.test.ts, InputArea.test.tsx); not executed as part of this integration. Recommended: add minimal unit tests for STT start/stop, TTS invocation, and ThinkingEngine.speak() when test run is available.
+
+## Summary
+- Integration is type-safe and lint-clean for the modified/added voice files.
+- Build/tsc failures are from existing codebase; voice layer changes do not add new errors.

@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Statistics Dashboard</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Colors */
+            --bg-main: #f0f2f8;
+            --bg-card: #ffffff;
+            --bg-sidebar: #ffffff;
+            --bg-globe: linear-gradient(180deg, #e8ecf4 0%, #d4dbe8 100%);
+            
+            /* Text Colors */
+            --text-primary: #1a1d29;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --text-light: #b4bcc8;
+            
+            /* Accent Colors */
+            --accent-purple: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-orange: #f97316;
+            --accent-pink: #ec4899;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ==================== LAYOUT ==================== */
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            width: 72px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-purple) 0%, #a78bfa 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            transition: transform var(--transition-normal);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-item {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-muted);
+            transition: fill var(--transition-fast);
+        }
+
+        .nav-item:hover {
+            background: rgba(139, 92, 246, 0.08);
+        }
+
+        .nav-item:hover svg {
+            fill: var(--accent-purple);
+        }
+
+        .nav-item.active {
+            background: rgba(139, 92, 246, 0.12);
+        }
+
+        .nav-item.active svg {
+            fill: var(--accent-purple);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            background: var(--accent-purple);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .nav-bottom {
+            margin-top: auto;
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            flex: 1;
+            margin-left: 72px;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 24px;
+            min-height: 100vh;
+        }
+
+        /* ==================== LEFT COLUMN ==================== */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        /* All Users Card */
+        .users-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-smooth);
+        }
+
+        .users-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .users-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .users-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .detail-badge {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.04);
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .users-count {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        /* Stat Items */
+        .stat-items {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+
+        .stat-item:hover {
+            background: rgba(139, 92, 246, 0.06);
+            transform: translateX(4px);
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Bottom Cards */
+        .bottom-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Monthly Sales Card */
+        .sales-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-smooth);
+        }
+
+        .sales-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .sales-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .sales-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .sales-amount {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .sales-value {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .sales-change {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .sales-change.positive {
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .sales-change.negative {
+            color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .sales-subtitle {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Mini Chart */
+        .mini-chart {
+            height: 50px;
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--accent-purple) 0%, rgba(139, 92, 246, 0.3) 100%);
+            border-radius: 3px 3px 0 0;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            background: linear-gradient(180deg, var(--accent-purple) 0%, var(--accent-purple) 100%);
+            transform: scaleY(1.1);
+            transform-origin: bottom;
+        }
+
+        /* Total Earning Card */
+        .earning-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-smooth);
+        }
+
+        .earning-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .earning-header {
+            margin-bottom: 16px;
+        }
+
+        .earning-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .earning-amount {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .earning-value {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .earning-subtitle {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Earning List */
+        .earning-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .earning-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .earning-item:last-child {
+            border-bottom: none;
+        }
+
+        .earning-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .earning-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .earning-dot.purple { background: var(--accent-purple); }
+        .earning-dot.blue { background: var(--accent-blue); }
+        .earning-dot.orange { background: var(--accent-orange); }
+
+        .earning-item-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .earning-item-value {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ==================== CENTER COLUMN - GLOBE ==================== */
+        .center-column {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Globe Container */
+        .globe-container {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .globe-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 3D Globe Effect */
+        .globe {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #e8ecf4 0%, #c8d0de 50%, #b8c4d4 100%);
+            box-shadow: 
+                inset -30px -30px 60px rgba(255, 255, 255, 0.6),
+                inset 30px 30px 60px rgba(0, 0, 0, 0.08),
+                0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .globe::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3ClinearGradient id='landGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23d4dbe8'/%3E%3Cstop offset='100%25' style='stop-color:%23c0c9da'/%3E%3C/linearGradient%3E%3C/defs%3E%3C!-- Stylized continents --%3E%3Cpath d='M120 180 Q150 150 200 160 Q250 140 280 170 Q300 200 280 240 Q260 280 220 290 Q180 300 150 270 Q120 240 120 180Z' fill='%23cdd5e4' stroke='%23b8c4d4' stroke-width='1'/%3E%3Cpath d='M300 120 Q350 100 400 130 Q420 170 400 210 Q380 250 340 240 Q300 230 290 180 Q280 140 300 120Z' fill='%23cdd5e4' stroke='%23b8c4d4' stroke-width='1'/%3E%3Cpath d='M200 320 Q250 300 300 320 Q350 340 360 390 Q350 430 300 440 Q250 450 210 420 Q180 390 200 320Z' fill='%23cdd5e4' stroke='%23b8c4d4' stroke-width='1'/%3E%3Cpath d='M80 280 Q100 250 140 260 Q160 290 140 330 Q120 360 80 340 Q60 310 80 280Z' fill='%23cdd5e4' stroke='%23b8c4d4' stroke-width='1'/%3E%3C/svg%3E") center/cover;
+            opacity: 0.8;
+        }
+
+        .globe::after {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            width: 30%;
+            height: 20%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%);
+            border-radius: 50%;
+            filter: blur(20px);
+        }
+
+        /* Map Markers */
+        .map-markers {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .marker {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform var(--transition-normal);
+            z-index: 10;
+        }
+
+        .marker:hover {
+            transform: scale(1.15);
+            z-index: 20;
+        }
+
+        .marker-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .marker-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        .marker-icon.purple { background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); }
+        .marker-icon.blue { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
+        .marker-icon.cyan { background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%); }
+        .marker-icon.orange { background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); }
+        .marker-icon.pink { background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); }
+        .marker-icon.green { background: linear-gradient(135deg, #10b981 0%, #34d399 100%); }
+
+        /* Marker positions */
+        .marker-1 { top: 25%; left: 30%; }
+        .marker-2 { top: 35%; left: 55%; }
+        .marker-3 { top: 20%; left: 65%; }
+        .marker-4 { top: 45%; left: 40%; }
+        .marker-5 { top: 55%; left: 60%; }
+        .marker-6 { top: 40%; left: 75%; }
+        .marker-7 { top: 60%; left: 45%; }
+
+        /* Activity Card - Floating */
+        .activity-card {
+            position: absolute;
+            top: 50%;
+            right: -20px;
+            transform: translateY(-50%);
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            min-width: 200px;
+            z-index: 30;
+            transition: all var(--transition-smooth);
+        }
+
+        .activity-card:hover {
+            transform: translateY(-50%) translateX(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .activity-title {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .activity-value {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .activity-number {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .activity-change {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+
+        .activity-subtitle {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        /* ==================== RIGHT COLUMN ==================== */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Quantity of Data Card */
+        .quantity-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-smooth);
+        }
+
+        .quantity-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .quantity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .quantity-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .quantity-right {
+            text-align: right;
+        }
+
+        .quantity-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .quantity-value {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-end;
+            gap: 2px;
+        }
+
+        .quantity-number {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .quantity-percent {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .quantity-subtitle {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        /* Data List */
+        .data-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .data-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+
+        .data-item:hover {
+            background: rgba(139, 92, 246, 0.06);
+            transform: translateX(4px);
+        }
+
+        .data-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .data-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .data-icon svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
+
+        .data-icon.purple { background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); }
+        .data-icon.blue { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
+        .data-icon.cyan { background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%); }
+        .data-icon.orange { background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); }
+        .data-icon.pink { background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); }
+        .data-icon.green { background: linear-gradient(135deg, #10b981 0%, #34d399 100%); }
+        .data-icon.yellow { background: linear-gradient(135deg, #eab308 0%, #facc15 100%); }
+        .data-icon.red { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+
+        .data-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .data-item-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .data-bar-container {
+            width: 60px;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .data-bar {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.8s ease-out;
+        }
+
+        .data-bar.purple { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .data-bar.blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .data-bar.cyan { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+        .data-bar.orange { background: linear-gradient(90deg, #f97316, #fb923c); }
+        .data-bar.pink { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .data-bar.green { background: linear-gradient(90deg, #10b981, #34d399); }
+        .data-bar.yellow { background: linear-gradient(90deg, #eab308, #facc15); }
+        .data-bar.red { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+        .data-value {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* User Stats Card */
+        .user-stats-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-smooth);
+        }
+
+        .user-stats-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .user-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .user-stat-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Circular Progress */
+        .circular-progress {
+            position: relative;
+            width: 70px;
+            height: 70px;
+        }
+
+        .circular-progress svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-bg {
+            fill: none;
+            stroke: rgba(0, 0, 0, 0.06);
+            stroke-width: 6;
+        }
+
+        .progress-bar-circle {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .progress-bar-circle.green { stroke: var(--accent-green); }
+        .progress-bar-circle.cyan { stroke: var(--accent-cyan); }
+
+        .progress-value {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .user-stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-stat-number {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .user-stat-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .users-card,
+        .sales-card,
+        .earning-card,
+        .quantity-card,
+        .user-stats-card,
+        .activity-card {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .users-card { animation-delay: 0.1s; }
+        .sales-card { animation-delay: 0.2s; }
+        .earning-card { animation-delay: 0.3s; }
+        .quantity-card { animation-delay: 0.2s; }
+        .user-stats-card { animation-delay: 0.3s; }
+        .activity-card { animation-delay: 0.4s; }
+
+        .marker {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .marker-1 { animation-delay: 0.3s; }
+        .marker-2 { animation-delay: 0.4s; }
+        .marker-3 { animation-delay: 0.5s; }
+        .marker-4 { animation-delay: 0.6s; }
+        .marker-5 { animation-delay: 0.7s; }
+        .marker-6 { animation-delay: 0.8s; }
+        .marker-7 { animation-delay: 0.9s; }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1400px) {
+            .main-content {
+                grid-template-columns: 260px 1fr 280px;
+                gap: 20px;
+            }
+            
+            .globe {
+                width: 400px;
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .center-column {
+                order: -1;
+            }
+            
+            .globe {
+                width: 350px;
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-item active">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                    </svg>
+                </div>
+            </nav>
+            
+            <div class="nav-bottom">
+                <div class="nav-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <div class="page-header">
+                    <h1 class="page-title">General statistics</h1>
+                </div>
+
+                <!-- All Users Card -->
+                <div class="users-card">
+                    <div class="users-header">
+                        <span class="users-label">All users</span>
+                        <span class="detail-badge">Detail</span>
+                    </div>
+                    <div class="users-count">7,541,390</div>
+
+                    <div class="stat-items">
+                        <div class="stat-item">
+                            <div class="stat-icon purple">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-name">Dynamics</span>
+                                <span class="stat-value">540,549</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-item">
+                            <div class="stat-icon blue">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-name">Sales</span>
+                                <span class="stat-value">1,205,677</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Cards -->
+                <div class="bottom-cards">
+                    <!-- Monthly Sales -->
+                    <div class="sales-card">
+                        <div class="sales-header">
+                            <div>
+                                <div class="sales-title">Monthly sales</div>
+                                <div class="sales-amount">
+                                    <span class="sales-value">$34,000</span>
+                                    <span class="sales-change positive">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M7 14l5-5 5 5z"/>
+                                        </svg>
+                                        12%
+                                    </span>
+                                </div>
+                                <div class="sales-subtitle">Compared to Q1 last year</div>
+                            </div>
+                        </div>
+                        <div class="mini-chart">
+                            <div class="chart-bar" style="height: 60%;"></div>
+                            <div class="chart-bar" style="height: 80%;"></div>
+                            <div class="chart-bar" style="height: 45%;"></div>
+                            <div class="chart-bar" style="height: 90%;"></div>
+                            <div class="chart-bar" style="height: 70%;"></div>
+                            <div class="chart-bar" style="height: 55%;"></div>
+                            <div class="chart-bar" style="height: 85%;"></div>
+                            <div class="chart-bar" style="height: 65%;"></div>
+                            <div class="chart-bar" style="height: 75%;"></div>
+                            <div class="chart-bar" style="height: 50%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Total Earning -->
+                    <div class="earning-card">
+                        <div class="earning-header">
+                            <div class="earning-title">Total earning</div>
+                            <div class="earning-amount">
+                                <span class="earning-value">$12,875</span>
+                                <span class="sales-change negative">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M7 10l5 5 5-5z"/>
+                                    </svg>
+                                    10%
+                                </span>
+                            </div>
+                            <div class="earning-subtitle">Compared to $21,490 last year</div>
+                        </div>
+
+                        <div class="earning-list">
+                            <div class="earning-item">
+                                <div class="earning-item-left">
+                                    <div class="earning-dot purple"></div>
+                                    <span class="earning-item-name">January</span>
+                                </div>
+                                <span class="earning-item-value">$7,245</span>
+                            </div>
+                            <div class="earning-item">
+                                <div class="earning-item-left">
+                                    <div class="earning-dot blue"></div>
+                                    <span class="earning-item-name">February</span>
+                                </div>
+                                <span class="earning-item-value">$3,478</span>
+                            </div>
+                            <div class="earning-item">
+                                <div class="earning-item-left">
+                                    <div class="earning-dot orange"></div>
+                                    <span class="earning-item-name">March</span>
+                                </div>
+                                <span class="earning-item-value">$2,152</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Column - Globe -->
+            <div class="center-column">
+                <div class="globe-container">
+                    <div class="globe-wrapper">
+                        <div class="globe">
+                            <div class="map-markers">
+                                <!-- Marker 1 - User -->
+                                <div class="marker marker-1">
+                                    <div class="marker-icon purple">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Marker 2 - Location -->
+                                <div class="marker marker-2">
+                                    <div class="marker-icon cyan">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Marker 3 - Shopping -->
+                                <div class="marker marker-3">
+                                    <div class="marker-icon orange">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Marker 4 - Star -->
+                                <div class="marker marker-4">
+                                    <div class="marker-icon pink">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Marker 5 - Chart -->
+                                <div class="marker marker-5">
+                                    <div class="marker-icon green">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Marker 6 - Settings -->
+                                <div class="marker marker-6">
+                                    <div class="marker-icon blue">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Marker 7 - Heart -->
+                                <div class="marker marker-7">
+                                    <div class="marker-icon pink">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Card (Floating) -->
+                        <div class="activity-card">
+                            <div class="activity-title">Total activity</div>
+                            <div class="activity-value">
+                                <span class="activity-number">3,412,875</span>
+                                <span class="activity-change">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M7 14l5-5 5 5z"/>
+                                    </svg>
+                                    11%
+                                </span>
+                            </div>
+                            <div class="activity-subtitle">Compared to 3,341,450 last year</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Quantity of Data -->
+                <div class="quantity-card">
+                    <div class="quantity-header">
+                        <span class="quantity-title">Quantity of data</span>
+                        <div class="quantity-right">
+                            <div class="quantity-label">Sales trend</div>
+                            <div class="quantity-value">
+                                <span class="quantity-number">64,3</span>
+                                <span class="quantity-percent">%</span>
+                            </div>
+                            <div class="quantity-subtitle">Compared to $21,504 last year</div>
+                        </div>
+                    </div>
+
+                    <div class="data-list">
+                        <div class="data-item">
+                            <div class="data-item-left">
+                                <div class="data-icon purple">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                                    </svg>
+                                </div>
+                                <span class="data-name">Travel</span>
+                            </div>
+                            <div class="data-item-right">
+                                <div class="data-bar-container">
+                                    <div class="data-bar purple" style="width: 75%;"></div>
+                                </div>
+                                <span class="data-value">2,540</span>
+                            </div>
+                        </div>
+
+                        <div class="data-item">
+                            <div class="data-item-left">
+                                <div class="data-icon blue">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                                    </svg>
+                                </div>
+                                <span class="data-name">Presentation</span>
+                            </div>
+                            <div class="data-item-right">
+                                <div class="data-bar-container">
+                                    <div class="data-bar blue" style="width: 65%;"></div>
+                                </div>
+                                <span class="data-value">2,304</span>
+                            </div>
+                        </div>
+
+                        <div class="data-item">
+                            <div class="data-item-left">
+                                <div class="data-icon cyan">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+                                    </svg>
+                                </div>
+                                <span class="data-name">Business</span>
+                            </div>
+                            <div class="data-item-right">
+                                <div class="data-bar-container">
+                                    <div class="data-bar cyan" style="width: 58%;"></div>
+                                </div>
+                                <span class="data-value">2,476</span>
+                            </div>
+                        </div>
+
+                        <div class="data-item">
+                            <div class="data-item-left">
+                                <div class="data-icon orange">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                                    </svg>
+                                </div>
+                                <span class="data-name">Finance</span>
+                            </div>
+                            <div class="data-item-right">
+                                <div class="data-bar-container">
+                                    <div class="data-bar orange" style="width: 52%;"></div>
+                                </div>
+                                <span class="data-value">1,976</span>
+                            </div>
+                        </div>
+
+                        <div class="data-item">
+                            <div class="data-item-left">
+                                <div class="data-icon pink">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                                    </svg>
+                                </div>
+                                <span class="data-name">Travel</span>
+                            </div>
+                            <div class="data-item-right">
+                                <div class="data-bar-container">
+                                    <div class="data-bar pink" style="width: 48%;"></div>
+                                </div>
+                                <span class="data-value">1,903</span>
+                            </div>
+                        </div>
+
+                        <div class="data-item">
+                            <div class="data-item-left">
+                                <div class="data-icon green">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                                    </svg>
+                                </div>
+                                <span class="data-name">Startup</span>
+                            </div>
+                            <div class="data-item-right">
+                                <div class="data-bar-container">
+                                    <div class="data-bar green" style="width: 42%;"></div>
+                                </div>
+                                <span class="data-value">1,320</span>
+                            </div>
+                        </div>
+
+                        <div class="data-item">
+                            <div class="data-item-left">
+                                <div class="data-icon yellow">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"/>
+                                    </svg>
+                                </div>
+                                <span class="data-name">Develop</span>
+                            </div>
+                            <div class="data-item-right">
+                                <div class="data-bar-container">
+                                    <div class="data-bar yellow" style="width: 38%;"></div>
+                                </div>
+                                <span class="data-value">1,103</span>
+                            </div>
+                        </div>
+
+                        <div class="data-item">
+                            <div class="data-item-left">
+                                <div class="data-icon red">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                                    </svg>
+                                </div>
+                                <span class="data-name">Product</span>
+                            </div>
+                            <div class="data-item-right">
+                                <div class="data-bar-container">
+                                    <div class="data-bar red" style="width: 35%;"></div>
+                                </div>
+                                <span class="data-value">1,043</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Stats Card -->
+                <div class="user-stats-card">
+                    <div class="user-stats">
+                        <div class="user-stat-item">
+                            <!-- Right Column -->
+                <div class="right-column">
+                    <!-- Quantity of Data -->
+                    <div class="card quantity-card animate-right delay-2">
+                        <div class="quantity-header">
+                            <div class="quantity-title">Quantity of data</div>
+                            <div class="quantity-subtitle">Sales trend</div>
+                            <div class="quantity-value">
+                                64,3<sup>%</sup>
+                            </div>
+                            <div class="compare-text" style="text-align: right;">Compared to $21,504 last year</div>
+                        </div>
+
+                        <!-- Data List -->
+                        <div class="data-list">
+                            <div class="data-item">
+                                <div class="data-left">
+                                    <span class="data-dot purple"></span>
+                                    <span class="data-name">Travel</span>
+                                </div>
+                                <div class="data-right">
+                                    <span class="data-count">760</span>
+                                    <span class="data-value counter" data-target="2540">0</span>
+                                </div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-left">
+                                    <span class="data-dot blue"></span>
+                                    <span class="data-name">Presentation</span>
+                                </div>
+                                <div class="data-right">
+                                    <span class="data-count">650</span>
+                                    <span class="data-value counter" data-target="2304">0</span>
+                                </div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-left">
+                                    <span class="data-dot cyan"></span>
+                                    <span class="data-name">Business</span>
+                                </div>
+                                <div class="data-right">
+                                    <span class="data-count">612</span>
+                                    <span class="data-value counter" data-target="2476">0</span>
+                                </div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-left">
+                                    <span class="data-dot green"></span>
+                                    <span class="data-name">Finance</span>
+                                </div>
+                                <div class="data-right">
+                                    <span class="data-count">809</span>
+                                    <span class="data-value counter" data-target="1976">0</span>
+                                </div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-left">
+                                    <span class="data-dot orange"></span>
+                                    <span class="data-name">Travel</span>
+                                </div>
+                                <div class="data-right">
+                                    <span class="data-count">513</span>
+                                    <span class="data-value counter" data-target="1903">0</span>
+                                </div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-left">
+                                    <span class="data-dot pink"></span>
+                                    <span class="data-name">Startup</span>
+                                </div>
+                                <div class="data-right">
+                                    <span class="data-count">498</span>
+                                    <span class="data-value counter" data-target="1320">0</span>
+                                </div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-left">
+                                    <span class="data-dot red"></span>
+                                    <span class="data-name">Develop</span>
+                                </div>
+                                <div class="data-right">
+                                    <span class="data-count">450</span>
+                                    <span class="data-value counter" data-target="1103">0</span>
+                                </div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-left">
+                                    <span class="data-dot yellow"></span>
+                                    <span class="data-name">Product</span>
+                                </div>
+                                <div class="data-right">
+                                    <span class="data-count">412</span>
+                                    <span class="data-value counter" data-target="1043">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Circular Stats -->
+                    <div class="card animate-right delay-4" style="padding: 20px;">
+                        <div class="circular-stats">
+                            <div class="circular-item">
+                                <div class="circular-progress">
+                                    <svg viewBox="0 0 36 36">
+                                        <circle class="bg" cx="18" cy="18" r="15.5"/>
+                                        <circle class="progress cyan" cx="18" cy="18" r="15.5" 
+                                            stroke-dasharray="97.4" 
+                                            stroke-dashoffset="71.1"/>
+                                    </svg>
+                                    <span class="percentage">27%</span>
+                                </div>
+                                <div class="circular-info">
+                                    <div class="circular-value counter" data-target="92980">0</div>
+                                    <div class="circular-label">Active users</div>
+                                </div>
+                            </div>
+                            <div class="circular-item">
+                                <div class="circular-progress">
+                                    <svg viewBox="0 0 36 36">
+                                        <circle class="bg" cx="18" cy="18" r="15.5"/>
+                                        <circle class="progress green" cx="18" cy="18" r="15.5" 
+                                            stroke-dasharray="97.4" 
+                                            stroke-dashoffset="32.1"/>
+                                    </svg>
+                                    <span class="percentage">67%</span>
+                                </div>
+                                <div class="circular-info">
+                                    <div class="circular-value counter" data-target="22652">0</div>
+                                    <div class="circular-label">New users</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Drawer -->
+                    <div class="card animate-right delay-5">
+                        <div class="drawer-panel open" id="settingsDrawer">
+                            <div class="drawer-header" onclick="toggleDrawer('settingsDrawer')">
+                                <div class="drawer-title">
+                                    <div class="drawer-icon green">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                                        </svg>
+                                    </div>
+                                    Quick Settings
+                                </div>
+                                <div class="drawer-arrow">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="drawer-content">
+                                <div class="drawer-inner">
+                                    <div class="drawer-item">
+                                        <div class="drawer-item-left">
+                                            <span class="drawer-item-dot"></span>
+                                            <span class="drawer-item-name">Auto-refresh data</span>
+                                        </div>
+                                        <div class="toggle-mini active" onclick="toggleMini(this)"></div>
+                                    </div>
+                                    <div class="drawer-item">
+                                        <div class="drawer-item-left">
+                                            <span class="drawer-item-dot"></span>
+                                            <span class="drawer-item-name">Show notifications</span>
+                                        </div>
+                                        <div class="toggle-mini active" onclick="toggleMini(this)"></div>
+                                    </div>
+                                    <div class="drawer-item">
+                                        <div class="drawer-item-left">
+                                            <span class="drawer-item-dot"></span>
+                                            <span class="drawer-item-name">Dark mode</span>
+                                        </div>
+                                        <div class="toggle-mini" onclick="toggleMini(this)"></div>
+                                    </div>
+                                    <div class="drawer-item">
+                                        <div class="drawer-item-left">
+                                            <span class="drawer-item-dot"></span>
+                                            <span class="drawer-item-name">Compact view</span>
+                                        </div>
+                                        <div class="toggle-mini" onclick="toggleMini(this)"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Additional Styles for Toggle Mini -->
+    <style>
+        .toggle-mini {
+            width: 36px;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+
+        .toggle-mini.active {
+            background: var(--accent-green);
+        }
+
+        .toggle-mini::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: var(--transition-normal);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .toggle-mini.active::after {
+            left: 18px;
+        }
+
+        /* Marker Tooltip */
+        .marker-tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) scale(0.8);
+            background: white;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+            white-space: nowrap;
+            z-index: 100;
+        }
+
+        .marker-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid white;
+        }
+
+        .map-marker:hover .marker-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .marker-tooltip-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .marker-tooltip-value {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Enhance Globe with more realistic look */
+        .globe-ring {
+            position: absolute;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            border-radius: 50%;
+            animation: rotateRing 20s linear infinite;
+        }
+
+        .globe-ring-1 {
+            width: 450px;
+            height: 450px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .globe-ring-2 {
+            width: 500px;
+            height: 500px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-direction: reverse;
+            animation-duration: 25s;
+        }
+
+        @keyframes rotateRing {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Loading shimmer effect */
+        .shimmer {
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0) 0%, 
+                rgba(255, 255, 255, 0.4) 50%, 
+                rgba(255, 255, 255, 0) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Smooth card entrance */
+        .card {
+            opacity: 0;
+            animation: cardEntrance 0.6s ease-out forwards;
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .left-column .card:nth-child(1) { animation-delay: 0.1s; }
+        .left-column .card:nth-child(2) { animation-delay: 0.2s; }
+        .left-column .card:nth-child(3) { animation-delay: 0.3s; }
+        .left-column .card:nth-child(4) { animation-delay: 0.4s; }
+
+        .right-column .card:nth-child(1) { animation-delay: 0.2s; }
+        .right-column .card:nth-child(2) { animation-delay: 0.3s; }
+        .right-column .card:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Hover effects enhancement */
+        .data-item:hover .data-dot {
+            transform: scale(1.3);
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .data-dot {
+            transition: var(--transition-normal);
+        }
+
+        /* Progress bar animation */
+        .progress-animated {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-animated::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.3) 50%, 
+                transparent 100%);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Micro-interaction for buttons */
+        .drawer-item:active {
+            transform: scale(0.98);
+        }
+
+        /* Focus states for accessibility */
+        .nav-item:focus-visible,
+        .drawer-header:focus-visible,
+        .map-marker:focus-visible {
+            outline: 2px solid var(--accent-purple);
+            outline-offset: 2px;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Card glass effect enhancement */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.8), 
+                transparent);
+        }
+    </style>
+
+    <script>
+        // ==================== COUNTER ANIMATION ====================
+        class CounterAnimation {
+            constructor() {
+                this.counters = document.querySelectorAll('.counter');
+                this.animated = new Set();
+                this.init();
+            }
+
+            init() {
+                // Use Intersection Observer for performance
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && !this.animated.has(entry.target)) {
+                            this.animateCounter(entry.target);
+                            this.animated.add(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.counters.forEach(counter => observer.observe(counter));
+            }
+
+            animateCounter(element) {
+                const target = parseInt(element.dataset.target);
+                const duration = 2000;
+                const startTime = performance.now();
+                const startValue = 0;
+
+                const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+
+                const updateCounter = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easedProgress = easeOutQuart(progress);
+                    const currentValue = Math.floor(startValue + (target - startValue) * easedProgress);
+                    
+                    element.textContent = this.formatNumber(currentValue);
+
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCounter);
+                    }
+                };
+
+                requestAnimationFrame(updateCounter);
+            }
+
+            formatNumber(num) {
+                return num.toLocaleString('en-US');
+            }
+        }
+
+        // ==================== DRAWER FUNCTIONALITY ====================
+        function toggleDrawer(id) {
+            const drawer = document.getElementById(id);
+            drawer.classList.toggle('open');
+            
+            // Add ripple effect
+            const header = drawer.querySelector('.drawer-header');
+            createRipple(header, event);
+        }
+
+        function toggleSubDeps(node) {
+            node.classList.toggle('expanded');
+            
+            // Smooth scroll into view if expanded
+            if (node.classList.contains('expanded')) {
+                setTimeout(() => {
+                    node.nextElementSibling?.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'nearest' 
+                    });
+                }, 100);
+            }
+        }
+
+        function toggleMini(element) {
+            element.classList.toggle('active');
+            
+            // Haptic feedback simulation
+            if (navigator.vibrate) {
+                navigator.vibrate(10);
+            }
+        }
+
+        // ==================== RIPPLE EFFECT ====================
+        function createRipple(element, event) {
+            const ripple = document.createElement('span');
+            const rect = element.getBoundingClientRect();
+            
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(139, 92, 246, 0.15);
+                transform: scale(0);
+                animation: rippleEffect 0.6s ease-out;
+                pointer-events: none;
+            `;
+
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (event?.clientX || rect.left + rect.width / 2) - rect.left - size / 2 + 'px';
+            ripple.style.top = (event?.clientY || rect.top + rect.height / 2) - rect.top - size / 2 + 'px';
+
+            element.style.position = 'relative';
+            element.style.overflow = 'hidden';
+            element.appendChild(ripple);
+
+            ripple.addEventListener('animationend', () => ripple.remove());
+        }
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rippleEffect {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // ==================== CIRCULAR PROGRESS ANIMATION ====================
+        function animateCircularProgress() {
+            const circles = document.querySelectorAll('.circular-progress .progress');
+            
+            circles.forEach(circle => {
+                const finalOffset = circle.getAttribute('stroke-dashoffset');
+                circle.style.strokeDashoffset = '97.4';
+                
+                setTimeout(() => {
+                    circle.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    circle.style.strokeDashoffset = finalOffset;
+                }, 500);
+            });
+        }
+
+        // ==================== MAP MARKER INTERACTIONS ====================
+        function initMapMarkers() {
+            const markers = document.querySelectorAll('.map-marker');
+            
+            const markerData = [
+                { title: 'North America', value: '2.4M users' },
+                { title: 'Europe', value: '1.8M users' },
+                { title: 'Asia Pacific', value: '3.2M users' },
+                { title: 'Middle East', value: '890K users' },
+                { title: 'South Asia', value: '1.5M users' },
+                { title: 'Africa', value: '650K users' }
+            ];
+
+            markers.forEach((marker, index) => {
+                // Add tooltip
+                const tooltip = document.createElement('div');
+                tooltip.className = 'marker-tooltip';
+                tooltip.innerHTML = `
+                    <div class="marker-tooltip-title">${markerData[index]?.title || 'Region'}</div>
+                    <div class="marker-tooltip-value">${markerData[index]?.value || '0 users'}</div>
+                `;
+                marker.appendChild(tooltip);
+
+                // Add click interaction
+                marker.addEventListener('click', () => {
+                    markers.forEach(m => m.classList.remove('active'));
+                    marker.classList.add('active');
+                    
+                    // Could trigger data update here
+                    console.log(`Selected: ${markerData[index]?.title}`);
+                });
+
+                // Staggered animation delay
+                marker.style.animationDelay = `${index * 0.15}s`;
+            });
+        }
+
+        // ==================== SMOOTH HOVER EFFECTS ====================
+        function initHoverEffects() {
+            const cards = document.querySelectorAll('.card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function(e) {
+                    this.style.transform = 'translateY(-4px)';
+                });
+                
+                card.addEventListener('mouseleave', function(e) {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Data items hover
+            const dataItems = document.querySelectorAll('.data-item');
+            dataItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.querySelector('.data-dot').style.transform = 'scale(1.5)';
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.querySelector('.data-dot').style.transform = 'scale(1)';
+                });
+            });
+        }
+
+        // ==================== GLOBE ROTATION (Optional) ====================
+        function initGlobeAnimation() {
+            const globe = document.querySelector('.globe');
+            let rotation = 0;
+            
+            // Subtle continuous rotation
+            function rotateGlobe() {
+                rotation += 0.02;
+                globe.style.backgroundPosition = `${rotation}px 0`;
+                requestAnimationFrame(rotateGlobe);
+            }
+            
+            // Uncomment to enable rotation
+            // rotateGlobe();
+        }
+
+        // ==================== KEYBOARD NAVIGATION ====================
+        function initKeyboardNav() {
+            document.addEventListener('keydown', (e) => {
+                // Ctrl + D: Toggle dependency drawer
+                if (e.ctrlKey && e.key === 'd') {
+                    e.preventDefault();
+                    toggleDrawer('dependencyDrawer');
+                }
+                
+                // Ctrl + S: Toggle settings drawer
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    toggleDrawer('settingsDrawer');
+                }
+                
+                // Escape: Close all drawers
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.drawer-panel.open').forEach(drawer => {
+                        drawer.classList.remove('open');
+                    });
+                }
+            });
+        }
+
+        // ==================== INITIALIZE ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize all components
+            new CounterAnimation();
+            animateCircularProgress();
+            initMapMarkers();
+            initHoverEffects();
+            initKeyboardNav();
+            
+            // Add loading complete class
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 100);
+
+            console.log('Dashboard initialized successfully! 🚀');
+            console.log('Keyboard shortcuts:');
+            console.log('  Ctrl + D: Toggle dependency graph');
+            console.log('  Ctrl + S: Toggle settings');
+            console.log('  Escape: Close all drawers');
+        });
+    </script>
+</body>
+</html>

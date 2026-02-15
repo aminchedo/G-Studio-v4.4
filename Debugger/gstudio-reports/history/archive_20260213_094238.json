@@ -1,0 +1,26 @@
+{
+  "timestamp": "20260213_094238",
+  "reason": "",
+  "files": [
+    "src\\components\\InspectorPanel.ts",
+    "src\\components\\Sidebar.ts",
+    "src\\components\\chat\\StreamingStatus.tsx",
+    "src\\components\\editor\\EditorBranding.tsx",
+    "src\\components\\layout\\splitView.tsx",
+    "src\\components\\modals\\ConfirmDialog.tsx",
+    "src\\components\\modals\\PromptDialog.tsx",
+    "src\\components\\panels\\RuntimeUIVerificationPanel.tsx",
+    "src\\components\\ui\\errorHandler.tsx",
+    "src\\config\\config.ts",
+    "src\\features\\ai\\MultiAgentStatus.tsx",
+    "src\\runtime\\toolRuntime.ts",
+    "src\\services\\databaseService.ts",
+    "src\\services\\filesystemAdapter.ts",
+    "src\\services\\secureStorage.ts",
+    "src\\services\\toolValidator.ts",
+    "src\\services\\VoskSpeechService.ts",
+    "src\\services\\mcp\\executorAdapter.ts",
+    "src\\testing-library\\react.ts"
+  ],
+  "count": 19
+}

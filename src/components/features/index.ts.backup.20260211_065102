@@ -1,0 +1,9 @@
+/**
+ * Features Components Barrel Export
+ * Advanced IDE features and enhanced UI components
+ */
+
+export { ModelSelector } from './ModelSelector';
+export { EnhancedSettingsModal } from './EnhancedSettingsModal';
+export { IntegratedTerminal } from './IntegratedTerminal';
+export { default, IntegratedTerminalPlaceholder, IntegratedTerminal } from './IntegratedTerminal'

@@ -1,0 +1,113 @@
+import React, { Component, ReactNode, ErrorInfo } from 'react';
+import { AppError, ErrorCode, ErrorSeverity } from '@/utils/errors';
+import { errorHandler } from '@/utils/errorHandler';
+
+interface Props {
+  children: ReactNode;
+  fallback?: (error: AppError, resetError: () => void) => ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+  error: AppError | null;
+}
+
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+    };
+  }
+
+  static getDerivedStateFromError(error: Error): State {
+    return {
+      hasError: true,
+      error: new AppError(error.message, ErrorCode.UNKNOWN_ERROR, ErrorSeverity.CRITICAL),
+    };
+  }
+
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    const appError = new AppError(
+      error.message,
+      ErrorCode.UNKNOWN_ERROR,
+      ErrorSeverity.CRITICAL,
+      { componentStack: errorInfo.componentStack },
+      error
+    );
+
+    this.setState({ error: appError });
+    errorHandler.handle(appError);
+  }
+
+  resetError = () => {
+    this.setState({
+      hasError: false,
+      error: null,
+    });
+  };
+
+  override render(): ReactNode {
+    const { hasError, error } = this.state;
+
+    if (hasError && error) {
+      if (this.props.fallback) {
+        return this.props.fallback(error, this.resetError);
+      }
+
+      return (
+        <div className="error-boundary" style={styles['wrapper']}>
+          <div className="error-boundary-content" style={styles['content']}>
+            <h1 style={styles['heading']}>Something went wrong</h1>
+            <p style={styles['message']}>{error.message}</p>
+            <button onClick={this.resetError} style={styles['button']}>
+              Try Again
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Inline styles (can be moved to CSS/SCSS)
+const styles: Record<string, React.CSSProperties> = {
+  wrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    width: '100%',
+    backgroundColor: '#f8f8f8',
+  },
+  content: {
+    padding: 24,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    textAlign: 'center',
+    maxWidth: 400,
+  },
+  heading: {
+    fontSize: 24,
+    marginBottom: 12,
+  },
+  message: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 16,
+  },
+  button: {
+    padding: '8px 16px',
+    fontSize: 16,
+    cursor: 'pointer',
+    borderRadius: 4,
+    border: 'none',
+    backgroundColor: '#4f46e5',
+    color: '#fff',
+    transition: 'background-color 0.2s',
+  },
+};

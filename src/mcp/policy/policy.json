@@ -1,0 +1,66 @@
+{
+  "toolPolicies": {
+    "write_code": {
+      "requires": ["lint", "typecheck", "test"],
+      "forbidDirectOutput": true,
+      "description": "Code generation requires validation"
+    },
+    "generate_component": {
+      "requires": ["lint", "typecheck", "test"],
+      "forbidDirectOutput": true,
+      "description": "Component generation requires validation"
+    },
+    "refactor_code": {
+      "requires": ["lint", "typecheck", "test"],
+      "forbidDirectOutput": true,
+      "description": "Refactoring requires validation"
+    },
+    "create_file": {
+      "requires": ["validate_path", "check_permissions"],
+      "forbidDirectOutput": true,
+      "description": "File creation requires path and permission validation"
+    },
+    "edit_file": {
+      "requires": ["validate_path", "check_permissions"],
+      "forbidDirectOutput": true,
+      "description": "File editing requires path and permission validation"
+    },
+    "delete_file": {
+      "requires": ["validate_path", "check_permissions"],
+      "forbidDirectOutput": true,
+      "description": "File deletion requires path and permission validation"
+    },
+    "analyze_code": {
+      "requires": ["read_file", "parse_ast"],
+      "forbidDirectOutput": false,
+      "description": "Code analysis requires file reading and AST parsing"
+    },
+    "detect_smells": {
+      "requires": ["read_file", "parse_ast"],
+      "forbidDirectOutput": false,
+      "description": "Smell detection requires file reading and AST parsing"
+    },
+    "dependency_graph": {
+      "requires": ["read_file", "parse_ast"],
+      "forbidDirectOutput": false,
+      "description": "Dependency graph requires file reading and AST parsing"
+    },
+    "run": {
+      "requires": ["sandbox_ready", "environment_verified"],
+      "forbidDirectOutput": true,
+      "description": "Execution requires sandbox and environment verification"
+    },
+    "build": {
+      "requires": ["sandbox_ready", "environment_verified"],
+      "forbidDirectOutput": true,
+      "description": "Build requires sandbox and environment verification"
+    },
+    "test": {
+      "requires": ["sandbox_ready", "environment_verified"],
+      "forbidDirectOutput": false,
+      "description": "Testing requires sandbox and environment verification"
+    }
+  },
+  "enforcementMode": "strict",
+  "allowBypass": false
+}

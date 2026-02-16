@@ -142,8 +142,8 @@ importers:
         specifier: ^4.3.4
         version: 4.7.0(vite@6.4.1(@types/node@25.2.1)(jiti@1.21.7)(lightningcss@1.30.2))
       '@vitest/ui':
-        specifier: ^2.1.5
-        version: 2.1.9(vitest@4.0.18)
+        specifier: ^4.0.18
+        version: 4.0.18(vitest@4.0.18)
       autoprefixer:
         specifier: ^10.4.24
         version: 10.4.24(postcss@8.5.6)
@@ -174,9 +174,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.19
         version: 3.4.19
-      turbo:
-        specifier: ^2.3.3
-        version: 2.8.9
+      turborepo:
+        specifier: ^0.0.1
+        version: 0.0.1
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -188,7 +188,7 @@ importers:
         version: 1.2.1(rollup@4.57.1)
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.2.1)(@vitest/ui@2.1.9)(happy-dom@20.6.1)(jiti@1.21.7)(lightningcss@1.30.2)
+        version: 4.0.18(@types/node@25.2.1)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@1.21.7)(lightningcss@1.30.2)
 
 packages:
 
@@ -1015,9 +1015,6 @@ packages:
       vite:
         optional: true
 
-  '@vitest/pretty-format@2.1.9':
-    resolution: {integrity: sha512-KhRIdGV2U9HOUzxfiHmY8IFHTdqtOhIzCpd8WRdJiE7D/HUcZVD0EgQCVjm+Q9gkUXWgBvMmTtZgIG48wq7sOQ==}
-
   '@vitest/pretty-format@4.0.18':
     resolution: {integrity: sha512-P24GK3GulZWC5tz87ux0m8OADrQIUVDPIjjj65vBXYG17ZeU3qD7r+MNZ1RNv4l8CGU2vtTRqixrOi9fYk/yKw==}
 
@@ -1030,13 +1027,10 @@ packages:
   '@vitest/spy@4.0.18':
     resolution: {integrity: sha512-cbQt3PTSD7P2OARdVW3qWER5EGq7PHlvE+QfzSC0lbwO+xnt7+XH06ZzFjFRgzUX//JmpxrCu92VdwvEPlWSNw==}
 
-  '@vitest/ui@2.1.9':
-    resolution: {integrity: sha512-izzd2zmnk8Nl5ECYkW27328RbQ1nKvkm6Bb5DAaz1Gk59EbLkiCMa6OLT0NoaAYTjOFS6N+SMYW1nh4/9ljPiw==}
+  '@vitest/ui@4.0.18':
+    resolution: {integrity: sha512-CGJ25bc8fRi8Lod/3GHSvXRKi7nBo3kxh0ApW4yCjmrWmRmlT53B5E08XRSZRliygG0aVNxLrBEqPYdz/KcCtQ==}
     peerDependencies:
-      vitest: 2.1.9
-
-  '@vitest/utils@2.1.9':
-    resolution: {integrity: sha512-v0psaMSkNJ3A2NMrUEHFRzJtDPFn+/VWZ5WxImB21T9fjucJRmS7xCS3ppEnARb9y11OAzaD+P2Ps+b+BGX5iQ==}
+      vitest: 4.0.18
 
   '@vitest/utils@4.0.18':
     resolution: {integrity: sha512-msMRKLMVLWygpK3u2Hybgi4MNjcYJvwTb0Ru09+fOyCXIgT5raYP041DRRdiJiI3k/2U6SEbAETB3YtBrUkCFA==}
@@ -2546,9 +2540,6 @@ packages:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
 
-  loupe@3.2.1:
-    resolution: {integrity: sha512-CdzqowRJCeLU72bHvWqwRBBlLcMEtIvGrlvef74kMnV2AolS9Y8xUv1I0U/MNAWMhBlKIoyuEgoJ0t/bbwHbLQ==}
-
   lowlight@1.20.0:
     resolution: {integrity: sha512-8Ktj+prEb1RoCPkEOrPMYUN/nCggB7qAWe3a7OpMjWQkh3l2RD5wKRQ+o8Q8YuI9RG/xs95waaI/E6ym/7NsTw==}
 
@@ -2998,9 +2989,6 @@ packages:
   path-type@3.0.0:
     resolution: {integrity: sha512-T2ZUsdZFHgA3u4e5PfPbjd7HDDpxPnQb5jN0SrDsjNSuVXHJqtwTnWqG0B1jZrgmJ/7lj1EmVIByWt1gxGkWvg==}
     engines: {node: '>=4'}
-
-  pathe@1.1.2:
-    resolution: {integrity: sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==}
 
   pathe@2.0.3:
     resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
@@ -3588,10 +3576,6 @@ packages:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
     engines: {node: '>=12.0.0'}
 
-  tinyrainbow@1.2.0:
-    resolution: {integrity: sha512-weEDEq7Z5eTHPDh4xjX789+fHfF+P8boiFB+0vbWzpbnbsEr/GRaohi/uMKxg8RZMXnl1ItAi/IUHWMsjDV7kQ==}
-    engines: {node: '>=14.0.0'}
-
   tinyrainbow@3.0.3:
     resolution: {integrity: sha512-PSkbLUoxOFRzJYjjxHJt9xro7D+iilgMX/C9lawzVuYiIdcihh9DXmVibBe8lmcFrRi/VzlPjBxbN7rH24q8/Q==}
     engines: {node: '>=14.0.0'}
@@ -3631,39 +3615,8 @@ packages:
     resolution: {integrity: sha512-LxhtAkPDTkVCMQjt2h6eBVY28KCjikZqZfMcC15YBeNjkgUpdCfBu5HoiOTDu86v6smE8yOjyEktJ8hlbANHQA==}
     engines: {node: '>=0.6.x'}
 
-  turbo-darwin-64@2.8.9:
-    resolution: {integrity: sha512-KnCw1ZI9KTnEAhdI9avZrnZ/z4wsM++flMA1w8s8PKOqi5daGpFV36qoPafg4S8TmYMe52JPWEoFr0L+lQ5JIw==}
-    cpu: [x64]
-    os: [darwin]
-
-  turbo-darwin-arm64@2.8.9:
-    resolution: {integrity: sha512-CbD5Y2NKJKBXTOZ7z7Cc7vGlFPZkYjApA7ri9lH4iFwKV1X7MoZswh9gyRLetXYWImVX1BqIvP8KftulJg/wIA==}
-    cpu: [arm64]
-    os: [darwin]
-
-  turbo-linux-64@2.8.9:
-    resolution: {integrity: sha512-OXC9HdCtsHvyH+5KUoH8ds+p5WU13vdif0OPbsFzZca4cUXMwKA3HWwUuCgQetk0iAE4cscXpi/t8A263n3VTg==}
-    cpu: [x64]
-    os: [linux]
-
-  turbo-linux-arm64@2.8.9:
-    resolution: {integrity: sha512-yI5n8jNXiFA6+CxnXG0gO7h5ZF1+19K8uO3/kXPQmyl37AdiA7ehKJQOvf9OPAnmkGDHcF2HSCPltabERNRmug==}
-    cpu: [arm64]
-    os: [linux]
-
-  turbo-windows-64@2.8.9:
-    resolution: {integrity: sha512-/OztzeGftJAg258M/9vK2ZCkUKUzqrWXJIikiD2pm8TlqHcIYUmepDbyZSDfOiUjMy6NzrLFahpNLnY7b5vNgg==}
-    cpu: [x64]
-    os: [win32]
-
-  turbo-windows-arm64@2.8.9:
-    resolution: {integrity: sha512-xZ2VTwVTjIqpFZKN4UBxDHCPM3oJ2J5cpRzCBSmRpJ/Pn33wpiYjs+9FB2E03svKaD04/lSSLlEUej0UYsugfg==}
-    cpu: [arm64]
-    os: [win32]
-
-  turbo@2.8.9:
-    resolution: {integrity: sha512-G+Mq8VVQAlpz/0HTsxiNNk/xywaHGl+dk1oiBREgOEVCCDjXInDlONWUn5srRnC9s5tdHTFD1bx1N19eR4hI+g==}
-    hasBin: true
+  turborepo@0.0.1:
+    resolution: {integrity: sha512-x+4Q9iy252nr6zuU/TvQIF4na8OVLe2pBTwTJKA/aTPzdR4W8q0uhEj/U69G09IznNDjMg8jXG2nm9gan4KQ1g==}
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -4749,10 +4702,6 @@ snapshots:
     optionalDependencies:
       vite: 6.4.1(@types/node@25.2.1)(jiti@1.21.7)(lightningcss@1.30.2)
 
-  '@vitest/pretty-format@2.1.9':
-    dependencies:
-      tinyrainbow: 1.2.0
-
   '@vitest/pretty-format@4.0.18':
     dependencies:
       tinyrainbow: 3.0.3
@@ -4770,22 +4719,16 @@ snapshots:
 
   '@vitest/spy@4.0.18': {}
 
-  '@vitest/ui@2.1.9(vitest@4.0.18)':
+  '@vitest/ui@4.0.18(vitest@4.0.18)':
     dependencies:
-      '@vitest/utils': 2.1.9
+      '@vitest/utils': 4.0.18
       fflate: 0.8.2
       flatted: 3.3.3
-      pathe: 1.1.2
+      pathe: 2.0.3
       sirv: 3.0.2
       tinyglobby: 0.2.15
-      tinyrainbow: 1.2.0
-      vitest: 4.0.18(@types/node@25.2.1)(@vitest/ui@2.1.9)(happy-dom@20.6.1)(jiti@1.21.7)(lightningcss@1.30.2)
-
-  '@vitest/utils@2.1.9':
-    dependencies:
-      '@vitest/pretty-format': 2.1.9
-      loupe: 3.2.1
-      tinyrainbow: 1.2.0
+      tinyrainbow: 3.0.3
+      vitest: 4.0.18(@types/node@25.2.1)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@1.21.7)(lightningcss@1.30.2)
 
   '@vitest/utils@4.0.18':
     dependencies:
@@ -6479,8 +6422,6 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  loupe@3.2.1: {}
-
   lowlight@1.20.0:
     dependencies:
       fault: 1.0.4
@@ -6975,8 +6916,6 @@ snapshots:
   path-type@3.0.0:
     dependencies:
       pify: 3.0.0
-
-  pathe@1.1.2: {}
 
   pathe@2.0.3: {}
 
@@ -7717,8 +7656,6 @@ snapshots:
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
 
-  tinyrainbow@1.2.0: {}
-
   tinyrainbow@3.0.3: {}
 
   tmp@0.2.5: {}
@@ -7743,32 +7680,7 @@ snapshots:
 
   tsscmp@1.0.6: {}
 
-  turbo-darwin-64@2.8.9:
-    optional: true
-
-  turbo-darwin-arm64@2.8.9:
-    optional: true
-
-  turbo-linux-64@2.8.9:
-    optional: true
-
-  turbo-linux-arm64@2.8.9:
-    optional: true
-
-  turbo-windows-64@2.8.9:
-    optional: true
-
-  turbo-windows-arm64@2.8.9:
-    optional: true
-
-  turbo@2.8.9:
-    optionalDependencies:
-      turbo-darwin-64: 2.8.9
-      turbo-darwin-arm64: 2.8.9
-      turbo-linux-64: 2.8.9
-      turbo-linux-arm64: 2.8.9
-      turbo-windows-64: 2.8.9
-      turbo-windows-arm64: 2.8.9
+  turborepo@0.0.1: {}
 
   type-check@0.4.0:
     dependencies:
@@ -7946,7 +7858,7 @@ snapshots:
       jiti: 1.21.7
       lightningcss: 1.30.2
 
-  vitest@4.0.18(@types/node@25.2.1)(@vitest/ui@2.1.9)(happy-dom@20.6.1)(jiti@1.21.7)(lightningcss@1.30.2):
+  vitest@4.0.18(@types/node@25.2.1)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@1.21.7)(lightningcss@1.30.2):
     dependencies:
       '@vitest/expect': 4.0.18
       '@vitest/mocker': 4.0.18(vite@6.4.1(@types/node@25.2.1)(jiti@1.21.7)(lightningcss@1.30.2))
@@ -7970,7 +7882,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 25.2.1
-      '@vitest/ui': 2.1.9(vitest@4.0.18)
+      '@vitest/ui': 4.0.18(vitest@4.0.18)
       happy-dom: 20.6.1
     transitivePeerDependencies:
       - jiti

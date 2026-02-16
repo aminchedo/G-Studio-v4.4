@@ -1,6 +1,6 @@
 /**
  * Right Activity Bar - Vertical tabs for right-side panels
- * Includes: G Studio (Chat), Preview, Inspector, Vcode (Speak to Write Code)
+ * Enhanced with better spacing, sizing, and quality
  */
 
 import React from "react";
@@ -29,7 +29,6 @@ interface PanelTabProps {
   active: boolean;
   onClick: () => void;
   tooltip: string;
-  isLast?: boolean;
 }
 
 const PanelTab: React.FC<PanelTabProps> = ({
@@ -38,54 +37,50 @@ const PanelTab: React.FC<PanelTabProps> = ({
   active,
   onClick,
   tooltip,
-  isLast = false,
 }) => {
   return (
-    <div className="relative group/panel flex-1 min-h-0 flex flex-col shrink-0">
+    <div className="relative group/panel flex flex-col shrink-0">
       <button
         onClick={onClick}
         title={tooltip}
         className={`
           flex flex-col items-center justify-center
-          w-full flex-1 min-h-[52px] rounded-none
+          w-full py-4 px-2 rounded-lg my-1.5 mx-1
           transition-all duration-200 relative overflow-hidden cursor-pointer
-          border-l border-white/[0.06]
-          ${!isLast ? "border-b border-white/[0.04]" : ""}
           ${
             active
-              ? "bg-slate-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-              : "bg-slate-900/95 hover:bg-slate-800/80 border-transparent hover:border-white/[0.05]"
+              ? "bg-gradient-to-br from-sky-500/20 to-blue-600/20 border border-sky-500/30 shadow-lg shadow-sky-500/20"
+              : "bg-slate-800/50 hover:bg-slate-700/60 border border-white/5 hover:border-white/10"
           }
         `}
       >
-        {/* Icon + label with padding, crisp white when active */}
+        {/* Icon with better quality */}
         <div
-          className="flex items-center justify-center gap-2 flex-shrink-0 px-3 py-2.5 transition-transform duration-200 group-hover/panel:scale-[1.02]"
-          style={{ transform: "rotate(90deg)", transformOrigin: "center" }}
+          className={`flex items-center justify-center mb-1.5 ${
+            active
+              ? "text-sky-400"
+              : "text-slate-400 group-hover/panel:text-slate-200"
+          }`}
+          style={{ 
+            filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3))',
+          }}
         >
-          <div
-            className={`flex-shrink-0 [stroke-linecap:round] [stroke-linejoin:round] ${
-              active
-                ? "text-white"
-                : "text-slate-400 group-hover/panel:text-slate-200"
-            }`}
-          >
-            {icon}
-          </div>
-          <span
-            className={`
-              text-xs font-semibold uppercase tracking-widest whitespace-nowrap select-none flex-shrink-0
-              antialiased
-              ${active ? "text-white" : "text-slate-400 group-hover/panel:text-slate-200"}
-            `}
-          >
-            {label}
-          </span>
+          {icon}
         </div>
+        
+        {/* Label */}
+        <span
+          className={`
+            text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap select-none
+            ${active ? "text-sky-400" : "text-slate-400 group-hover/panel:text-slate-200"}
+          `}
+        >
+          {label}
+        </span>
       </button>
 
-      {/* Tooltip */}
-      <div className="absolute right-full mr-2 px-2.5 py-1.5 bg-slate-800/95 backdrop-blur-sm border border-white/[0.08] text-white text-xs font-medium rounded-md opacity-0 group-hover/panel:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap z-50 translate-x-[8px] group-hover/panel:translate-x-0 shadow-xl">
+      {/* Enhanced Tooltip */}
+      <div className="absolute right-full mr-3 px-3 py-2 bg-slate-800/95 backdrop-blur-md border border-white/10 text-white text-sm font-medium rounded-lg opacity-0 group-hover/panel:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap z-50 translate-x-2 group-hover/panel:translate-x-0 shadow-2xl">
         {tooltip}
         <div className="absolute top-1/2 -right-1 -mt-1 border-4 border-transparent border-l-slate-800/95" />
       </div>
@@ -106,70 +101,66 @@ export const RightActivityBar: React.FC<RightActivityBarProps> = ({
   onToggleVcode,
 }) => {
   return (
-    <div className="fixed right-0 top-[150px] h-[calc(100%-150px)] z-30 flex items-start">
-      {/* Activity Bar – compact padding, consistent with left sidebar */}
-      <div className="w-11 bg-slate-900/95 backdrop-blur-md border-l border-white/[0.06] flex flex-col items-stretch shrink-0 h-full">
-        <div className="flex flex-col flex-1 min-h-0">
+    <div className="fixed right-0 top-[200px] bottom-0 z-30 flex items-stretch">
+      {/* Activity Bar with improved spacing */}
+      <div className="w-16 bg-slate-900/95 backdrop-blur-md border-l border-white/5 flex flex-col py-4 shadow-2xl">
+        <div className="flex flex-col gap-2">
           <PanelTab
             icon={
               <MessageSquare
-                className="w-5 h-5"
-                strokeWidth={1.75}
+                className="w-6 h-6"
+                strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             }
-            label="G STUDIO"
+            label="Chat"
             active={chatVisible}
             onClick={onToggleChat}
             tooltip="G Studio Assistant"
-            isLast={false}
           />
           <PanelTab
             icon={
               <Eye
-                className="w-5 h-5"
-                strokeWidth={1.75}
+                className="w-6 h-6"
+                strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             }
-            label="PREVIEW"
+            label="Preview"
             active={previewVisible}
             onClick={onTogglePreview}
             tooltip="Live Preview"
-            isLast={false}
           />
           <PanelTab
             icon={
               <Activity
-                className="w-5 h-5"
-                strokeWidth={1.75}
+                className="w-6 h-6"
+                strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             }
-            label="INSPECTOR"
+            label="Inspector"
             active={inspectorVisible}
             onClick={onToggleInspector}
             tooltip="Code Inspector"
-            isLast={false}
           />
           {onToggleVcode && (
             <PanelTab
               icon={
                 <Mic
-                  className="w-5 h-5"
-                  strokeWidth={1.75}
+                  className="w-6 h-6"
+                  strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               }
-              label="VCODE"
+              label="Vcode"
               active={vcodeVisible}
               onClick={onToggleVcode}
-              tooltip="Speak to write code – voice + Gemini"
-              isLast
+              tooltip="Voice Coding"
             />
           )}
         </div>

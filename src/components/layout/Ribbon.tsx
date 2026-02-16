@@ -318,7 +318,7 @@ export const Ribbon: React.FC<RibbonProps> = React.memo(
           }, 2000);
         }, 500);
       },
-      [toolAccess, onRunMcpTool],
+      [toolAccess, onRunMcpTool]
     );
 
     const getFileIcon = React.useCallback((filename: string) => {
@@ -485,7 +485,7 @@ export const Ribbon: React.FC<RibbonProps> = React.memo(
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           className={`${onePieceBg} border-b border-slate-600/40 z-50 select-none flex flex-col shrink-0 relative overflow-hidden transition-all duration-200 ${
-            isExpanded ? "h-[150px]" : "h-[80px]"
+            isExpanded ? "h-[200px]" : "h-[100px]"
           }`}
           style={{
             willChange: "height",
@@ -589,5 +589,5 @@ export const Ribbon: React.FC<RibbonProps> = React.memo(
         </div>
       </>
     );
-  },
+  }
 );

@@ -21,7 +21,6 @@ import {
   Sun,
 } from "lucide-react";
 import Editor, { useMonaco, loader } from "@monaco-editor/react";
-import type { IDisposable } from "monaco-editor";
 import { CodeCompletionService } from "@/services/codeCompletionService";
 // @ts-ignore
 import prettier from "prettier";
@@ -52,7 +51,7 @@ interface CodeEditorProps {
   onFindRequest?: () => void;
   onUndoRequest?: () => void;
   onRedoRequest?: () => void;
-  theme?: "dark" | "light" | string;
+  theme?: 'dark' | 'light' | string;
 }
 
 const LANGUAGE_MAP: Record<string, string> = {
@@ -144,8 +143,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
   // Sync with external `theme` prop when provided by parent (App.tsx)
   useEffect(() => {
-    if (theme === "dark" || theme === "light") {
-      setIsDarkTheme(theme === "dark");
+    if (theme === 'dark' || theme === 'light') {
+      setIsDarkTheme(theme === 'dark');
     }
   }, [theme]);
 
@@ -193,7 +192,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     if (!monaco || !editorRef.current) return;
 
     const language = getLanguage(filename);
-    const disposables: IDisposable[] = [];
+    const disposables: monaco.IDisposable[] = [];
 
     // Register comprehensive autocomplete using CodeCompletionService
     if (language === "typescript" || language === "javascript") {
@@ -929,6 +928,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             bracketPairColorization: {
               enabled: true,
             },
+            guides: {
+              indentation: true,
+              bracketPairs: true,
+            },
             suggest: {
               showKeywords: true,
               showSnippets: true,
@@ -956,11 +959,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             matchBrackets: "always",
             renderWhitespace: "selection",
             renderControlCharacters: false,
-            guides: {
-              indentation: true,
-              bracketPairs: true,
-              highlightActiveIndentation: true,
-            },
+            renderIndentGuides: "always" as any,
+            highlightActiveIndentGuide: true,
             rulers: [],
             codeLens: false,
             scrollbar: {

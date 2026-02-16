@@ -1,87 +1,109 @@
 /**
  * G Studio - Chat Welcome Component
- *
- * Modern welcome message for the AI assistant chat panel
+ * Clean and minimal design
  */
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Sparkles,
   MessageCircle,
   Code2,
   Lightbulb,
-  Zap,
   Bug,
   Wand2,
+  Settings,
+  ArrowRight,
 } from "lucide-react";
 
 export interface ChatWelcomeProps {
   isDarkMode?: boolean;
   hasApiKey?: boolean;
   onOpenSettings?: () => void;
+  onSendMessage?: (message: string) => void;
 }
 
 export const ChatWelcome: React.FC<ChatWelcomeProps> = ({
   isDarkMode = true,
   hasApiKey = true,
   onOpenSettings,
+  onSendMessage,
 }) => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   const suggestions = [
     {
       icon: Code2,
       text: "Create a React component",
-      gradient: "from-blue-500 to-cyan-500",
+      prompt: "Create a modern React component with TypeScript and Tailwind CSS",
     },
     {
       icon: Bug,
       text: "Help debug my code",
-      gradient: "from-red-500 to-orange-500",
+      prompt: "Help me debug and fix issues in my code",
     },
     {
       icon: Lightbulb,
       text: "Suggest improvements",
-      gradient: "from-yellow-500 to-orange-500",
+      prompt: "Analyze my code and suggest improvements for better quality and performance",
     },
     {
       icon: Wand2,
       text: "Refactor this function",
-      gradient: "from-purple-500 to-pink-500",
+      prompt: "Refactor my code to make it cleaner, more maintainable, and efficient",
     },
   ];
+
+  const handleSuggestionClick = (prompt: string) => {
+    if (onSendMessage) {
+      onSendMessage(prompt);
+    }
+  };
 
   if (!hasApiKey) {
     return (
       <div className="flex-1 flex items-center justify-center p-8">
-        <div className="text-center max-w-sm space-y-6">
+        <div className="text-center max-w-md space-y-8">
           <div className="relative">
             <div
-              className={`w-16 h-16 mx-auto rounded-2xl flex items-center justify-center ${
+              className={`w-20 h-20 mx-auto rounded-3xl flex items-center justify-center shadow-2xl ${
                 isDarkMode
-                  ? "bg-red-500/20 border border-red-500/40"
-                  : "bg-red-100 border border-red-200"
+                  ? "bg-gradient-to-br from-red-500/20 to-orange-500/20 border border-red-500/30"
+                  : "bg-gradient-to-br from-red-100 to-orange-100 border border-red-200"
               }`}
             >
-              <Sparkles
-                className={`w-8 h-8 ${isDarkMode ? "text-red-400" : "text-red-600"}`}
+              <Settings
+                className={`w-10 h-10 ${isDarkMode ? "text-red-400" : "text-red-600"}`}
+                style={{ animation: "spin 3s linear infinite" }}
               />
             </div>
           </div>
-          <h3
-            className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}
-          >
-            API Key Required
-          </h3>
-          <p
-            className={`text-sm ${isDarkMode ? "text-slate-400" : "text-gray-600"}`}
-          >
-            Add your Gemini API key to use the assistant
-          </p>
+
+          <div className="space-y-3">
+            <h3
+              className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
+            >
+              Welcome to G Studio
+            </h3>
+            <p
+              className={`text-base leading-relaxed ${isDarkMode ? "text-slate-400" : "text-gray-600"}`}
+            >
+              Configure your API key to unlock AI-assisted development
+            </p>
+          </div>
+
           {onOpenSettings && (
             <button
               onClick={onOpenSettings}
-              className="w-full py-3 px-5 rounded-xl font-medium border-2 border-red-500/50 bg-red-500/20 hover:bg-red-500/30 text-red-200 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+              className={`group w-full py-4 px-6 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 shadow-xl ${
+                isDarkMode
+                  ? "bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white focus:ring-red-500/50 shadow-red-500/20"
+                  : "bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white focus:ring-red-500/50 shadow-red-500/30"
+              }`}
             >
-              Configure API Key
+              <span className="flex items-center justify-center gap-3">
+                Configure API Key
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
             </button>
           )}
         </div>
@@ -93,143 +115,90 @@ export const ChatWelcome: React.FC<ChatWelcomeProps> = ({
     <div
       className={`flex-1 flex items-center justify-center p-6 overflow-y-auto ${
         isDarkMode
-          ? "bg-gradient-to-b from-transparent to-slate-900/20"
-          : "bg-gradient-to-b from-transparent to-gray-50/50"
+          ? "bg-gradient-to-b from-transparent via-slate-900/10 to-slate-900/20"
+          : "bg-gradient-to-b from-transparent via-gray-50/30 to-gray-50/50"
       }`}
     >
-      <div className="text-center max-w-xl w-full space-y-6">
-        {/* Hero */}
-        <div
-          className={`relative w-16 h-16 mx-auto rounded-2xl flex items-center justify-center ${
-            isDarkMode
-              ? "bg-slate-800/60 backdrop-blur-sm border border-white/10 shadow-lg"
-              : "bg-white border border-gray-200"
-          }`}
-        >
-          <Sparkles
-            className={`w-8 h-8 ${isDarkMode ? "text-sky-400" : "text-purple-600"}`}
-          />
-        </div>
-
-        <h2
-          className={`text-xl font-semibold ${
-            isDarkMode ? "text-white" : "text-gray-900"
-          }`}
-        >
-          Welcome to G Studio!
-        </h2>
-
-        <p
-          className={`text-sm leading-relaxed ${
-            isDarkMode ? "text-slate-400" : "text-gray-600"
-          }`}
-        >
-          Your AI coding companion. Request features, debug, or get suggestions.
-        </p>
-
-        {/* Capabilities - compact grid */}
-        <div className="grid grid-cols-2 gap-2 mb-6">
-          {[
-            {
-              icon: Code2,
-              title: "Code",
-              sub: "Components & functions",
-              darkBg: "bg-blue-500/20",
-              lightBg: "bg-blue-100",
-              darkText: "text-blue-400",
-              lightText: "text-blue-600",
-            },
-            {
-              icon: Bug,
-              title: "Debug",
-              sub: "Find and fix issues",
-              darkBg: "bg-purple-500/20",
-              lightBg: "bg-purple-100",
-              darkText: "text-purple-400",
-              lightText: "text-purple-600",
-            },
-            {
-              icon: Lightbulb,
-              title: "Suggest",
-              sub: "Improve quality",
-              darkBg: "bg-green-500/20",
-              lightBg: "bg-green-100",
-              darkText: "text-green-400",
-              lightText: "text-green-600",
-            },
-            {
-              icon: Zap,
-              title: "Refactor",
-              sub: "Clean & optimize",
-              darkBg: "bg-orange-500/20",
-              lightBg: "bg-orange-100",
-              darkText: "text-orange-400",
-              lightText: "text-orange-600",
-            },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className={`p-3 rounded-xl text-left border ${
-                isDarkMode
-                  ? "bg-slate-800/60 border-slate-700/80"
-                  : "bg-white border-gray-200"
-              }`}
-            >
-              <div
-                className={`w-7 h-7 rounded-lg flex items-center justify-center mb-1.5 ${isDarkMode ? item.darkBg : item.lightBg}`}
-              >
-                <item.icon
-                  className={`w-3.5 h-3.5 ${isDarkMode ? item.darkText : item.lightText}`}
-                />
-              </div>
-              <h4
-                className={`text-xs font-semibold ${isDarkMode ? "text-white" : "text-gray-900"}`}
-              >
-                {item.title}
-              </h4>
-              <p
-                className={`text-[11px] ${isDarkMode ? "text-slate-500" : "text-gray-600"}`}
-              >
-                {item.sub}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* Example prompts - stronger buttons */}
+      <div className="text-center max-w-2xl w-full space-y-6">
+        {/* Hero - Clean, no lightning bolt */}
         <div className="space-y-3">
-          <p
-            className={`text-xs font-medium ${isDarkMode ? "text-slate-500" : "text-gray-500"}`}
+          <div
+            className={`relative w-16 h-16 mx-auto rounded-2xl flex items-center justify-center shadow-xl ${
+              isDarkMode
+                ? "bg-gradient-to-br from-sky-500/20 to-blue-600/20 border border-sky-500/30"
+                : "bg-gradient-to-br from-sky-100 to-blue-100 border border-sky-200"
+            }`}
           >
-            Try:
+            <Sparkles
+              className={`w-8 h-8 ${isDarkMode ? "text-sky-400" : "text-sky-600"}`}
+            />
+          </div>
+
+          <h2
+            className={`text-2xl font-bold tracking-tight ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            Welcome to G Studio
+          </h2>
+
+          <p
+            className={`text-sm leading-relaxed max-w-lg mx-auto ${
+              isDarkMode ? "text-slate-400" : "text-gray-600"
+            }`}
+          >
+            Your intelligent AI coding companion
           </p>
-          <div className="flex flex-wrap justify-center gap-2">
+        </div>
+
+        {/* Minimal Suggestions - Simple list without icons */}
+        <div className="space-y-2">
+          <p
+            className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-500" : "text-gray-500"}`}
+          >
+            Quick Start
+          </p>
+          <div className="space-y-1.5">
             {suggestions.map((suggestion, index) => (
               <button
                 key={index}
                 type="button"
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent ${
+                onClick={() => handleSuggestionClick(suggestion.prompt)}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all duration-200 ${
                   isDarkMode
-                    ? "bg-slate-800/80 border-slate-600/80 hover:border-slate-500 text-slate-200 hover:text-white focus:ring-purple-500/50"
-                    : "bg-white border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 focus:ring-purple-400"
+                    ? "bg-white/5 hover:bg-white/10 border border-white/5"
+                    : "bg-gray-100 hover:bg-gray-200 border border-gray-200"
                 }`}
               >
-                <div
-                  className={`w-6 h-6 rounded-lg flex items-center justify-center bg-gradient-to-br ${suggestion.gradient}`}
+                <span
+                  className={`text-sm ${isDarkMode ? "text-slate-300" : "text-gray-700"}`}
                 >
-                  <suggestion.icon className="w-3.5 h-3.5 text-white" />
-                </div>
-                <span>{suggestion.text}</span>
+                  {suggestion.text}
+                </span>
+                <ArrowRight
+                  className={`w-3.5 h-3.5 transition-all ${
+                    hoveredIndex === index
+                      ? "translate-x-0 opacity-100"
+                      : "-translate-x-1 opacity-0"
+                  } ${isDarkMode ? "text-slate-400" : "text-gray-400"}`}
+                />
               </button>
             ))}
           </div>
         </div>
 
+        {/* Footer */}
         <div
-          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs ${isDarkMode ? "text-slate-500" : "text-gray-500"}`}
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs ${
+            isDarkMode
+              ? "bg-white/5 border border-white/10 text-slate-400"
+              : "bg-gray-100 border border-gray-200 text-gray-600"
+          }`}
         >
-          <MessageCircle className="w-3.5 h-3.5 opacity-70" />
-          <span>Type below to start</span>
+          <MessageCircle className="w-3 h-3 opacity-70" />
+          <span>Start typing or click a suggestion</span>
         </div>
       </div>
     </div>

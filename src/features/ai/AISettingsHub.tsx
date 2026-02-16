@@ -1,16 +1,13 @@
 /**
- * AI Settings Hub - Unified AI Configuration Center
+ * AI Settings Hub - Enhanced Modern UI
  *
- * A polished, dark-themed settings panel with 7 tabs:
- * - Connection: API key and connection testing
- * - Models: Model selection and parameters
- * - API Test: Model discovery and benchmarking
- * - Behavior: AI persona and response style
- * - Voice Input: Speech recognition settings
- * - Voice Output: Text-to-speech settings
- * - Local AI: LM Studio integration
+ * A stunning, modern settings panel with premium design:
+ * - Glassmorphism effects and smooth gradients
+ * - Refined animations and micro-interactions
+ * - Professional color palette with depth
+ * - Responsive and accessible
  *
- * @version 2.2.0
+ * @version 3.0.0 - Enhanced Modern UI
  */
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -30,7 +27,7 @@ import {
 
 export type { AIConfig } from "./AISettingsHub/types";
 
-// High-quality Colorful SVG Icons
+// Premium SVG Icons
 const KeyIcon = () => (
   <svg
     width="20"
@@ -81,12 +78,6 @@ const FlaskIcon = () => (
       strokeWidth="2.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-    />
-    <path
-      d="M9 3h6"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
     />
   </svg>
 );
@@ -202,15 +193,14 @@ const CpuIcon = () => (
 
 const SettingsIcon = () => (
   <svg
-    width="22"
-    height="22"
+    width="24"
+    height="24"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="transition-all duration-300"
   >
     <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
     <circle cx="12" cy="12" r="3" />
@@ -219,15 +209,14 @@ const SettingsIcon = () => (
 
 const XIcon = () => (
   <svg
-    width="18"
-    height="18"
+    width="20"
+    height="20"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="transition-all duration-300"
   >
     <line x1="18" x2="6" y1="6" y2="18" />
     <line x1="6" x2="18" y1="6" y2="18" />
@@ -244,7 +233,6 @@ const SaveIcon = () => (
     strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="transition-all duration-300"
   >
     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
     <polyline points="17 21 17 13 7 13 7 21" />
@@ -254,34 +242,17 @@ const SaveIcon = () => (
 
 const RotateCcwIcon = () => (
   <svg
-    width="16"
-    height="16"
+    width="18"
+    height="18"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="transition-all duration-300"
   >
     <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
     <path d="M3 3v5h5" />
-  </svg>
-);
-
-const ChevronRightIcon = ({ className }: { className?: string }) => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={`transition-all duration-300 ${className || ""}`}
-  >
-    <polyline points="9 18 15 12 9 6" />
   </svg>
 );
 
@@ -290,7 +261,6 @@ interface AISettingsHubProps {
   onClose: () => void;
   config?: Partial<AIConfig>;
   onSave?: (config: AIConfig) => void;
-  /** Optional convenience: prefill apiKey */
   apiKey?: string;
 }
 
@@ -372,7 +342,6 @@ export const AISettingsHub: React.FC<AISettingsHubProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  // Load saved config from localStorage on mount
   useEffect(() => {
     try {
       const savedConfig = localStorage.getItem("gstudio_ai_config");
@@ -385,7 +354,6 @@ export const AISettingsHub: React.FC<AISettingsHubProps> = ({
     }
   }, []);
 
-  // Reset state when modal opens
   useEffect(() => {
     if (isOpen && config) {
       setLocalConfig((prev) => ({ ...prev, ...config }));
@@ -394,22 +362,20 @@ export const AISettingsHub: React.FC<AISettingsHubProps> = ({
     }
   }, [isOpen, config]);
 
-  // Update config
   const updateConfig = useCallback(
     (key: keyof AIConfig, value: AIConfig[keyof AIConfig]) => {
       setLocalConfig((prev) => ({ ...prev, [key]: value }));
       setIsDirty(true);
     },
-    [],
+    []
   );
 
-  // Save handler (with validation: prevent invalid API key submission)
   const handleSave = useCallback(async () => {
     setSaveError(null);
     const key = normalizeGeminiApiKey(localConfig.apiKey);
     if (key.length > 0 && !isLikelyGeminiApiKey(key)) {
       setSaveError(
-        "API key format looks invalid. It should look like `AIza...`. Please paste a valid Google AI Studio key.",
+        "API key format looks invalid. It should look like `AIza...`. Please paste a valid Google AI Studio key."
       );
       return;
     }
@@ -419,21 +385,20 @@ export const AISettingsHub: React.FC<AISettingsHubProps> = ({
       onSave({ ...localConfig, apiKey: key });
       localStorage.setItem(
         "gstudio_ai_config",
-        JSON.stringify({ ...localConfig, apiKey: key }),
+        JSON.stringify({ ...localConfig, apiKey: key })
       );
       setIsDirty(false);
       onClose();
     } catch (error) {
       console.error("Failed to save config:", error);
       setSaveError(
-        error instanceof Error ? error.message : "Failed to save. Try again.",
+        error instanceof Error ? error.message : "Failed to save. Try again."
       );
     } finally {
       setIsSaving(false);
     }
   }, [localConfig, onSave, onClose]);
 
-  // Reset handler
   const handleReset = useCallback(() => {
     if (window.confirm("Reset all settings to defaults?")) {
       setLocalConfig(DEFAULT_CONFIG);
@@ -441,132 +406,130 @@ export const AISettingsHub: React.FC<AISettingsHubProps> = ({
     }
   }, []);
 
-  // Cancel handler - No confirmation dialog
   const handleCancel = useCallback(() => {
     onClose();
   }, [onClose]);
 
-  // Keyboard shortcuts
   useEffect(() => {
     if (!isOpen) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        handleCancel();
-      } else if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+      if (e.key === "Escape") handleCancel();
+      else if ((e.metaKey || e.ctrlKey) && e.key === "s") {
         e.preventDefault();
         if (isDirty) handleSave();
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, handleCancel, handleSave, isDirty]);
 
   if (!isOpen) return null;
 
-  // Tab color schemes - distinct colors for each tab
   const tabColors: Record<
     TabId,
     { gradient: string; text: string; bg: string; border: string; glow: string }
   > = {
     connection: {
-      gradient: "from-blue-500 to-cyan-600",
+      gradient: "from-blue-500 via-blue-600 to-cyan-500",
       text: "text-blue-400",
       bg: "bg-blue-500/10",
-      border: "border-blue-500/30",
-      glow: "shadow-blue-500/20",
+      border: "border-blue-500/40",
+      glow: "shadow-blue-500/25",
     },
     models: {
-      gradient: "from-violet-500 to-purple-600",
+      gradient: "from-violet-500 via-purple-600 to-fuchsia-500",
       text: "text-violet-400",
       bg: "bg-violet-500/10",
-      border: "border-violet-500/30",
-      glow: "shadow-violet-500/20",
+      border: "border-violet-500/40",
+      glow: "shadow-violet-500/25",
     },
     providers: {
-      gradient: "from-pink-500 to-rose-600",
+      gradient: "from-pink-500 via-rose-600 to-red-500",
       text: "text-pink-400",
       bg: "bg-pink-500/10",
-      border: "border-pink-500/30",
-      glow: "shadow-pink-500/20",
+      border: "border-pink-500/40",
+      glow: "shadow-pink-500/25",
     },
     "api-test": {
-      gradient: "from-emerald-500 to-teal-600",
+      gradient: "from-emerald-500 via-teal-600 to-cyan-500",
       text: "text-emerald-400",
       bg: "bg-emerald-500/10",
-      border: "border-emerald-500/30",
-      glow: "shadow-emerald-500/20",
+      border: "border-emerald-500/40",
+      glow: "shadow-emerald-500/25",
     },
     behavior: {
-      gradient: "from-amber-500 to-orange-600",
+      gradient: "from-amber-500 via-orange-600 to-red-500",
       text: "text-amber-400",
       bg: "bg-amber-500/10",
-      border: "border-amber-500/30",
-      glow: "shadow-amber-500/20",
+      border: "border-amber-500/40",
+      glow: "shadow-amber-500/25",
     },
     "voice-input": {
-      gradient: "from-rose-500 to-pink-600",
+      gradient: "from-rose-500 via-pink-600 to-purple-500",
       text: "text-rose-400",
       bg: "bg-rose-500/10",
-      border: "border-rose-500/30",
-      glow: "shadow-rose-500/20",
+      border: "border-rose-500/40",
+      glow: "shadow-rose-500/25",
     },
     "voice-output": {
-      gradient: "from-indigo-500 to-blue-600",
+      gradient: "from-indigo-500 via-blue-600 to-cyan-500",
       text: "text-indigo-400",
       bg: "bg-indigo-500/10",
-      border: "border-indigo-500/30",
-      glow: "shadow-indigo-500/20",
+      border: "border-indigo-500/40",
+      glow: "shadow-indigo-500/25",
     },
     local: {
-      gradient: "from-cyan-500 to-sky-600",
+      gradient: "from-cyan-500 via-sky-600 to-blue-500",
       text: "text-cyan-400",
       bg: "bg-cyan-500/10",
-      border: "border-cyan-500/30",
-      glow: "shadow-cyan-500/20",
+      border: "border-cyan-500/40",
+      glow: "shadow-cyan-500/25",
     },
   };
 
   const currentTabColor = tabColors[activeTab];
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      {/* Dark Backdrop */}
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      {/* Premium Backdrop with Blur */}
       <div
-        className="absolute inset-0 backdrop-blur-md bg-black/50"
+        className="absolute inset-0 backdrop-blur-xl bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95"
         onClick={handleCancel}
-        style={{ animation: "fadeIn 0.2s ease-out" }}
+        style={{ animation: "modalFadeIn 0.3s ease-out" }}
       />
 
-      {/* Modal - minimal (features/ai AISettingsHub) */}
+      {/* Premium Modal Container */}
       <div
-        data-component="ai-settings-hub"
-        data-version="compact"
-        className="relative rounded-lg shadow-xl flex overflow-hidden border border-white/10"
+        data-component="ai-settings-hub-enhanced"
+        className="relative rounded-2xl shadow-2xl flex overflow-hidden border"
         style={{
-          width: "720px",
-          height: "520px",
-          background: "#1E1E2E",
-          animation:
-            "fadeIn 0.2s ease-out, slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          width: "900px",
+          height: "640px",
+          background:
+            "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
+          borderColor: "rgba(139, 92, 246, 0.2)",
+          animation: "modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
           boxShadow:
-            "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05)",
+            "0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 60px -15px rgba(139, 92, 246, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)",
         }}
       >
-        {/* Sidebar - minimal */}
-        <div className="w-32 bg-slate-900/90 border-r border-white/10 flex flex-col shrink-0">
-          <div className="px-2 py-2 border-b border-white/10">
-            <div className="flex items-center gap-1.5">
-              <div className="w-6 h-6 rounded flex items-center justify-center text-white bg-gradient-to-br from-violet-500 to-purple-600">
+        {/* Enhanced Sidebar */}
+        <div className="w-64 bg-gradient-to-b from-slate-900/95 via-slate-800/90 to-slate-900/95 border-r border-white/10 flex flex-col shrink-0 backdrop-blur-sm">
+          {/* Header with Logo */}
+          <div className="px-5 py-4 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 shadow-lg shadow-purple-500/30">
                 <SettingsIcon />
               </div>
-              <span className="text-[10px] font-bold text-white">
-                AI Settings
-              </span>
+              <div>
+                <h2 className="text-sm font-bold text-white">AI Settings</h2>
+                <p className="text-xs text-slate-400">Configure your AI</p>
+              </div>
             </div>
           </div>
-          <nav className="flex-1 p-1 space-y-0.5 overflow-y-auto">
+
+          {/* Navigation Tabs */}
+          <nav className="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               const c = tabColors[tab.id];
@@ -574,67 +537,104 @@ export const AISettingsHub: React.FC<AISettingsHubProps> = ({
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-1.5 px-2 py-1.5 rounded-md text-left transition-all duration-200 group relative border-l-2 ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-300 group relative overflow-hidden ${
                     isActive
-                      ? `${c.bg} ${c.border}`
-                      : "border-transparent hover:bg-white/5 text-slate-400 hover:text-slate-200"
+                      ? `${c.bg} border-l-4 ${c.border}`
+                      : "border-l-4 border-transparent hover:bg-white/5 text-slate-400 hover:text-slate-200"
                   }`}
                 >
+                  {/* Animated Background Gradient */}
+                  {isActive && (
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-r ${c.gradient} opacity-10 animate-pulse`}
+                      style={{ animationDuration: "3s" }}
+                    />
+                  )}
+
+                  {/* Icon Container */}
                   <div
-                    className={`w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all ${
+                    className={`relative z-10 w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300 ${
                       isActive
-                        ? `bg-gradient-to-br ${c.gradient} text-white`
-                        : "bg-slate-700/50 text-slate-400 group-hover:opacity-90"
+                        ? `bg-gradient-to-br ${c.gradient} text-white shadow-lg ${c.glow}`
+                        : "bg-slate-700/50 text-slate-400 group-hover:bg-slate-600/50 group-hover:scale-105"
                     }`}
                   >
                     <tab.icon />
                   </div>
-                  <span
-                    className={`text-[10px] font-medium truncate ${isActive ? c.text : "text-slate-300"}`}
-                  >
-                    {tab.label}
-                  </span>
+
+                  {/* Label Container */}
+                  <div className="relative z-10 flex-1 min-w-0">
+                    <div
+                      className={`text-sm font-semibold truncate transition-colors ${isActive ? c.text : "text-slate-300 group-hover:text-white"}`}
+                    >
+                      {tab.label}
+                    </div>
+                    <div className="text-xs text-slate-500 truncate">
+                      {tab.description}
+                    </div>
+                  </div>
+
+                  {/* Active Indicator */}
+                  {isActive && (
+                    <div
+                      className={`relative z-10 w-2 h-2 rounded-full bg-gradient-to-br ${c.gradient} shadow-lg ${c.glow} animate-pulse`}
+                    />
+                  )}
                 </button>
               );
             })}
           </nav>
-          <div className="p-2 border-t border-white/10">
+
+          {/* Footer with Reset Button */}
+          <div className="p-3 border-t border-white/10">
             <button
               onClick={handleReset}
-              className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 text-slate-500 hover:text-slate-200 hover:bg-white/5 rounded-md text-[10px] font-medium"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl text-sm font-medium transition-all duration-200 group"
             >
               <RotateCcwIcon />
-              Reset
+              <span>Reset All</span>
             </button>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 flex flex-col min-w-0 bg-[#1E1E2E]">
-          <div className="flex items-center justify-between px-3 py-2 border-b border-white/10">
-            <h3 className={`text-xs font-semibold ${currentTabColor.text}`}>
-              {TABS.find((t) => t.id === activeTab)?.label}
-            </h3>
+        {/* Enhanced Content Area */}
+        <div className="flex-1 flex flex-col min-w-0 bg-gradient-to-b from-slate-900/50 to-slate-800/50">
+          {/* Header Bar */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-gradient-to-r from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br ${currentTabColor.gradient} shadow-lg ${currentTabColor.glow}`}
+              >
+                {TABS.find((t) => t.id === activeTab)?.icon &&
+                  React.createElement(
+                    TABS.find((t) => t.id === activeTab)!.icon
+                  )}
+              </div>
+              <div>
+                <h3 className={`text-base font-bold ${currentTabColor.text}`}>
+                  {TABS.find((t) => t.id === activeTab)?.label}
+                </h3>
+                <p className="text-xs text-slate-400">
+                  {TABS.find((t) => t.id === activeTab)?.description}
+                </p>
+              </div>
+            </div>
             <button
               onClick={handleCancel}
-              className="p-1 hover:bg-white/10 rounded text-slate-400 hover:text-white"
+              className="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all duration-200 group"
             >
               <XIcon />
             </button>
           </div>
+
+          {/* Scrollable Content */}
           <div
-            className="flex-1 overflow-y-auto overflow-x-hidden p-2.5"
-            style={{
-              scrollbarWidth: "thin",
-              scrollbarColor: "rgba(148, 163, 184, 0.2) transparent",
-              minHeight: 0,
-            }}
+            className="flex-1 overflow-y-auto overflow-x-hidden p-6 custom-scrollbar"
+            style={{ minHeight: 0 }}
           >
             <div
               key={activeTab}
-              style={{
-                animation: "fadeInContent 0.2s ease-out",
-              }}
+              style={{ animation: "contentFadeIn 0.3s ease-out" }}
             >
               {activeTab === "connection" && (
                 <ConnectionTab
@@ -675,86 +675,111 @@ export const AISettingsHub: React.FC<AISettingsHubProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-between px-3 py-2 border-t border-white/10 bg-slate-900/50">
-            <span className="text-[10px]">
-              {isDirty ? (
-                <span className="text-amber-400 font-medium">Unsaved</span>
-              ) : (
-                <span className="text-emerald-400/80">Saved</span>
-              )}
-            </span>
+          {/* Enhanced Footer with Actions */}
+          <div className="flex items-center justify-between px-6 py-4 border-t border-white/10 bg-gradient-to-r from-slate-900/90 to-slate-800/90 backdrop-blur-sm">
+            {/* Status Indicator */}
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-2 h-2 rounded-full animate-pulse ${isDirty ? "bg-yellow-400 shadow-lg shadow-yellow-400/50" : "bg-emerald-400 shadow-lg shadow-emerald-400/50"}`}
+              />
+              <span
+                className={`text-sm font-medium ${isDirty ? "text-yellow-400" : "text-emerald-400"}`}
+              >
+                {isDirty ? "Unsaved changes" : "All changes saved"}
+              </span>
+            </div>
+
+            {/* Error Message */}
             {saveError && (
               <p
-                className="text-[10px] text-amber-400 absolute left-3"
+                className="text-sm text-red-400 absolute left-1/2 -translate-x-1/2"
                 role="alert"
               >
                 {saveError}
               </p>
             )}
-            <div className="flex items-center gap-1.5">
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
               <button
                 onClick={handleCancel}
                 disabled={isSaving}
-                className="px-2.5 py-1 text-[10px] font-medium text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded transition-all disabled:opacity-50"
+                className="px-5 py-2.5 text-sm font-medium text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={!isDirty || isSaving}
-                className={`flex items-center gap-1 px-3 py-1 rounded text-[10px] font-semibold transition-all ${
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 ${
                   isDirty && !isSaving
-                    ? "bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:shadow-purple-500/20"
+                    ? "bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 text-white hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
                     : "bg-slate-700 text-slate-500 cursor-not-allowed opacity-60"
                 }`}
               >
                 {isSaving ? (
-                  <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Saving...</span>
+                  </>
                 ) : (
-                  <SaveIcon />
+                  <>
+                    <SaveIcon />
+                    <span>Save Changes</span>
+                  </>
                 )}
-                {isSaving ? "Saving..." : "Save"}
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Minimal Animations */}
+      {/* Enhanced CSS Animations and Styles */}
       <style>{`
-        @keyframes fadeIn {
+        @keyframes modalFadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-        @keyframes slideUp {
+        
+        @keyframes modalSlideIn {
           from { 
             opacity: 0; 
-            transform: translateY(20px) scale(0.97); 
+            transform: translateY(30px) scale(0.95); 
           }
           to { 
             opacity: 1; 
             transform: translateY(0) scale(1); 
           }
         }
-        @keyframes fadeInContent {
-          from { opacity: 0; }
-          to { opacity: 1; }
+        
+        @keyframes contentFadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Minimal scrollbar */
-        div::-webkit-scrollbar {
-          width: 4px;
-          height: 4px;
+        /* Custom Scrollbar Styling */
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
         }
-        div::-webkit-scrollbar-track {
-          background: transparent;
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(15, 23, 42, 0.3);
+          border-radius: 10px;
         }
-        div::-webkit-scrollbar-thumb {
-          background: rgba(148, 163, 184, 0.3);
-          border-radius: 2px;
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(180deg, rgba(139, 92, 246, 0.6), rgba(167, 139, 250, 0.6));
+          border-radius: 10px;
         }
-        div::-webkit-scrollbar-thumb:hover {
-          background: rgba(148, 163, 184, 0.5);
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(180deg, rgba(139, 92, 246, 0.8), rgba(167, 139, 250, 0.8));
+        }
+        
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(139, 92, 246, 0.6) rgba(15, 23, 42, 0.3);
         }
       `}</style>
     </div>

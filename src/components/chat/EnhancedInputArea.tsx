@@ -5,17 +5,6 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import {
-  Code2,
-  FileText,
-  Bug,
-  Zap,
-  MessageSquare,
-  LayoutGrid,
-} from "lucide-react";
-
-type ActionMode = "write" | "explain" | "fix" | "optimize" | "review";
-
 export interface EnhancedInputAreaRef {
   appendText: (text: string) => void;
 }
@@ -35,87 +24,6 @@ interface EnhancedInputAreaProps {
   speechLanguage?: string;
 }
 
-/** Distinct color theme per action for the quick-action panel */
-const ACTION_THEMES: Record<
-  ActionMode,
-  { bg: string; border: string; text: string; shadow: string }
-> = {
-  write: {
-    bg: "bg-blue-500/25",
-    border: "border-blue-400/50",
-    text: "text-blue-200",
-    shadow: "shadow-blue-500/20",
-  },
-  explain: {
-    bg: "bg-emerald-500/25",
-    border: "border-emerald-400/50",
-    text: "text-emerald-200",
-    shadow: "shadow-emerald-500/20",
-  },
-  fix: {
-    bg: "bg-amber-500/25",
-    border: "border-amber-400/50",
-    text: "text-amber-200",
-    shadow: "shadow-amber-500/20",
-  },
-  optimize: {
-    bg: "bg-violet-500/25",
-    border: "border-violet-400/50",
-    text: "text-violet-200",
-    shadow: "shadow-violet-500/20",
-  },
-  review: {
-    bg: "bg-rose-500/25",
-    border: "border-rose-400/50",
-    text: "text-rose-200",
-    shadow: "shadow-rose-500/20",
-  },
-};
-
-const ACTION_CONFIG: Record<
-  ActionMode,
-  {
-    label: string;
-    placeholder: string;
-    promptPrefix: string;
-    Icon: React.ComponentType<{
-      className?: string;
-      strokeWidth?: number | string;
-    }>;
-  }
-> = {
-  write: {
-    label: "Write",
-    placeholder: "Write code for:",
-    promptPrefix: "Write code for: ",
-    Icon: Code2,
-  },
-  explain: {
-    label: "Exp",
-    placeholder: "Explain this in detail:",
-    promptPrefix: "Explain this in detail: ",
-    Icon: FileText,
-  },
-  fix: {
-    label: "Fix",
-    placeholder: "Find and fix bugs in:",
-    promptPrefix: "Find and fix bugs in: ",
-    Icon: Bug,
-  },
-  optimize: {
-    label: "Opt",
-    placeholder: "Optimize and improve:",
-    promptPrefix: "Optimize and improve: ",
-    Icon: Zap,
-  },
-  review: {
-    label: "Review",
-    placeholder: "Review this code:",
-    promptPrefix: "Review this code: ",
-    Icon: MessageSquare,
-  },
-};
-
 export const EnhancedInputArea = forwardRef<
   EnhancedInputAreaRef,
   EnhancedInputAreaProps
@@ -130,12 +38,10 @@ export const EnhancedInputArea = forwardRef<
       voiceTranscript = "",
       speechLanguage = "fa-IR",
     },
-    ref,
+    ref
   ) => {
     const [message, setMessage] = useState("");
     const [files, setFiles] = useState<File[]>([]);
-    const [selectedAction, setSelectedAction] = useState<ActionMode>("explain");
-    const [showQuickActions, setShowQuickActions] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -153,7 +59,7 @@ export const EnhancedInputArea = forwardRef<
           setMessage((prev) => (prev ? prev + " " + text.trim() : text.trim()));
         },
       }),
-      [],
+      []
     );
 
     useEffect(() => {
@@ -161,23 +67,16 @@ export const EnhancedInputArea = forwardRef<
         textareaRef.current.style.height = "auto";
         const newHeight = Math.min(
           textareaRef.current.scrollHeight,
-          textareaMaxHeightPx,
+          textareaMaxHeightPx
         );
         textareaRef.current.style.height = newHeight + "px";
       }
     }, [message, voiceTranscript]);
 
-    const currentConfig = ACTION_CONFIG[selectedAction];
-
     const handleSend = () => {
       const textToSend = displayValue.trim();
       if ((!textToSend && files.length === 0) || disabled) return;
-      const text = textToSend
-        ? textToSend.startsWith(currentConfig.promptPrefix)
-          ? textToSend
-          : currentConfig.promptPrefix + textToSend
-        : currentConfig.promptPrefix;
-      onSend(text, files);
+      onSend(textToSend, files);
       setMessage("");
       setFiles([]);
       if (textareaRef.current) {
@@ -203,56 +102,6 @@ export const EnhancedInputArea = forwardRef<
         className="relative bg-slate-800/40 backdrop-blur-xl border-t border-white/10"
         dir="ltr"
       >
-        {/* Top: Quick actions – icon only, minimal, justified left; panel below when open */}
-        <div className="px-3 pt-2 pb-1.5">
-          <div className="flex items-center justify-start">
-            <button
-              type="button"
-              onClick={() => setShowQuickActions((v) => !v)}
-              className={`flex items-center justify-center w-8 h-8 rounded-lg border transition-all duration-200 active:scale-95 text-slate-400 hover:text-slate-200 hover:bg-white/5 border-white/10 shrink-0 ${
-                showQuickActions
-                  ? "bg-white/10 border-white/20 text-slate-200"
-                  : ""
-              }`}
-              title={showQuickActions ? "Hide quick actions" : "Quick actions"}
-            >
-              <LayoutGrid className="w-4 h-4" strokeWidth={2} />
-            </button>
-          </div>
-          {showQuickActions && (
-            <div className="mt-2 rounded-xl border border-white/10 bg-slate-800/90 backdrop-blur-md p-2 shadow-xl">
-              <div className="grid grid-cols-5 gap-1.5">
-                {(Object.keys(ACTION_CONFIG) as ActionMode[]).map((mode) => {
-                  const config = ACTION_CONFIG[mode];
-                  const Icon = config.Icon;
-                  const theme = ACTION_THEMES[mode];
-                  const isActive = selectedAction === mode;
-                  return (
-                    <button
-                      key={mode}
-                      type="button"
-                      onClick={() => {
-                        setSelectedAction(mode);
-                        setShowQuickActions(false);
-                      }}
-                      className={`flex flex-col items-center justify-center gap-0.5 py-2 rounded-lg border transition-all duration-200 active:scale-95 min-w-0 overflow-hidden ${theme.bg} ${theme.border} ${theme.text} ${
-                        isActive
-                          ? `ring-2 ring-white/40 shadow-lg ${theme.shadow}`
-                          : "hover:opacity-90"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4 shrink-0" strokeWidth={1.75} />
-                      <span className="text-[10px] font-semibold leading-tight truncate w-full text-center">
-                        {config.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Files preview */}
         {files.length > 0 && (
           <div className="px-3 pb-2 flex items-center gap-2 flex-wrap">
@@ -339,7 +188,7 @@ export const EnhancedInputArea = forwardRef<
                         setMessage(
                           v
                             .slice(0, v.length - voiceTranscript.length)
-                            .trimEnd(),
+                            .trimEnd()
                         );
                       }
                     } else {
@@ -349,7 +198,7 @@ export const EnhancedInputArea = forwardRef<
                   onKeyDown={handleKeyDown}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
-                  placeholder={currentConfig.placeholder}
+                  placeholder="Type a message..."
                   disabled={disabled}
                   rows={1}
                   className="w-full min-h-[2.25rem] max-h-[11rem] py-2 px-3 bg-transparent text-white placeholder-slate-500 resize-none focus:outline-none focus:ring-0 text-xs leading-relaxed border-0 rounded-lg disabled:opacity-70 disabled:cursor-not-allowed text-left"
@@ -433,6 +282,6 @@ export const EnhancedInputArea = forwardRef<
         </div>
       </div>
     );
-  },
+  }
 );
 EnhancedInputArea.displayName = "EnhancedInputArea";

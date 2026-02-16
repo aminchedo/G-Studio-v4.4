@@ -482,10 +482,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   sidebarVisible = true,
 }) => {
   const [activeTab, setActiveTab] = useState<"explorer" | "tools" | null>(
-    "explorer",
+    "explorer"
   );
   const [bookmarkedFiles, setBookmarkedFiles] = useState<Set<string>>(
-    new Set(),
+    new Set()
   );
   const [recentFiles, setRecentFiles] = useState<string[]>([]);
 
@@ -522,7 +522,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       try {
         localStorage.setItem(
           "gstudio_bookmarked_files",
-          JSON.stringify(Array.from(newSet)),
+          JSON.stringify(Array.from(newSet))
         );
       } catch (e) {
         console.warn("Failed to save bookmarks:", e);
@@ -613,9 +613,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   );
 
   return (
-    <aside className="flex h-full z-40 relative select-none">
-      {/* Activity Bar – compact padding, tighter icon spacing */}
-      <div className="w-[52px] bg-slate-900/90 backdrop-blur-md border-r border-slate-800/50 flex flex-col items-center py-3 gap-2 z-30 shrink-0">
+    <aside className="flex h-full min-h-full self-stretch z-40 relative select-none shrink-0">
+      {/* Activity Bar – match right sidebar: backdrop-blur, shadow, subtle border so it stands out from code area */}
+      <div className="w-[52px] bg-slate-900/95 backdrop-blur-md border-r border-white/[0.06] shadow-xl flex flex-col items-center py-3 gap-2 z-30 shrink-0">
         <button
           onClick={() => setActiveTab(null)}
           title="Home"
@@ -671,11 +671,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Side Panel Drawer - Level 1 Depth - Only shown when sidebarVisible is true */}
+      {/* Side Panel Drawer – match right: bg, border, shadow so it stands out from code area */}
       <div
-        className={`${sidebarVisible && activeTab ? "w-[280px] opacity-100 translate-x-0" : "w-0 opacity-0 -translate-x-4 overflow-hidden"} bg-slate-900/90 backdrop-blur-md border-r border-slate-800/50 flex flex-col transition-all duration-200 relative z-20`}
+        className={`flex-1 min-h-0 h-full ${sidebarVisible && activeTab ? "w-[312px] opacity-100 translate-x-0" : "w-0 opacity-0 -translate-x-4 overflow-hidden"} bg-[#0f172a] backdrop-blur-md border-r border-white/5 shadow-xl flex flex-col transition-all duration-200 relative z-20`}
       >
-        <div className="min-w-[280px] h-full flex flex-col">
+        <div className="min-w-[312px] h-full flex-1 min-h-0 flex flex-col">
           {/* Header – compact, title and actions closer */}
           <div className="border-b border-slate-800/50 bg-slate-950/95 relative z-10 shrink-0">
             <div className="h-14 px-3 flex items-center justify-between gap-2">
@@ -755,7 +755,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Content */}
           <div className="flex-1 overflow-y-auto py-2 flex flex-col gap-2 no-scrollbar relative z-10 custom-scrollbar bg-slate-900/80 backdrop-blur-md">
             {activeTab === "explorer" && (
-              <div className="pb-4">
+              <div
+                className={`pb-4 ${Object.keys(filteredFiles).length === 0 ? "flex-1 min-h-0 flex flex-col" : ""}`}
+              >
                 {/* Bookmarked Files Section */}
                 {bookmarkedFiles.size > 0 && (
                   <div className="px-3 mb-3">
@@ -850,37 +852,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 )}
 
                 {Object.keys(filteredFiles).length === 0 ? (
-                  <div className="px-4 py-10 text-center mx-3 mt-3 bg-gradient-to-br from-slate-800/90 via-slate-800/80 to-slate-900/90 rounded-xl border border-dashed border-slate-700/50 flex flex-col items-center gap-3 shadow-xl backdrop-blur-sm relative overflow-hidden">
-                    {/* Subtle background glow effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 pointer-events-none" />
+                  <div className="flex-1 min-h-0 flex flex-col justify-center items-center px-3">
+                    <div className="w-full max-w-[260px] px-5 py-14 text-center bg-gradient-to-br from-slate-800/90 via-slate-800/80 to-slate-900/90 rounded-xl border border-dashed border-slate-700/50 flex flex-col items-center gap-4 shadow-xl backdrop-blur-sm relative overflow-hidden">
+                      {/* Subtle background glow effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 pointer-events-none" />
 
-                    {/* Icon container */}
-                    <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-slate-700/60 to-slate-800/60 border border-slate-600/40 flex items-center justify-center shadow-lg backdrop-blur-sm group hover:scale-105 transition-all duration-300">
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <Box
-                        strokeWidth={2}
-                        className="w-5 h-5 text-slate-300 relative z-10 group-hover:text-purple-400 transition-colors duration-300"
-                      />
+                      {/* Icon container */}
+                      <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-slate-700/60 to-slate-800/60 border border-slate-600/40 flex items-center justify-center shadow-lg backdrop-blur-sm group hover:scale-105 transition-all duration-300">
+                        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <Box
+                          strokeWidth={2}
+                          className="w-5 h-5 text-slate-300 relative z-10 group-hover:text-purple-400 transition-colors duration-300"
+                        />
+                      </div>
+
+                      {/* Text content */}
+                      <div className="relative z-10 space-y-1.5">
+                        <p className="text-xs font-bold text-slate-200 tracking-tight">
+                          No Files Found
+                        </p>
+                        <p className="text-[10px] text-slate-400/90 max-w-[180px] mx-auto leading-snug">
+                          Create a file or load a demo project.
+                        </p>
+                      </div>
+
+                      {/* CTA button */}
+                      <button
+                        onClick={onLoadProject}
+                        className="relative z-10 mt-0.5 px-4 py-2.5 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-600 text-white rounded-lg text-[11px] font-semibold hover:from-purple-500 hover:via-purple-400 hover:to-purple-500 transition-all duration-300 shadow-md hover:shadow-purple-500/30 hover:scale-[1.02] active:scale-100 border border-purple-400/20 backdrop-blur-sm"
+                      >
+                        <span className="relative z-10">Load Demo</span>
+                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                      </button>
                     </div>
-
-                    {/* Text content */}
-                    <div className="relative z-10 space-y-1">
-                      <p className="text-xs font-bold text-slate-200 tracking-tight">
-                        No Files Found
-                      </p>
-                      <p className="text-[10px] text-slate-400/90 max-w-[160px] mx-auto leading-snug">
-                        Create a file or load a demo project.
-                      </p>
-                    </div>
-
-                    {/* CTA button */}
-                    <button
-                      onClick={onLoadProject}
-                      className="relative z-10 mt-0.5 px-4 py-2 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-600 text-white rounded-lg text-[11px] font-semibold hover:from-purple-500 hover:via-purple-400 hover:to-purple-500 transition-all duration-300 shadow-md hover:shadow-purple-500/30 hover:scale-[1.02] active:scale-100 border border-purple-400/20 backdrop-blur-sm"
-                    >
-                      <span className="relative z-10">Load Demo</span>
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 hover:opacity-100 transition-opacity duration-300" />
-                    </button>
                   </div>
                 ) : (
                   <div className="mt-2">
@@ -996,8 +1000,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             )}
           </div>
 
-          {/* Footer */}
-          <div className="px-3 py-2.5 border-t border-slate-800/50 bg-slate-950/95 relative z-10">
+          {/* Footer - shrink-0 so it stays at bottom with minimal padding from bottom */}
+          <div className="shrink-0 px-3 pt-2.5 pb-1 border-t border-slate-800/50 bg-slate-950/95 relative z-10">
             <button
               onClick={() => {
                 sendAgentTelemetry({

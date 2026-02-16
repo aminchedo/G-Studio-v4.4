@@ -41,38 +41,38 @@ import { PromptDialog } from "@/components/modals/PromptDialog";
 const SettingsModal = React.lazy(() =>
   import("@/components/modals/SettingsModal").then((module) => ({
     default: module.SettingsModal,
-  })),
+  }))
 );
 const AgentModal = React.lazy(() =>
   import("@/components/modals/AgentModal").then((module) => ({
     default: module.AgentModal,
-  })),
+  }))
 );
 const McpToolModal = React.lazy(() =>
   import("@/components/modals/McpToolModal").then((module) => ({
     default: module.McpToolModal,
-  })),
+  }))
 );
 const AgentSelector = React.lazy(() =>
   import("@/components/ai/AgentSelector").then((module) => ({
     default: module.AgentSelector,
-  })),
+  }))
 );
 const CodeIntelligenceDashboard = React.lazy(() =>
   import("@/components/CodeIntelligenceDashboard").then((module) => ({
     default: module.CodeIntelligenceDashboard,
-  })),
+  }))
 );
 const GeminiTesterPro = React.lazy(() =>
   import("@/components/ultimate-gemini-tester").then((module) => ({
     default: module.default,
-  })),
+  }))
 );
 // AI Settings Hub - Unified AI Configuration (features/ai: compact tabs, connection, API test, voice, local)
 const AISettingsHub = React.lazy(() =>
   import("@/features/ai/AISettingsHub").then((module) => ({
     default: module.AISettingsHub,
-  })),
+  }))
 );
 // Voice Chat Modal with AI Avatar
 import VoiceChatModal from "@/components/modals/VoiceChatModal";
@@ -245,7 +245,7 @@ export default function App() {
       // Models
       selectedModel: selectedModel,
       selectionMode: ModelSelectionService.getSelectionMode(
-        agentConfig.apiKey || "",
+        agentConfig.apiKey || ""
       ) as "auto" | "manual",
       temperature: 0.7,
       maxTokens: 2048,
@@ -276,7 +276,7 @@ export default function App() {
       // General
       notifications: true,
     }),
-    [agentConfig, selectedModel],
+    [agentConfig, selectedModel]
   );
 
   const handleSaveAIConfig = useCallback(
@@ -297,7 +297,7 @@ export default function App() {
         console.warn("Failed to save AI config:", e);
       }
     },
-    [agentConfig, setAgentConfig],
+    [agentConfig, setAgentConfig]
   );
 
   // ==================== API KEY INITIALIZATION ====================
@@ -336,7 +336,7 @@ export default function App() {
     }
     setVoiceLiveTranscript(
       voiceAccumulatedRef.current +
-        (voiceInterimRef.current ? " " + voiceInterimRef.current : ""),
+        (voiceInterimRef.current ? " " + voiceInterimRef.current : "")
     );
   }, []);
   const speech = useSpeechRecognition({
@@ -567,7 +567,7 @@ export default function App() {
           models,
           (current, total) => {
             console.log(`[App] Testing models: ${current}/${total}`);
-          },
+          }
         );
 
         console.log("[App] Model testing complete:", {
@@ -590,7 +590,7 @@ export default function App() {
             undefined,
             modelData?.inputTokenLimit,
             modelData?.outputTokenLimit,
-            modelData?.responseTime,
+            modelData?.responseTime
           );
         }
 
@@ -600,7 +600,7 @@ export default function App() {
             effectiveApiKey,
             rejected.modelId,
             "failed",
-            rejected.reason as any,
+            rejected.reason as any
           );
         }
         Store.markTestComplete(effectiveApiKey);
@@ -612,11 +612,11 @@ export default function App() {
         // Show success notification
         if (testResults.usableModels.length > 0) {
           showSuccess(
-            `API key validated! ${testResults.usableModels.length} models available.`,
+            `API key validated! ${testResults.usableModels.length} models available.`
           );
         } else {
           showWarning(
-            "API key validated but no models are available. Check your billing and quotas.",
+            "API key validated but no models are available. Check your billing and quotas."
           );
         }
       } catch (error: any) {
@@ -684,7 +684,7 @@ export default function App() {
       const updated = customTools.map((tool) =>
         tool.id === editingTool.id
           ? { ...tool, name: newToolName, description: newToolDescription }
-          : tool,
+          : tool
       );
       setCustomTools(updated);
       try {
@@ -712,7 +712,7 @@ export default function App() {
     setShowWelcome(!effectiveApiKey);
   }, [effectiveApiKey]);
   const [currentAIMode, setCurrentAIMode] = useState<ExecutionMode | null>(
-    null,
+    null
   );
   const [isOfflineResponse, setIsOfflineResponse] = useState(false);
 
@@ -823,7 +823,7 @@ export default function App() {
     // Store diagnostic result for system status panel
     localStorage.setItem(
       "gstudio_last_diagnostic",
-      diagnosticPassed ? "passed" : "failed",
+      diagnosticPassed ? "passed" : "failed"
     );
 
     // Build diagnostic report
@@ -916,7 +916,7 @@ ${
           const contextSize =
             await ContextDatabaseBridge.getContextSize(sessionId);
           console.log(
-            `[App] Restored context: ${contextSize.entryCount} entries, ${contextSize.totalTokens} tokens`,
+            `[App] Restored context: ${contextSize.entryCount} entries, ${contextSize.totalTokens} tokens`
           );
         }
 
@@ -1033,7 +1033,7 @@ I'm your intelligent assistant for software development. To get started, please 
           handleRunCode();
         });
         uiActionRegistry.register("open-settings", () =>
-          setIsAISettingsHubOpen(true),
+          setIsAISettingsHubOpen(true)
         );
         uiActionRegistry.register("close", () => {
           if (activeFile) handleCloseFile(activeFile);
@@ -1049,7 +1049,7 @@ I'm your intelligent assistant for software development. To get started, please 
       } catch (error) {
         console.warn(
           "[App] Runtime UI verification initialization failed (non-critical):",
-          error,
+          error
         );
       }
     })();
@@ -1340,7 +1340,7 @@ I'm your intelligent assistant for software development. To get started, please 
           selectedModel, // Kept for compatibility, but ribbon selection takes precedence
           files,
           messages,
-          requestId,
+          requestId
         );
         console.timeEnd("agent_pipeline");
 
@@ -1354,16 +1354,16 @@ I'm your intelligent assistant for software development. To get started, please 
               prev.map((m) =>
                 m.id === modelMessageId
                   ? { ...m, content: degradedMessage, isLoading: false }
-                  : m,
-              ),
+                  : m
+              )
             );
           } else {
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === modelMessageId
                   ? { ...m, content: "", isLoading: false }
-                  : m,
-              ),
+                  : m
+              )
             );
           }
           setIsLoading(false);
@@ -1383,8 +1383,8 @@ I'm your intelligent assistant for software development. To get started, please 
           prev.map((m) =>
             m.id === modelMessageId
               ? { ...m, content: result.response, isLoading: false }
-              : m,
-          ),
+              : m
+          )
         );
 
         // TTS: speak reply when voice enabled and API ready (post-response hook only)
@@ -1404,7 +1404,7 @@ I'm your intelligent assistant for software development. To get started, please 
             try {
               localStorage.setItem(
                 "gstudio_token_usage",
-                JSON.stringify(newUsage),
+                JSON.stringify(newUsage)
               );
             } catch (e) {
               console.error("Failed to save token usage to localStorage:", e);
@@ -1419,7 +1419,7 @@ I'm your intelligent assistant for software development. To get started, please 
 
           // ??? ???? ?????? ???????? ????
           const newFiles = Object.keys(result.updatedFiles).filter(
-            (f) => !files[f],
+            (f) => !files[f]
           );
           if (newFiles.length > 0) {
             setOpenFiles((prev) => {
@@ -1455,7 +1455,7 @@ I'm your intelligent assistant for software development. To get started, please 
           const completionVerification = AIBehaviorValidation.verifyCompletion(
             { text: result.response, toolCalls: result.actions },
             null,
-            requestId,
+            requestId
           );
 
           // Determine system status
@@ -1491,26 +1491,26 @@ I'm your intelligent assistant for software development. To get started, please 
             liveVerification,
             codeDelivery,
             completionVerification,
-            false, // allModelsExhausted
+            false // allModelsExhausted
           );
 
           // Log report in development
           if (process.env.NODE_ENV === "development") {
             console.log(
               "[CompletionReporter] Final report:",
-              CompletionReporter.formatReportAsMarkdown(report),
+              CompletionReporter.formatReportAsMarkdown(report)
             );
           }
         } catch (reportError) {
           console.warn(
             "[App] Failed to generate completion report:",
-            reportError,
+            reportError
           );
         }
       } catch (err: any) {
         console.error(
           `[App][requestId=${requestId}] Agent processing error:`,
-          err,
+          err
         );
 
         // CRITICAL: Check for FatalAIError - must block UI and stop execution
@@ -1518,7 +1518,7 @@ I'm your intelligent assistant for software development. To get started, please 
         if (isFatalError(err)) {
           console.error(
             `[App][requestId=${requestId}] FATAL_ERROR_DETECTED - blocking UI and stopping execution`,
-            err.message,
+            err.message
           );
 
           // Block UI input
@@ -1565,7 +1565,7 @@ I'm your intelligent assistant for software development. To get started, please 
             error,
             requestId,
             selectedModel,
-            1,
+            1
           );
 
           // Record error root cause
@@ -1573,14 +1573,14 @@ I'm your intelligent assistant for software development. To get started, please 
             requestId,
             error,
             classification,
-            selectedModel,
+            selectedModel
           );
 
           // Generate failure report
           const completionVerification = AIBehaviorValidation.verifyCompletion(
             null,
             error,
-            requestId,
+            requestId
           );
           const systemStatus = {
             ui: "OK" as const,
@@ -1610,13 +1610,13 @@ I'm your intelligent assistant for software development. To get started, please 
             liveVerification,
             codeDelivery,
             completionVerification,
-            true, // allModelsExhausted (assume true on error)
+            true // allModelsExhausted (assume true on error)
           );
 
           if (process.env.NODE_ENV === "development") {
             console.log(
               "[CompletionReporter] Failure report:",
-              CompletionReporter.formatReportAsMarkdown(report),
+              CompletionReporter.formatReportAsMarkdown(report)
             );
           }
 
@@ -1664,7 +1664,7 @@ I'm your intelligent assistant for software development. To get started, please 
             errorContent = AIBehaviorValidation.getUserMessage(
               finalClassification,
               allModelsExhausted,
-              context,
+              context
             );
           }
 
@@ -1689,7 +1689,7 @@ I'm your intelligent assistant for software development. To get started, please 
           // Fallback if validation import fails
           console.warn(
             "[App] Failed to use smart notification policy, using fallback:",
-            reportError,
+            reportError
           );
           const sanitizedMsg = errorMsg
             .split("\n")[0]
@@ -1707,8 +1707,8 @@ I'm your intelligent assistant for software development. To get started, please 
                   content: errorContent,
                   isLoading: false,
                 }
-              : m,
-          ),
+              : m
+          )
         );
       } finally {
         setIsLoading(false);
@@ -1719,7 +1719,7 @@ I'm your intelligent assistant for software development. To get started, please 
         delete (window as any).__currentRequestId;
       }
     },
-    [effectiveApiKey, selectedModel, files, messages, activeFile, apiStatus],
+    [effectiveApiKey, selectedModel, files, messages, activeFile, apiStatus]
   );
 
   // ==================== FILE MANAGEMENT ====================
@@ -1875,7 +1875,7 @@ I'm your intelligent assistant for software development. To get started, please 
         newContent,
         oldContent,
         setFiles,
-        language,
+        language
       );
 
       const result = await StateTransaction.execute(transaction);
@@ -1891,7 +1891,7 @@ I'm your intelligent assistant for software development. To get started, please 
         };
       }
     },
-    [files],
+    [files]
   );
 
   const handleOpenFile = useCallback(
@@ -1901,7 +1901,7 @@ I'm your intelligent assistant for software development. To get started, please 
       }
       setActiveFile(filename);
     },
-    [openFiles],
+    [openFiles]
   );
 
   const handleCloseFile = useCallback(
@@ -1916,7 +1916,7 @@ I'm your intelligent assistant for software development. To get started, please 
         return updated;
       });
     },
-    [activeFile],
+    [activeFile]
   );
 
   // ==================== FORMATTING ====================
@@ -2087,7 +2087,7 @@ What project would you like to build?
           .trim();
         if (!validFoldername) {
           showError(
-            "Invalid folder name. Please use only letters, numbers, hyphens, and underscores.",
+            "Invalid folder name. Please use only letters, numbers, hyphens, and underscores."
           );
           return;
         }
@@ -2162,7 +2162,7 @@ What project would you like to build?
         },
       ]);
     },
-    [],
+    []
   );
 
   // ==================== ADDITIONAL FILE HANDLERS ====================
@@ -2261,7 +2261,7 @@ What project would you like to build?
         const results = Object.keys(files).filter(
           (name) =>
             name.toLowerCase().includes(query.toLowerCase()) ||
-            files[name].content.toLowerCase().includes(query.toLowerCase()),
+            files[name].content.toLowerCase().includes(query.toLowerCase())
         );
         setMessages((prev) => [
           ...prev,
@@ -2327,640 +2327,138 @@ What project would you like to build?
 
   // ==================== RENDER ====================
   return (
-    <div
-      className={`h-screen flex flex-col font-['Inter','Vazir'] overflow-hidden ${isDarkMode ? "bg-slate-900" : "bg-white"}`}
-      data-theme={isDarkMode ? "dark" : "light"}
-    >
-      {/* Modern Ribbon */}
-      <Ribbon
-        onNewFile={handleNewFile}
-        onNewFolder={handleNewFolder}
-        onLoadDemo={handleLoadDemo}
-        onImportProject={handleImportProject}
-        onTriggerTool={async (action) => {
-          if (action === "format" && activeFile) {
-            handleFormat();
-            return;
-          }
+    <div className="__scale_root">
+      <div className="__scale_inner">
+        <div
+          className={`flex flex-col min-h-full h-full font-['Inter','Vazir'] overflow-hidden ${isDarkMode ? "bg-slate-900" : "bg-white"}`}
+          data-theme={isDarkMode ? "dark" : "light"}
+        >
+          {/* Modern Ribbon */}
+          <Ribbon
+            onNewFile={handleNewFile}
+            onNewFolder={handleNewFolder}
+            onLoadDemo={handleLoadDemo}
+            onImportProject={handleImportProject}
+            onTriggerTool={async (action) => {
+              if (action === "format" && activeFile) {
+                handleFormat();
+                return;
+              }
 
-          // Map actions to appropriate messages
-          const actionMessages: Record<string, string> = {
-            overview:
-              "Analyze the project structure and provide an overview of all files, dependencies, and architecture.",
-            analyze:
-              "Perform a deep code audit. Review the architecture, design patterns, code quality, and provide detailed analysis.",
-            bugs: "Find and identify all bugs, security vulnerabilities, and potential issues in the codebase.",
-            refactor:
-              "Refactor the code to improve quality, maintainability, and follow best practices. Modernize the codebase.",
-            optimize:
-              "Optimize the code for performance, efficiency, and resource usage.",
-          };
+              // Map actions to appropriate messages
+              const actionMessages: Record<string, string> = {
+                overview:
+                  "Analyze the project structure and provide an overview of all files, dependencies, and architecture.",
+                analyze:
+                  "Perform a deep code audit. Review the architecture, design patterns, code quality, and provide detailed analysis.",
+                bugs: "Find and identify all bugs, security vulnerabilities, and potential issues in the codebase.",
+                refactor:
+                  "Refactor the code to improve quality, maintainability, and follow best practices. Modernize the codebase.",
+                optimize:
+                  "Optimize the code for performance, efficiency, and resource usage.",
+              };
 
-          const message = actionMessages[action];
-          if (message) {
-            // Ensure chat is visible
-            if (!chatVisible) {
-              setChatVisible(true);
-            }
-            // Send message to chat handler
-            await handleSend(message);
-          }
-        }}
-        onToggleChat={() => {
-          // #region agent log
-          sendAgentTelemetry({
-            location: "App.tsx:660",
-            message: "Toggle chat clicked",
-            data: { currentState: chatVisible, newState: !chatVisible },
-            hypothesisId: "D",
-          });
-          // #endregion
-          setChatVisible(!chatVisible);
-        }}
-        onOpenSettings={() => setIsAISettingsHubOpen(true)}
-        onOpenCodeIntelligence={() => {
-          // Initialize Code Intelligence API if not already initialized
-          if (!codeIntelligenceAPI) {
-            try {
-              // Try to import and initialize the API
-              import("./services/codeIntelligence/api")
-                .then(({ getCodeIntelligenceAPI }) => {
-                  const api = getCodeIntelligenceAPI();
-                  setCodeIntelligenceAPI(api);
-                  setIsCodeIntelligenceOpen(true);
-                  // Initialize asynchronously
-                  api.initialize().catch((err: any) => {
-                    console.error(
-                      "Code Intelligence initialization error:",
-                      err,
-                    );
-                    setMessages((prev) => [
-                      ...prev,
-                      {
-                        id: generateId(),
-                        role: "model",
-                        content: `?? Code Intelligence initialized with limited functionality. Some features may not be available.`,
-                        timestamp: Date.now(),
-                      },
-                    ]);
-                  });
-                })
-                .catch((err: any) => {
-                  // Handle TypeScript dependency error gracefully
-                  const errorMessage = err?.message || String(err);
-                  const isTypeScriptError =
-                    errorMessage.includes("typescript") ||
-                    errorMessage.includes("Synchronous require");
-
-                  console.warn("Code Intelligence API load warning:", err);
-
-                  if (isTypeScriptError) {
-                    setMessages((prev) => [
-                      ...prev,
-                      {
-                        id: generateId(),
-                        role: "model",
-                        content: `?? Code Intelligence feature requires TypeScript. Some features may be limited. This is expected in browser environments.`,
-                        timestamp: Date.now(),
-                      },
-                    ]);
-                  } else {
-                    setMessages((prev) => [
-                      ...prev,
-                      {
-                        id: generateId(),
-                        role: "model",
-                        content: `?? Code Intelligence feature is not available in this environment. The feature requires Node.js runtime.`,
-                        timestamp: Date.now(),
-                      },
-                    ]);
-                  }
-                });
-            } catch (err: any) {
-              console.error("Code Intelligence error:", err);
-              setMessages((prev) => [
-                ...prev,
-                {
-                  id: generateId(),
-                  role: "model",
-                  content: `?? Code Intelligence feature is not available. ${err.message || "Unknown error"}`,
-                  timestamp: Date.now(),
-                },
-              ]);
-            }
-          } else {
-            setIsCodeIntelligenceOpen(true);
-          }
-        }}
-        onClearChat={() => {
-          setMessages([]);
-          AgentOrchestrator.reset();
-        }}
-        chatVisible={chatVisible}
-        selectedModel={selectedModel}
-        onSelectModel={(model) => {
-          setSelectedModel(model);
-          if (effectiveApiKey) {
-            ModelSelectionService.setManualModel(effectiveApiKey, model);
-          }
-        }}
-        onManageApiKey={() => {
-          setIsAgentModalOpen(true);
-          setActiveAgentTab("connection");
-        }}
-        onChangeVoice={() => {
-          setIsAgentModalOpen(true);
-          setActiveAgentTab("voice");
-        }}
-        onChangePersonality={() => {
-          setIsAgentModalOpen(true);
-          setActiveAgentTab("identity");
-        }}
-        onRunMcpTool={(tool) => setMcpToolModal({ isOpen: true, tool })}
-        agentConfig={agentConfig}
-        files={files}
-        onShare={() => {
-          if (Object.keys(files).length === 0) {
-            showWarning("No files to share.");
-            return;
-          }
-          const jsonString = JSON.stringify(files, null, 2);
-          navigator.clipboard.writeText(jsonString).then(() => {
-            setMessages((prev) => [
-              ...prev,
-              {
-                id: generateId(),
-                role: "model",
-                content: `? Project copied to clipboard. You can share it now.`,
-                timestamp: Date.now(),
-              },
-            ]);
-          });
-        }}
-        onShowSpeechTest={() => {
-          setIsSpeechTestOpen(true);
-        }}
-        isListening={isListening}
-        onToggleListening={handleVoiceToggle}
-        onToggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-        onToggleInspector={() => setInspectorVisible(!inspectorVisible)}
-        onTogglePreview={() => setPreviewVisible(!previewVisible)}
-        onToggleMonitor={() => setMonitorVisible(!monitorVisible)}
-        onToggleMinimap={() => setMinimapEnabled(!minimapEnabled)}
-        onToggleEditor={() => setEditorVisible(!editorVisible)}
-        sidebarVisible={sidebarVisible}
-        inspectorVisible={inspectorVisible}
-        previewVisible={previewVisible}
-        monitorVisible={monitorVisible}
-        minimapEnabled={minimapEnabled}
-        editorVisible={editorVisible}
-        onFormatFile={handleFormat}
-        activeFile={activeFile}
-        openFiles={openFiles}
-        onSaveFile={handleSaveFile}
-        onCloseFile={() => activeFile && handleCloseFile(activeFile)}
-        onDuplicateFile={handleDuplicateFile}
-        onCopyFilePath={handleCopyFilePath}
-        onToggleWordWrap={handleToggleWordWrap}
-        onClearEditor={handleClearEditor}
-        onRefresh={handleRefresh}
-        onSearchFiles={handleSearchFiles}
-        onFind={handleFind}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        onGoToLine={handleGoToLine}
-        onRunCode={async () => {
-          // #region agent log
-          sendAgentTelemetry({
-            location: "App.tsx:740",
-            message: "onRunCode clicked",
-            data: { activeFile, hasFile: !!files[activeFile || ""] },
-            hypothesisId: "C",
-          });
-          // #endregion
-          handleRunCode();
-        }}
-        onShowRibbonModal={(modalName, data) => {
-          setRibbonModals((prev) => ({ ...prev, [modalName]: true }));
-          // Update state from RibbonMcpTab if provided
-          if (data) {
-            if (data.toolExecutionHistory) {
-              setToolExecutionHistory(data.toolExecutionHistory);
-            }
-            if (data.toolChains) {
-              setToolChains(data.toolChains);
-            }
-            if (data.customTools) {
-              setCustomTools(data.customTools);
-            }
-            if (data.editingTool !== undefined) {
-              setEditingTool(data.editingTool);
-            }
-            if (data.newToolName !== undefined) {
-              setNewToolName(data.newToolName);
-            }
-            if (data.newToolDescription !== undefined) {
-              setNewToolDescription(data.newToolDescription);
-            }
-          }
-        }}
-        isDarkMode={isDarkMode}
-        onToggleTheme={toggleTheme}
-        onOpenGeminiTester={() => setIsGeminiTesterOpen(true)}
-        onOpenAISettingsHub={() => setIsAISettingsHubOpen(true)}
-        onOpenVoiceChat={() => setIsVoiceChatOpen(true)}
-        isApiReady={isApiReady}
-      />
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar - Toolbox always visible, drawer controlled by sidebarVisible */}
-        <Sidebar
-          files={files}
-          selectedModel={selectedModel}
-          onSelectModel={(model) => {
-            setSelectedModel(model);
-            if (effectiveApiKey) {
-              ModelSelectionService.setManualModel(effectiveApiKey, model);
-            }
-          }}
-          onClearChat={() => {
-            setMessages([]);
-            AgentOrchestrator.reset();
-          }}
-          onFileSelect={(filename) => {
-            // #region agent log
-            sendAgentTelemetry({
-              location: "App.tsx:814",
-              message: "File selected from sidebar",
-              data: { filename },
-              hypothesisId: "E",
-            });
-            // #endregion
-            handleOpenFile(filename);
-          }}
-          selectedFile={activeFile}
-          onCreateFile={handleNewFile}
-          onDeleteFile={(filename) => {
-            setConfirmDialog({
-              isOpen: true,
-              title: "Delete File",
-              message: `Are you sure you want to delete "${filename}"?`,
-              variant: "danger",
-              onConfirm: () => {
-                setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
-                setFiles((prev) => {
-                  const updated = { ...prev };
-                  delete updated[filename];
-                  return updated;
-                });
-                handleCloseFile(filename);
-              },
-            });
-          }}
-          onRenameItem={(oldPath, newName) => {
-            if (files[oldPath]) {
-              const newPath = newName;
-              setFiles((prev) => {
-                const updated = { ...prev };
-                updated[newPath] = { ...updated[oldPath], name: newName };
-                delete updated[oldPath];
-                return updated;
+              const message = actionMessages[action];
+              if (message) {
+                // Ensure chat is visible
+                if (!chatVisible) {
+                  setChatVisible(true);
+                }
+                // Send message to chat handler
+                await handleSend(message);
+              }
+            }}
+            onToggleChat={() => {
+              // #region agent log
+              sendAgentTelemetry({
+                location: "App.tsx:660",
+                message: "Toggle chat clicked",
+                data: { currentState: chatVisible, newState: !chatVisible },
+                hypothesisId: "D",
               });
-              if (activeFile === oldPath) {
-                setActiveFile(newPath);
+              // #endregion
+              setChatVisible(!chatVisible);
+            }}
+            onOpenSettings={() => setIsAISettingsHubOpen(true)}
+            onOpenCodeIntelligence={() => {
+              // Initialize Code Intelligence API if not already initialized
+              if (!codeIntelligenceAPI) {
+                try {
+                  // Try to import and initialize the API
+                  import("./services/codeIntelligence/api")
+                    .then(({ getCodeIntelligenceAPI }) => {
+                      const api = getCodeIntelligenceAPI();
+                      setCodeIntelligenceAPI(api);
+                      setIsCodeIntelligenceOpen(true);
+                      // Initialize asynchronously
+                      api.initialize().catch((err: any) => {
+                        console.error(
+                          "Code Intelligence initialization error:",
+                          err
+                        );
+                        setMessages((prev) => [
+                          ...prev,
+                          {
+                            id: generateId(),
+                            role: "model",
+                            content: `?? Code Intelligence initialized with limited functionality. Some features may not be available.`,
+                            timestamp: Date.now(),
+                          },
+                        ]);
+                      });
+                    })
+                    .catch((err: any) => {
+                      // Handle TypeScript dependency error gracefully
+                      const errorMessage = err?.message || String(err);
+                      const isTypeScriptError =
+                        errorMessage.includes("typescript") ||
+                        errorMessage.includes("Synchronous require");
+
+                      console.warn("Code Intelligence API load warning:", err);
+
+                      if (isTypeScriptError) {
+                        setMessages((prev) => [
+                          ...prev,
+                          {
+                            id: generateId(),
+                            role: "model",
+                            content: `?? Code Intelligence feature requires TypeScript. Some features may be limited. This is expected in browser environments.`,
+                            timestamp: Date.now(),
+                          },
+                        ]);
+                      } else {
+                        setMessages((prev) => [
+                          ...prev,
+                          {
+                            id: generateId(),
+                            role: "model",
+                            content: `?? Code Intelligence feature is not available in this environment. The feature requires Node.js runtime.`,
+                            timestamp: Date.now(),
+                          },
+                        ]);
+                      }
+                    });
+                } catch (err: any) {
+                  console.error("Code Intelligence error:", err);
+                  setMessages((prev) => [
+                    ...prev,
+                    {
+                      id: generateId(),
+                      role: "model",
+                      content: `?? Code Intelligence feature is not available. ${err.message || "Unknown error"}`,
+                      timestamp: Date.now(),
+                    },
+                  ]);
+                }
+              } else {
+                setIsCodeIntelligenceOpen(true);
               }
-              setOpenFiles((prev) =>
-                prev.map((f) => (f === oldPath ? newPath : f)),
-              );
-            }
-          }}
-          onOpenSettings={() => setIsAISettingsHubOpen(true)}
-          onOpenAISettingsHub={() => setIsAISettingsHubOpen(true)}
-          onLoadProject={handleLoadDemo}
-          onTriggerTool={async (action) => {
-            if (action === "format" && activeFile) {
-              handleFormat();
-              return;
-            }
-
-            // Map actions to appropriate messages
-            const actionMessages: Record<string, string> = {
-              overview:
-                "Analyze the project structure and provide an overview of all files, dependencies, and architecture.",
-              analyze:
-                "Perform a deep code audit. Review the architecture, design patterns, code quality, and provide detailed analysis.",
-              bugs: "Find and identify all bugs, security vulnerabilities, and potential issues in the codebase.",
-              refactor:
-                "Refactor the code to improve quality, maintainability, and follow best practices. Modernize the codebase.",
-              optimize:
-                "Optimize the code for performance, efficiency, and resource usage.",
-            };
-
-            const message = actionMessages[action];
-            if (message) {
-              // Ensure chat is visible
-              if (!chatVisible) {
-                setChatVisible(true);
-                setChatCollapsed(false);
-              }
-              // Send message to chat handler
-              await handleSend(message);
-            }
-          }}
-          onToggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-          sidebarVisible={sidebarVisible}
-        />
-
-        {/* Center Area: Editor and Chat Panel */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Editor */}
-          {editorVisible && (
-            <div className="flex-1 flex flex-col min-w-0">
-              {/* Tabs */}
-              {openFiles.length > 0 && (
-                <div className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800/60 shadow-md">
-                  <EditorTabs
-                    openFiles={openFiles}
-                    activeFile={activeFile}
-                    onFileSelect={setActiveFile}
-                    onFileClose={handleCloseFile}
-                    onCreateFile={handleNewFile}
-                  />
-                </div>
-              )}
-
-              {/* Editor */}
-              <div className="flex-1 bg-slate-900 overflow-hidden">
-                {activeFile && files[activeFile] ? (
-                  <CodeEditor
-                    key={activeFile}
-                    filename={activeFile}
-                    content={files[activeFile].content}
-                    onSave={handleFileChange}
-                    onClose={() => handleCloseFile(activeFile)}
-                    modelName={
-                      SUPPORTED_MODELS.find((m) => m.id === selectedModel)?.name
-                    }
-                    tokenCount={tokenUsage.prompt + tokenUsage.response}
-                    minimapEnabled={minimapEnabled}
-                  />
-                ) : (
-                  <div className="h-full flex items-center justify-center text-slate-400">
-                    <div className="text-center space-y-4">
-                      <Code2 className="w-20 h-20 mx-auto opacity-30" />
-                      <p className="text-lg font-semibold text-slate-300">
-                        No file open
-                      </p>
-                      <p className="text-sm text-slate-400">
-                        Select a file from the Sidebar
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right Panel: G Studio (Chat), Preview, Inspector, Monitor - same size container */}
-        {(chatVisible ||
-          previewVisible ||
-          inspectorVisible ||
-          monitorVisible) && (
-          <div className="w-[32%] max-w-[420px] border-l border-white/5 bg-[#0f172a] backdrop-blur-md shadow-xl mr-8 pr-[5mm] transition-all duration-300 ease-in-out flex flex-col h-full">
-            {chatVisible && (
-              <div
-                className="h-full flex flex-col min-h-0 transition-opacity duration-300 ease-in-out"
-                dir="ltr"
-              >
-                <ChatPanelHeader
-                  agentConnected={!!effectiveApiKey}
-                  mcpToolsCount={6}
-                  currentAIMode={currentAIMode}
-                  isProcessing={isLoading}
-                  isListening={isListening}
-                  onAgentDialog={() => setShowAgentDialog(true)}
-                  onVoiceToggle={handleVoiceToggle}
-                />
-                {messages.length === 0 ? (
-                  <div className="flex-1 min-h-0 overflow-hidden">
-                    <ChatWelcome
-                      isDarkMode={isDarkMode}
-                      hasApiKey={!!effectiveApiKey}
-                      onOpenSettings={() => setIsAISettingsHubOpen(true)}
-                    />
-                  </div>
-                ) : (
-                  <div className="flex-1 min-h-0 overflow-hidden">
-                    <EnhancedMessageList
-                      messages={messages as any}
-                      isLoading={isLoading}
-                      onRetry={() => {
-                        const lastUser = [...messages]
-                          .reverse()
-                          .find((m: { role: string }) => m.role === "user");
-                        if (
-                          lastUser &&
-                          (lastUser as { content?: string }).content
-                        ) {
-                          handleSend((lastUser as { content: string }).content);
-                        }
-                      }}
-                      onRegenerate={() => {
-                        const lastUser = [...messages]
-                          .reverse()
-                          .find((m: { role: string }) => m.role === "user");
-                        setMessages((prev) => prev.slice(0, -1));
-                        if (
-                          lastUser &&
-                          (lastUser as { content?: string }).content
-                        ) {
-                          handleSend((lastUser as { content: string }).content);
-                        }
-                      }}
-                    />
-                  </div>
-                )}
-                <EnhancedInputArea
-                  ref={chatInputRef}
-                  onSend={(message, _files) => {
-                    void handleSend(message);
-                  }}
-                  disabled={!configReady || isLoading || isValidatingApi}
-                  isProcessing={isLoading}
-                  onVoiceToggle={handleVoiceToggle}
-                  isListening={isListening}
-                  voiceTranscript={voiceLiveTranscript}
-                  onAgentDialog={() => setShowAgentDialog(true)}
-                  agentConnected={!!effectiveApiKey}
-                  mcpToolsCount={6}
-                  currentAIMode={currentAIMode}
-                  speechLanguage="fa-IR"
-                />
-              </div>
-            )}
-            {!chatVisible && previewVisible && (
-              <div className="h-full transition-opacity duration-300 ease-in-out">
-                {FEATURE_FLAGS.ENABLE_ENHANCED_PREVIEW ? (
-                  <ErrorBoundary componentName="PreviewPanelEnhanced">
-                    <PreviewPanelEnhanced
-                      files={files || {}}
-                      activeFile={activeFile || undefined}
-                    />
-                  </ErrorBoundary>
-                ) : (
-                  <ErrorBoundary componentName="PreviewPanel">
-                    <PreviewPanel
-                      files={files || {}}
-                      activeFile={activeFile || undefined}
-                    />
-                  </ErrorBoundary>
-                )}
-              </div>
-            )}
-            {!chatVisible && !previewVisible && inspectorVisible && (
-              <div className="h-full transition-opacity duration-300 ease-in-out">
-                <InspectorPanel
-                  activeFile={activeFile}
-                  files={files}
-                  openFiles={openFiles}
-                  tokenUsage={tokenUsage}
-                  onClose={() => setInspectorVisible(false)}
-                />
-              </div>
-            )}
-            {!chatVisible &&
-              !previewVisible &&
-              !inspectorVisible &&
-              monitorVisible && (
-                <div className="h-full transition-opacity duration-300 ease-in-out">
-                  <div className="h-full flex flex-col bg-slate-900/80">
-                    <MonitorPanel onClose={() => setMonitorVisible(false)} />
-                  </div>
-                </div>
-              )}
-          </div>
-        )}
-      </div>
-
-      {/* Right Activity Bar - Always visible */}
-      <RightActivityBar
-        chatVisible={chatVisible}
-        previewVisible={previewVisible}
-        inspectorVisible={inspectorVisible}
-        monitorVisible={monitorVisible}
-        onToggleChat={() => {
-          const newValue = !chatVisible;
-          setChatVisible(newValue);
-          if (newValue) {
-            setChatCollapsed(false);
-            setPreviewVisible(false);
-            setInspectorVisible(false);
-            setMonitorVisible(false);
-          }
-        }}
-        onTogglePreview={() => {
-          const newValue = !previewVisible;
-          setPreviewVisible(newValue);
-          if (newValue) {
-            setChatVisible(false);
-            setInspectorVisible(false);
-            setMonitorVisible(false);
-          }
-        }}
-        onToggleInspector={() => {
-          const newValue = !inspectorVisible;
-          setInspectorVisible(newValue);
-          if (newValue) {
-            setChatVisible(false);
-            setPreviewVisible(false);
-            setMonitorVisible(false);
-          }
-        }}
-        onToggleMonitor={() => {
-          const newValue = !monitorVisible;
-          setMonitorVisible(newValue);
-          if (newValue) {
-            setChatVisible(false);
-            setPreviewVisible(false);
-            setInspectorVisible(false);
-          }
-        }}
-        onClosePreview={() => setPreviewVisible(false)}
-        onCloseInspector={() => setInspectorVisible(false)}
-        onCloseMonitor={() => setMonitorVisible(false)}
-      />
-
-      {/* Multi-Agent Status Bar */}
-      {activeAgents.length > 0 && (
-        <div className="fixed top-16 left-0 right-0 z-40">
-          <MultiAgentStatus
-            activeAgents={activeAgents}
-            currentAgent={currentAgent}
-            isProcessing={isLoading}
-          />
-        </div>
-      )}
-
-      {/* Notification Toast */}
-      <NotificationToast
-        notifications={notifications}
-        onClose={(id) => {
-          if (id) {
-            notificationManager.remove(id);
-          } else {
-            notificationManager.clear();
-          }
-        }}
-      />
-
-      {/* Confirm Dialog */}
-      <ConfirmDialog
-        isOpen={confirmDialog.isOpen}
-        title={confirmDialog.title}
-        message={confirmDialog.message}
-        variant={confirmDialog.variant}
-        onConfirm={confirmDialog.onConfirm}
-        onCancel={() =>
-          setConfirmDialog((prev) => ({ ...prev, isOpen: false }))
-        }
-      />
-
-      {/* Prompt Dialog */}
-      <PromptDialog
-        isOpen={promptDialog.isOpen}
-        title={promptDialog.title}
-        message={promptDialog.message}
-        defaultValue={promptDialog.defaultValue}
-        placeholder={promptDialog.placeholder}
-        onConfirm={promptDialog.onConfirm}
-        onCancel={() => setPromptDialog((prev) => ({ ...prev, isOpen: false }))}
-        validate={promptDialog.validate}
-      />
-
-      {/* Modals - Lazy loaded with Suspense */}
-      <React.Suspense
-        fallback={
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <Loader2 className="w-8 h-8 animate-spin text-white" />
-          </div>
-        }
-      >
-        {isAgentModalOpen && (
-          <AgentModal
-            isOpen={isAgentModalOpen}
-            config={agentConfig}
-            onSave={setAgentConfig}
-            onClose={() => setIsAgentModalOpen(false)}
-            initialTab={activeAgentTab}
-          />
-        )}
-
-        {isSettingsOpen && (
-          <SettingsModal
-            isOpen={true}
-            onClose={() => setIsSettingsOpen(false)}
+            }}
+            onClearChat={() => {
+              setMessages([]);
+              AgentOrchestrator.reset();
+            }}
+            chatVisible={chatVisible}
             selectedModel={selectedModel}
             onSelectModel={(model) => {
               setSelectedModel(model);
@@ -2968,314 +2466,843 @@ What project would you like to build?
                 ModelSelectionService.setManualModel(effectiveApiKey, model);
               }
             }}
-          />
-        )}
-
-        {/* AI Settings Hub - Unified AI Configuration */}
-        {isAISettingsHubOpen && (
-          <AISettingsHub
-            isOpen={isAISettingsHubOpen}
-            onClose={() => setIsAISettingsHubOpen(false)}
-            config={
-              aiConfig as Partial<
-                import("@/features/ai/AISettingsHub/types").AIConfig
-              >
-            }
-            onSave={handleSaveAIConfig}
-          />
-        )}
-
-        {isCodeIntelligenceOpen && codeIntelligenceAPI && (
-          <CodeIntelligenceDashboard
-            isOpen={isCodeIntelligenceOpen}
-            onClose={() => setIsCodeIntelligenceOpen(false)}
-            api={codeIntelligenceAPI}
-          />
-        )}
-
-        {mcpToolModal.isOpen && (
-          <McpToolModal
-            isOpen={true}
-            tool={mcpToolModal.tool}
-            onClose={() => setMcpToolModal({ isOpen: false, tool: "" })}
-            onExecute={async (params) => {
-              try {
-                const result = await McpService.executeTool(
-                  mcpToolModal.tool,
-                  params,
-                  files,
-                  {
-                    setFiles: (updater) => {
-                      setFiles(updater);
-                    },
-                    setOpenFiles: (updater) => {
-                      setOpenFiles(updater);
-                    },
-                    setActiveFile: (file) => {
-                      setActiveFile(file);
-                    },
-                    getActiveFile: () => activeFile,
-                    getOpenFiles: () => openFiles,
-                  },
-                );
-
-                if (result.success) {
-                  setMessages((prev) => [
-                    ...prev,
-                    {
-                      id: generateId(),
-                      role: "model",
-                      content: `? ${result.message}`,
-                      timestamp: Date.now(),
-                    },
-                  ]);
-                } else {
-                  setMessages((prev) => [
-                    ...prev,
-                    {
-                      id: generateId(),
-                      role: "model",
-                      content: `? Error: ${result.message}`,
-                      timestamp: Date.now(),
-                    },
-                  ]);
-                }
-              } catch (error: any) {
+            onManageApiKey={() => {
+              setIsAgentModalOpen(true);
+              setActiveAgentTab("connection");
+            }}
+            onChangeVoice={() => {
+              setIsAgentModalOpen(true);
+              setActiveAgentTab("voice");
+            }}
+            onChangePersonality={() => {
+              setIsAgentModalOpen(true);
+              setActiveAgentTab("identity");
+            }}
+            onRunMcpTool={(tool) => setMcpToolModal({ isOpen: true, tool })}
+            agentConfig={agentConfig}
+            files={files}
+            onShare={() => {
+              if (Object.keys(files).length === 0) {
+                showWarning("No files to share.");
+                return;
+              }
+              const jsonString = JSON.stringify(files, null, 2);
+              navigator.clipboard.writeText(jsonString).then(() => {
                 setMessages((prev) => [
                   ...prev,
                   {
                     id: generateId(),
                     role: "model",
-                    content: `? Error executing tool: ${error.message}`,
+                    content: `? Project copied to clipboard. You can share it now.`,
                     timestamp: Date.now(),
                   },
                 ]);
+              });
+            }}
+            onShowSpeechTest={() => {
+              setIsSpeechTestOpen(true);
+            }}
+            isListening={isListening}
+            onToggleListening={handleVoiceToggle}
+            onToggleSidebar={() => setSidebarVisible(!sidebarVisible)}
+            onToggleInspector={() => setInspectorVisible(!inspectorVisible)}
+            onTogglePreview={() => setPreviewVisible(!previewVisible)}
+            onToggleMonitor={() => setMonitorVisible(!monitorVisible)}
+            onToggleMinimap={() => setMinimapEnabled(!minimapEnabled)}
+            onToggleEditor={() => setEditorVisible(!editorVisible)}
+            sidebarVisible={sidebarVisible}
+            inspectorVisible={inspectorVisible}
+            previewVisible={previewVisible}
+            monitorVisible={monitorVisible}
+            minimapEnabled={minimapEnabled}
+            editorVisible={editorVisible}
+            onFormatFile={handleFormat}
+            activeFile={activeFile}
+            openFiles={openFiles}
+            onSaveFile={handleSaveFile}
+            onCloseFile={() => activeFile && handleCloseFile(activeFile)}
+            onDuplicateFile={handleDuplicateFile}
+            onCopyFilePath={handleCopyFilePath}
+            onToggleWordWrap={handleToggleWordWrap}
+            onClearEditor={handleClearEditor}
+            onRefresh={handleRefresh}
+            onSearchFiles={handleSearchFiles}
+            onFind={handleFind}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            onGoToLine={handleGoToLine}
+            onRunCode={async () => {
+              // #region agent log
+              sendAgentTelemetry({
+                location: "App.tsx:740",
+                message: "onRunCode clicked",
+                data: { activeFile, hasFile: !!files[activeFile || ""] },
+                hypothesisId: "C",
+              });
+              // #endregion
+              handleRunCode();
+            }}
+            onShowRibbonModal={(modalName, data) => {
+              setRibbonModals((prev) => ({ ...prev, [modalName]: true }));
+              // Update state from RibbonMcpTab if provided
+              if (data) {
+                if (data.toolExecutionHistory) {
+                  setToolExecutionHistory(data.toolExecutionHistory);
+                }
+                if (data.toolChains) {
+                  setToolChains(data.toolChains);
+                }
+                if (data.customTools) {
+                  setCustomTools(data.customTools);
+                }
+                if (data.editingTool !== undefined) {
+                  setEditingTool(data.editingTool);
+                }
+                if (data.newToolName !== undefined) {
+                  setNewToolName(data.newToolName);
+                }
+                if (data.newToolDescription !== undefined) {
+                  setNewToolDescription(data.newToolDescription);
+                }
               }
             }}
-            files={files}
+            isDarkMode={isDarkMode}
+            onToggleTheme={toggleTheme}
+            onOpenGeminiTester={() => setIsGeminiTesterOpen(true)}
+            onOpenAISettingsHub={() => setIsAISettingsHubOpen(true)}
+            onOpenVoiceChat={() => setIsVoiceChatOpen(true)}
+            isApiReady={isApiReady}
           />
-        )}
 
-        {showAgentSelector && (
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={() => setShowAgentSelector(false)}
-          >
-            <div
-              className="bg-white rounded-2xl shadow-2xl p-6 max-w-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <React.Suspense
-                fallback={
-                  <div className="p-8 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto" />
-                  </div>
+          {/* Main Content Area: min-h-0 so row is constrained and sidebars stay within viewport */}
+          <div className="flex-1 flex min-h-0 overflow-hidden">
+            {/* Sidebar - Toolbox always visible, drawer controlled by sidebarVisible */}
+            <Sidebar
+              files={files}
+              selectedModel={selectedModel}
+              onSelectModel={(model) => {
+                setSelectedModel(model);
+                if (effectiveApiKey) {
+                  ModelSelectionService.setManualModel(effectiveApiKey, model);
                 }
-              >
-                <AgentSelector
-                  selectedAgents={selectedAgents}
-                  onChange={setSelectedAgents}
-                  onClose={() => setShowAgentSelector(false)}
-                />
-              </React.Suspense>
+              }}
+              onClearChat={() => {
+                setMessages([]);
+                AgentOrchestrator.reset();
+              }}
+              onFileSelect={(filename) => {
+                // #region agent log
+                sendAgentTelemetry({
+                  location: "App.tsx:814",
+                  message: "File selected from sidebar",
+                  data: { filename },
+                  hypothesisId: "E",
+                });
+                // #endregion
+                handleOpenFile(filename);
+              }}
+              selectedFile={activeFile}
+              onCreateFile={handleNewFile}
+              onDeleteFile={(filename) => {
+                setConfirmDialog({
+                  isOpen: true,
+                  title: "Delete File",
+                  message: `Are you sure you want to delete "${filename}"?`,
+                  variant: "danger",
+                  onConfirm: () => {
+                    setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
+                    setFiles((prev) => {
+                      const updated = { ...prev };
+                      delete updated[filename];
+                      return updated;
+                    });
+                    handleCloseFile(filename);
+                  },
+                });
+              }}
+              onRenameItem={(oldPath, newName) => {
+                if (files[oldPath]) {
+                  const newPath = newName;
+                  setFiles((prev) => {
+                    const updated = { ...prev };
+                    updated[newPath] = { ...updated[oldPath], name: newName };
+                    delete updated[oldPath];
+                    return updated;
+                  });
+                  if (activeFile === oldPath) {
+                    setActiveFile(newPath);
+                  }
+                  setOpenFiles((prev) =>
+                    prev.map((f) => (f === oldPath ? newPath : f))
+                  );
+                }
+              }}
+              onOpenSettings={() => setIsAISettingsHubOpen(true)}
+              onOpenAISettingsHub={() => setIsAISettingsHubOpen(true)}
+              onLoadProject={handleLoadDemo}
+              onTriggerTool={async (action) => {
+                if (action === "format" && activeFile) {
+                  handleFormat();
+                  return;
+                }
+
+                // Map actions to appropriate messages
+                const actionMessages: Record<string, string> = {
+                  overview:
+                    "Analyze the project structure and provide an overview of all files, dependencies, and architecture.",
+                  analyze:
+                    "Perform a deep code audit. Review the architecture, design patterns, code quality, and provide detailed analysis.",
+                  bugs: "Find and identify all bugs, security vulnerabilities, and potential issues in the codebase.",
+                  refactor:
+                    "Refactor the code to improve quality, maintainability, and follow best practices. Modernize the codebase.",
+                  optimize:
+                    "Optimize the code for performance, efficiency, and resource usage.",
+                };
+
+                const message = actionMessages[action];
+                if (message) {
+                  // Ensure chat is visible
+                  if (!chatVisible) {
+                    setChatVisible(true);
+                    setChatCollapsed(false);
+                  }
+                  // Send message to chat handler
+                  await handleSend(message);
+                }
+              }}
+              onToggleSidebar={() => setSidebarVisible(!sidebarVisible)}
+              sidebarVisible={sidebarVisible}
+            />
+
+            {/* Center Area: Editor and Right Panel side by side; mt-3 pushes middle block lower */}
+            <div className="flex-1 flex flex-row min-w-0 min-h-0 overflow-hidden mt-3">
+              {/* Editor - takes remaining width when visible */}
+              {editorVisible && (
+                <div className="flex-1 flex flex-col min-w-0 min-h-0">
+                  {openFiles.length > 0 && (
+                    <div className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800/60 shadow-md shrink-0">
+                      <EditorTabs
+                        openFiles={openFiles}
+                        activeFile={activeFile}
+                        onFileSelect={setActiveFile}
+                        onFileClose={handleCloseFile}
+                        onCreateFile={handleNewFile}
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex-1 bg-slate-900 overflow-hidden min-h-0">
+                    {activeFile && files[activeFile] ? (
+                      <CodeEditor
+                        key={activeFile}
+                        filename={activeFile}
+                        content={files[activeFile].content}
+                        onSave={handleFileChange}
+                        onClose={() => handleCloseFile(activeFile)}
+                        modelName={
+                          SUPPORTED_MODELS.find((m) => m.id === selectedModel)
+                            ?.name
+                        }
+                        tokenCount={tokenUsage.prompt + tokenUsage.response}
+                        minimapEnabled={minimapEnabled}
+                      />
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-slate-400">
+                        <div className="text-center space-y-4">
+                          <Code2 className="w-20 h-20 mx-auto opacity-30" />
+                          <p className="text-lg font-semibold text-slate-300">
+                            No file open
+                          </p>
+                          <p className="text-sm text-slate-400">
+                            Select a file from the Sidebar
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Right Panel: G Studio (Chat), Preview, Inspector, Monitor - full height, min-h-0 so content fits */}
+              {(chatVisible ||
+                previewVisible ||
+                inspectorVisible ||
+                monitorVisible) && (
+                <div className="w-[34%] max-w-[460px] shrink-0 border-l border-white/5 bg-[#0f172a] backdrop-blur-md shadow-xl mr-8 pr-[5mm] transition-all duration-300 ease-in-out flex flex-col min-h-0 overflow-hidden">
+                  {chatVisible && (
+                    <div
+                      className="flex-1 flex flex-col min-h-0 overflow-hidden transition-opacity duration-300 ease-in-out"
+                      dir="ltr"
+                    >
+                      <div className="shrink-0">
+                        <ChatPanelHeader
+                          agentConnected={!!effectiveApiKey}
+                          mcpToolsCount={6}
+                          currentAIMode={currentAIMode}
+                          isProcessing={isLoading}
+                          isListening={isListening}
+                          onAgentDialog={() => setShowAgentDialog(true)}
+                          onVoiceToggle={handleVoiceToggle}
+                        />
+                      </div>
+                      {messages.length === 0 ? (
+                        <div className="flex-1 min-h-0 overflow-hidden">
+                          <ChatWelcome
+                            isDarkMode={isDarkMode}
+                            hasApiKey={!!effectiveApiKey}
+                            onOpenSettings={() => setIsAISettingsHubOpen(true)}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex-1 min-h-0 overflow-hidden">
+                          <EnhancedMessageList
+                            messages={messages as any}
+                            isLoading={isLoading}
+                            onRetry={() => {
+                              const lastUser = [...messages]
+                                .reverse()
+                                .find(
+                                  (m: { role: string }) => m.role === "user"
+                                );
+                              if (
+                                lastUser &&
+                                (lastUser as { content?: string }).content
+                              ) {
+                                handleSend(
+                                  (lastUser as { content: string }).content
+                                );
+                              }
+                            }}
+                            onRegenerate={() => {
+                              const lastUser = [...messages]
+                                .reverse()
+                                .find(
+                                  (m: { role: string }) => m.role === "user"
+                                );
+                              setMessages((prev) => prev.slice(0, -1));
+                              if (
+                                lastUser &&
+                                (lastUser as { content?: string }).content
+                              ) {
+                                handleSend(
+                                  (lastUser as { content: string }).content
+                                );
+                              }
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div className="shrink-0">
+                        <EnhancedInputArea
+                          ref={chatInputRef}
+                          onSend={(message, _files) => {
+                            void handleSend(message);
+                          }}
+                          disabled={
+                            !configReady || isLoading || isValidatingApi
+                          }
+                          isProcessing={isLoading}
+                          onVoiceToggle={handleVoiceToggle}
+                          isListening={isListening}
+                          voiceTranscript={voiceLiveTranscript}
+                          onAgentDialog={() => setShowAgentDialog(true)}
+                          agentConnected={!!effectiveApiKey}
+                          mcpToolsCount={6}
+                          currentAIMode={currentAIMode}
+                          speechLanguage="fa-IR"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  {!chatVisible && previewVisible && (
+                    <div className="flex-1 min-h-0 overflow-hidden transition-opacity duration-300 ease-in-out">
+                      {FEATURE_FLAGS.ENABLE_ENHANCED_PREVIEW ? (
+                        <ErrorBoundary componentName="PreviewPanelEnhanced">
+                          <PreviewPanelEnhanced
+                            files={files || {}}
+                            activeFile={activeFile || undefined}
+                          />
+                        </ErrorBoundary>
+                      ) : (
+                        <ErrorBoundary componentName="PreviewPanel">
+                          <PreviewPanel
+                            files={files || {}}
+                            activeFile={activeFile || undefined}
+                          />
+                        </ErrorBoundary>
+                      )}
+                    </div>
+                  )}
+                  {!chatVisible && !previewVisible && inspectorVisible && (
+                    <div className="flex-1 min-h-0 overflow-hidden transition-opacity duration-300 ease-in-out">
+                      <InspectorPanel
+                        activeFile={activeFile}
+                        files={files}
+                        openFiles={openFiles}
+                        tokenUsage={tokenUsage}
+                        onClose={() => setInspectorVisible(false)}
+                      />
+                    </div>
+                  )}
+                  {!chatVisible &&
+                    !previewVisible &&
+                    !inspectorVisible &&
+                    monitorVisible && (
+                      <div className="flex-1 min-h-0 overflow-hidden transition-opacity duration-300 ease-in-out">
+                        <div className="h-full min-h-0 flex flex-col bg-slate-900/80 overflow-hidden">
+                          <MonitorPanel
+                            onClose={() => setMonitorVisible(false)}
+                          />
+                        </div>
+                      </div>
+                    )}
+                </div>
+              )}
             </div>
           </div>
-        )}
 
-        {/* Agent Collaboration Modal */}
-        {showAgentCollaboration && (
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={() => setShowAgentCollaboration(false)}
-          >
-            <div
-              className="bg-white rounded-2xl shadow-2xl p-6 max-w-3xl w-full max-h-[90vh] overflow-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-slate-900">
-                  Agent Collaboration
-                </h2>
-                <button
-                  onClick={() => setShowAgentCollaboration(false)}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <AgentCollaboration
-                activeAgents={selectedAgents as any}
-                onAgentsChange={(roles) => {
-                  setSelectedAgents(roles as any);
-                }}
+          {/* Right Activity Bar - Always visible */}
+          <RightActivityBar
+            chatVisible={chatVisible}
+            previewVisible={previewVisible}
+            inspectorVisible={inspectorVisible}
+            monitorVisible={monitorVisible}
+            onToggleChat={() => {
+              const newValue = !chatVisible;
+              setChatVisible(newValue);
+              if (newValue) {
+                setChatCollapsed(false);
+                setPreviewVisible(false);
+                setInspectorVisible(false);
+                setMonitorVisible(false);
+              }
+            }}
+            onTogglePreview={() => {
+              const newValue = !previewVisible;
+              setPreviewVisible(newValue);
+              if (newValue) {
+                setChatVisible(false);
+                setInspectorVisible(false);
+                setMonitorVisible(false);
+              }
+            }}
+            onToggleInspector={() => {
+              const newValue = !inspectorVisible;
+              setInspectorVisible(newValue);
+              if (newValue) {
+                setChatVisible(false);
+                setPreviewVisible(false);
+                setMonitorVisible(false);
+              }
+            }}
+            onToggleMonitor={() => {
+              const newValue = !monitorVisible;
+              setMonitorVisible(newValue);
+              if (newValue) {
+                setChatVisible(false);
+                setPreviewVisible(false);
+                setInspectorVisible(false);
+              }
+            }}
+            onClosePreview={() => setPreviewVisible(false)}
+            onCloseInspector={() => setInspectorVisible(false)}
+            onCloseMonitor={() => setMonitorVisible(false)}
+          />
+
+          {/* Multi-Agent Status Bar */}
+          {activeAgents.length > 0 && (
+            <div className="fixed top-16 left-0 right-0 z-40">
+              <MultiAgentStatus
+                activeAgents={activeAgents}
+                currentAgent={currentAgent}
+                isProcessing={isLoading}
               />
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Speech Test Modal */}
-        {isSpeechTestOpen && (
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={() => setIsSpeechTestOpen(false)}
-          >
-            <div
-              className="bg-white rounded-2xl shadow-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-slate-900">
-                  Speech Recognition Test
-                </h2>
-                <button
-                  onClick={() => setIsSpeechTestOpen(false)}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <SpeechTest />
-            </div>
-          </div>
-        )}
-
-        {/* Gemini Model Tester Modal - First screen on startup */}
-        <React.Suspense
-          fallback={
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]">
-              <div className="p-8 text-center">
-                <Loader2 className="w-8 h-8 animate-spin mx-auto text-white" />
-              </div>
-            </div>
-          }
-        >
-          <GeminiTesterPro
-            isOpen={isGeminiTesterOpen}
-            onClose={() => setIsGeminiTesterOpen(false)}
+          {/* Notification Toast */}
+          <NotificationToast
+            notifications={notifications}
+            onClose={(id) => {
+              if (id) {
+                notificationManager.remove(id);
+              } else {
+                notificationManager.clear();
+              }
+            }}
           />
-        </React.Suspense>
-      </React.Suspense>
 
-      {/* Ribbon Modals - Rendered as popups in separate frame */}
-      <ProjectStructureModal
-        isOpen={ribbonModals.projectStructure}
-        files={files}
-        onClose={() =>
-          setRibbonModals((prev) => ({ ...prev, projectStructure: false }))
-        }
-      />
-
-      <ToolExecutionHistoryModal
-        isOpen={ribbonModals.toolHistory}
-        toolExecutionHistory={toolExecutionHistory}
-        onClose={() =>
-          setRibbonModals((prev) => ({ ...prev, toolHistory: false }))
-        }
-      />
-
-      <ToolChainsModal
-        isOpen={ribbonModals.toolChains}
-        toolChains={toolChains}
-        onClose={() =>
-          setRibbonModals((prev) => ({ ...prev, toolChains: false }))
-        }
-      />
-
-      <ToolManagerModal
-        isOpen={ribbonModals.toolManager}
-        tools={customTools}
-        onClose={() =>
-          setRibbonModals((prev) => ({ ...prev, toolManager: false }))
-        }
-        onToolAdd={(tool) => {
-          setCustomTools((prev) => {
-            const next = [...prev, tool];
-            try {
-              localStorage.setItem(
-                "gstudio_custom_tools",
-                JSON.stringify(next),
-              );
-            } catch {
-              /* ignore */
+          {/* Confirm Dialog */}
+          <ConfirmDialog
+            isOpen={confirmDialog.isOpen}
+            title={confirmDialog.title}
+            message={confirmDialog.message}
+            variant={confirmDialog.variant}
+            onConfirm={confirmDialog.onConfirm}
+            onCancel={() =>
+              setConfirmDialog((prev) => ({ ...prev, isOpen: false }))
             }
-            return next;
-          });
-        }}
-        onToolEdit={(tool) => {
-          setCustomTools((prev) => {
-            const next = prev.map((t) => (t.id === tool.id ? tool : t));
-            try {
-              localStorage.setItem(
-                "gstudio_custom_tools",
-                JSON.stringify(next),
-              );
-            } catch {
-              /* ignore */
+          />
+
+          {/* Prompt Dialog */}
+          <PromptDialog
+            isOpen={promptDialog.isOpen}
+            title={promptDialog.title}
+            message={promptDialog.message}
+            defaultValue={promptDialog.defaultValue}
+            placeholder={promptDialog.placeholder}
+            onConfirm={promptDialog.onConfirm}
+            onCancel={() =>
+              setPromptDialog((prev) => ({ ...prev, isOpen: false }))
             }
-            return next;
-          });
-        }}
-        onToolDelete={handleRemoveTool}
-      />
+            validate={promptDialog.validate}
+          />
 
-      <CodeMetricsModal
-        isOpen={ribbonModals.codeMetrics}
-        codeMetrics={codeMetrics}
-        onClose={() =>
-          setRibbonModals((prev) => ({ ...prev, codeMetrics: false }))
-        }
-      />
-
-      <ToolUsageAnalyticsModal
-        isOpen={ribbonModals.toolUsageAnalytics}
-        toolUsage={toolUsage}
-        onClose={() =>
-          setRibbonModals((prev) => ({ ...prev, toolUsageAnalytics: false }))
-        }
-      />
-
-      {/* Voice Chat Modal with AI Avatar */}
-      <VoiceChatModal
-        isOpen={isVoiceChatOpen}
-        onClose={() => setIsVoiceChatOpen(false)}
-        apiKey={effectiveApiKey ?? undefined}
-      />
-
-      {showAgentDialog && (
-        <AgentCommunicationDialog
-          isOpen={showAgentDialog}
-          onClose={() => setShowAgentDialog(false)}
-          onSendMessage={async (message) => {
-            try {
-              const requestId = `agent-dialog-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-              const response = await GeminiService.chatNonStreaming(
-                selectedModel,
-                [
-                  {
-                    id: generateId(),
-                    role: "user",
-                    content: message,
-                    timestamp: Date.now(),
-                  },
-                ],
-                message,
-                undefined,
-                undefined,
-                effectiveApiKey ?? "",
-                30000,
-                requestId,
-              );
-              return (
-                response.text ??
-                (response as { content?: string }).content ??
-                "No response"
-              );
-            } catch (error: any) {
-              return `Error: ${error.message}`;
+          {/* Modals - Lazy loaded with Suspense */}
+          <React.Suspense
+            fallback={
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <Loader2 className="w-8 h-8 animate-spin text-white" />
+              </div>
             }
-          }}
-        />
-      )}
+          >
+            {isAgentModalOpen && (
+              <AgentModal
+                isOpen={isAgentModalOpen}
+                config={agentConfig}
+                onSave={setAgentConfig}
+                onClose={() => setIsAgentModalOpen(false)}
+                initialTab={activeAgentTab}
+              />
+            )}
+
+            {isSettingsOpen && (
+              <SettingsModal
+                isOpen={true}
+                onClose={() => setIsSettingsOpen(false)}
+                selectedModel={selectedModel}
+                onSelectModel={(model) => {
+                  setSelectedModel(model);
+                  if (effectiveApiKey) {
+                    ModelSelectionService.setManualModel(
+                      effectiveApiKey,
+                      model
+                    );
+                  }
+                }}
+              />
+            )}
+
+            {/* AI Settings Hub - Unified AI Configuration */}
+            {isAISettingsHubOpen && (
+              <AISettingsHub
+                isOpen={isAISettingsHubOpen}
+                onClose={() => setIsAISettingsHubOpen(false)}
+                config={
+                  aiConfig as Partial<
+                    import("@/features/ai/AISettingsHub/types").AIConfig
+                  >
+                }
+                onSave={handleSaveAIConfig}
+              />
+            )}
+
+            {isCodeIntelligenceOpen && codeIntelligenceAPI && (
+              <CodeIntelligenceDashboard
+                isOpen={isCodeIntelligenceOpen}
+                onClose={() => setIsCodeIntelligenceOpen(false)}
+                api={codeIntelligenceAPI}
+              />
+            )}
+
+            {mcpToolModal.isOpen && (
+              <McpToolModal
+                isOpen={true}
+                tool={mcpToolModal.tool}
+                onClose={() => setMcpToolModal({ isOpen: false, tool: "" })}
+                onExecute={async (params) => {
+                  try {
+                    const result = await McpService.executeTool(
+                      mcpToolModal.tool,
+                      params,
+                      files,
+                      {
+                        setFiles: (updater) => {
+                          setFiles(updater);
+                        },
+                        setOpenFiles: (updater) => {
+                          setOpenFiles(updater);
+                        },
+                        setActiveFile: (file) => {
+                          setActiveFile(file);
+                        },
+                        getActiveFile: () => activeFile,
+                        getOpenFiles: () => openFiles,
+                      }
+                    );
+
+                    if (result.success) {
+                      setMessages((prev) => [
+                        ...prev,
+                        {
+                          id: generateId(),
+                          role: "model",
+                          content: `? ${result.message}`,
+                          timestamp: Date.now(),
+                        },
+                      ]);
+                    } else {
+                      setMessages((prev) => [
+                        ...prev,
+                        {
+                          id: generateId(),
+                          role: "model",
+                          content: `? Error: ${result.message}`,
+                          timestamp: Date.now(),
+                        },
+                      ]);
+                    }
+                  } catch (error: any) {
+                    setMessages((prev) => [
+                      ...prev,
+                      {
+                        id: generateId(),
+                        role: "model",
+                        content: `? Error executing tool: ${error.message}`,
+                        timestamp: Date.now(),
+                      },
+                    ]);
+                  }
+                }}
+                files={files}
+              />
+            )}
+
+            {showAgentSelector && (
+              <div
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+                onClick={() => setShowAgentSelector(false)}
+              >
+                <div
+                  className="bg-white rounded-2xl shadow-2xl p-6 max-w-2xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <React.Suspense
+                    fallback={
+                      <div className="p-8 text-center">
+                        <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+                      </div>
+                    }
+                  >
+                    <AgentSelector
+                      selectedAgents={selectedAgents}
+                      onChange={setSelectedAgents}
+                      onClose={() => setShowAgentSelector(false)}
+                    />
+                  </React.Suspense>
+                </div>
+              </div>
+            )}
+
+            {/* Agent Collaboration Modal */}
+            {showAgentCollaboration && (
+              <div
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+                onClick={() => setShowAgentCollaboration(false)}
+              >
+                <div
+                  className="bg-white rounded-2xl shadow-2xl p-6 max-w-3xl w-full max-h-[90vh] overflow-auto"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold text-slate-900">
+                      Agent Collaboration
+                    </h2>
+                    <button
+                      onClick={() => setShowAgentCollaboration(false)}
+                      className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <AgentCollaboration
+                    activeAgents={selectedAgents as any}
+                    onAgentsChange={(roles) => {
+                      setSelectedAgents(roles as any);
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Speech Test Modal */}
+            {isSpeechTestOpen && (
+              <div
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+                onClick={() => setIsSpeechTestOpen(false)}
+              >
+                <div
+                  className="bg-white rounded-2xl shadow-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-auto"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold text-slate-900">
+                      Speech Recognition Test
+                    </h2>
+                    <button
+                      onClick={() => setIsSpeechTestOpen(false)}
+                      className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <SpeechTest />
+                </div>
+              </div>
+            )}
+
+            {/* Gemini Model Tester Modal - First screen on startup */}
+            <React.Suspense
+              fallback={
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]">
+                  <div className="p-8 text-center">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-white" />
+                  </div>
+                </div>
+              }
+            >
+              <GeminiTesterPro
+                isOpen={isGeminiTesterOpen}
+                onClose={() => setIsGeminiTesterOpen(false)}
+              />
+            </React.Suspense>
+          </React.Suspense>
+
+          {/* Ribbon Modals - Rendered as popups in separate frame */}
+          <ProjectStructureModal
+            isOpen={ribbonModals.projectStructure}
+            files={files}
+            onClose={() =>
+              setRibbonModals((prev) => ({ ...prev, projectStructure: false }))
+            }
+          />
+
+          <ToolExecutionHistoryModal
+            isOpen={ribbonModals.toolHistory}
+            toolExecutionHistory={toolExecutionHistory}
+            onClose={() =>
+              setRibbonModals((prev) => ({ ...prev, toolHistory: false }))
+            }
+          />
+
+          <ToolChainsModal
+            isOpen={ribbonModals.toolChains}
+            toolChains={toolChains}
+            onClose={() =>
+              setRibbonModals((prev) => ({ ...prev, toolChains: false }))
+            }
+          />
+
+          <ToolManagerModal
+            isOpen={ribbonModals.toolManager}
+            tools={customTools}
+            onClose={() =>
+              setRibbonModals((prev) => ({ ...prev, toolManager: false }))
+            }
+            onToolAdd={(tool) => {
+              setCustomTools((prev) => {
+                const next = [...prev, tool];
+                try {
+                  localStorage.setItem(
+                    "gstudio_custom_tools",
+                    JSON.stringify(next)
+                  );
+                } catch {
+                  /* ignore */
+                }
+                return next;
+              });
+            }}
+            onToolEdit={(tool) => {
+              setCustomTools((prev) => {
+                const next = prev.map((t) => (t.id === tool.id ? tool : t));
+                try {
+                  localStorage.setItem(
+                    "gstudio_custom_tools",
+                    JSON.stringify(next)
+                  );
+                } catch {
+                  /* ignore */
+                }
+                return next;
+              });
+            }}
+            onToolDelete={handleRemoveTool}
+          />
+
+          <CodeMetricsModal
+            isOpen={ribbonModals.codeMetrics}
+            codeMetrics={codeMetrics}
+            onClose={() =>
+              setRibbonModals((prev) => ({ ...prev, codeMetrics: false }))
+            }
+          />
+
+          <ToolUsageAnalyticsModal
+            isOpen={ribbonModals.toolUsageAnalytics}
+            toolUsage={toolUsage}
+            onClose={() =>
+              setRibbonModals((prev) => ({
+                ...prev,
+                toolUsageAnalytics: false,
+              }))
+            }
+          />
+
+          {/* Voice Chat Modal with AI Avatar */}
+          <VoiceChatModal
+            isOpen={isVoiceChatOpen}
+            onClose={() => setIsVoiceChatOpen(false)}
+            apiKey={effectiveApiKey ?? undefined}
+          />
+
+          {showAgentDialog && (
+            <AgentCommunicationDialog
+              isOpen={showAgentDialog}
+              onClose={() => setShowAgentDialog(false)}
+              onSendMessage={async (message) => {
+                try {
+                  const requestId = `agent-dialog-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+                  const response = await GeminiService.chatNonStreaming(
+                    selectedModel,
+                    [
+                      {
+                        id: generateId(),
+                        role: "user",
+                        content: message,
+                        timestamp: Date.now(),
+                      },
+                    ],
+                    message,
+                    undefined,
+                    undefined,
+                    effectiveApiKey ?? "",
+                    30000,
+                    requestId
+                  );
+                  return (
+                    response.text ??
+                    (response as { content?: string }).content ??
+                    "No response"
+                  );
+                } catch (error: any) {
+                  return `Error: ${error.message}`;
+                }
+              }}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

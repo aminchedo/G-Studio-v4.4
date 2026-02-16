@@ -84,37 +84,37 @@ import { PromptDialog } from "@/components/modals/PromptDialog";
 const SettingsModal = React.lazy(() =>
   import("@/components/modals/SettingsModal").then((module) => ({
     default: module.SettingsModal,
-  })),
+  }))
 );
 const AgentModal = React.lazy(() =>
   import("@/components/modals/AgentModal").then((module) => ({
     default: module.AgentModal,
-  })),
+  }))
 );
 const McpToolModal = React.lazy(() =>
   import("@/components/modals/McpToolModal").then((module) => ({
     default: module.McpToolModal,
-  })),
+  }))
 );
 const AgentSelector = React.lazy(() =>
   import("@/components/ai/AgentSelector").then((module) => ({
     default: module.AgentSelector,
-  })),
+  }))
 );
 const CodeIntelligenceDashboard = React.lazy(() =>
   import("@/features/code-intelligence/CodeIntelligenceDashboard").then(
-    (module) => ({ default: module.CodeIntelligenceDashboard }),
-  ),
+    (module) => ({ default: module.CodeIntelligenceDashboard })
+  )
 );
 const GeminiTesterPro = React.lazy(() =>
   import("@/features/ai/gemini-tester").then((module) => ({
     default: module.default,
-  })),
+  }))
 );
 const AISettingsHub = React.lazy(() =>
   import("@/features/ai/AISettingsHub").then((module) => ({
     default: module.AISettingsHub,
-  })),
+  }))
 );
 
 // ==================== RIBBON MODALS ====================
@@ -341,7 +341,7 @@ export default function App() {
   };
 
   const [aiUserConfig, setAiUserConfig] = useState<any>(() =>
-    loadAiUserConfig(),
+    loadAiUserConfig()
   );
 
   // Keep local state in sync if user edits storage externally (rare, but safe)
@@ -451,12 +451,12 @@ export default function App() {
         } catch (e) {
           console.warn(
             "[App] setManualModel failed (run Test Models first):",
-            e,
+            e
           );
         }
       }
     },
-    [agentConfig.apiKey],
+    [agentConfig.apiKey]
   );
 
   // ==================== PREVIEW STATE ====================
@@ -507,7 +507,7 @@ export default function App() {
       // Models
       selectedModel: selectedModel,
       selectionMode: ModelSelectionService.getSelectionMode(
-        agentConfig.apiKey || "",
+        agentConfig.apiKey || ""
       ) as "auto" | "manual",
       temperature: 0.7,
       maxTokens: 2048,
@@ -550,7 +550,7 @@ export default function App() {
       // General
       notifications: true,
     }),
-    [agentConfig, selectedModel, aiUserConfig],
+    [agentConfig, selectedModel, aiUserConfig]
   );
 
   /**
@@ -577,7 +577,7 @@ export default function App() {
           if (apiKey)
             ModelSelectionService.setSelectionMode(
               apiKey,
-              newConfig.selectionMode,
+              newConfig.selectionMode
             );
         } catch (e) {
           console.warn("[App] Failed to set selection mode:", e);
@@ -590,12 +590,12 @@ export default function App() {
           if (apiKey)
             ModelSelectionService.setManualModel(
               apiKey,
-              newConfig.selectedModel,
+              newConfig.selectedModel
             );
         } catch (e) {
           console.warn(
             "[App] Failed to set manual model (run API Test first):",
-            e,
+            e
           );
         }
       } else if (newConfig.selectionMode === "auto") {
@@ -614,14 +614,14 @@ export default function App() {
         if (newConfig.apiKey?.trim()) {
           localStorage.setItem(
             "gemini_api_key",
-            String(newConfig.apiKey).trim(),
+            String(newConfig.apiKey).trim()
           );
         }
       } catch (e) {
         console.warn("Failed to save AI config:", e);
       }
     },
-    [agentConfig, setAgentConfig],
+    [agentConfig, setAgentConfig]
   );
 
   // ==================== PROJECT STATE ====================
@@ -723,7 +723,7 @@ export default function App() {
           typeof m.content === "string" &&
           m.content.trim().length > 0 &&
           !m.isError &&
-          !m.isLoading,
+          !m.isLoading
       );
     if (!lastModelMsg) return;
     if (lastSpokenMessageIdRef.current === lastModelMsg.id) return;
@@ -744,7 +744,7 @@ export default function App() {
       const byLang = voices.find((v) =>
         (v.lang || "")
           .toLowerCase()
-          .startsWith((utter.lang || "").toLowerCase()),
+          .startsWith((utter.lang || "").toLowerCase())
       );
       utter.voice = byName || byLang || null;
     } catch {
@@ -912,7 +912,7 @@ export default function App() {
           true,
           true,
           false,
-          requestId,
+          requestId
         );
 
         let fullResponse = "";
@@ -938,8 +938,8 @@ export default function App() {
             // Update in real-time
             setMessages((prev) =>
               prev.map((msg) =>
-                msg.id === aiMsgId ? { ...msg, content: fullResponse } : msg,
-              ),
+                msg.id === aiMsgId ? { ...msg, content: fullResponse } : msg
+              )
             );
           }
 
@@ -954,8 +954,8 @@ export default function App() {
             // Attach tool calls to the AI message for UI display
             setMessages((prev) =>
               prev.map((msg) =>
-                msg.id === aiMsgId ? { ...msg, toolCalls: toolCallsSeen } : msg,
-              ),
+                msg.id === aiMsgId ? { ...msg, toolCalls: toolCallsSeen } : msg
+              )
             );
 
             for (const call of chunk.toolCalls) {
@@ -969,7 +969,7 @@ export default function App() {
                   call.name,
                   args as Record<string, any>,
                   filesRef.current,
-                  toolCallbacks as any,
+                  toolCallbacks as any
                 );
 
                 const toolResult: ToolResult = {
@@ -1001,8 +1001,8 @@ export default function App() {
                   prev.map((msg) =>
                     msg.id === aiMsgId
                       ? { ...msg, toolResults: toolResultsSeen }
-                      : msg,
-                  ),
+                      : msg
+                  )
                 );
               } catch (e: any) {
                 const toolResult: ToolResult = {
@@ -1016,8 +1016,8 @@ export default function App() {
                   prev.map((msg) =>
                     msg.id === aiMsgId
                       ? { ...msg, toolResults: toolResultsSeen }
-                      : msg,
-                  ),
+                      : msg
+                  )
                 );
               }
             }
@@ -1045,7 +1045,7 @@ export default function App() {
               const res = toolResultsSeen.find((r) => r.toolCallId === call.id);
               const argsSummary = summarize(
                 call.arguments ?? call.args ?? {},
-                400,
+                400
               );
               const resultSummary = summarize(res?.result, 1200);
               const errorSummary = res?.error ? summarize(res.error, 300) : "";
@@ -1078,7 +1078,7 @@ export default function App() {
             true,
             true,
             false,
-            followRequestId,
+            followRequestId
           );
 
           // Separate with a divider if we already streamed any text
@@ -1091,8 +1091,8 @@ export default function App() {
               fullResponse += chunk.text;
               setMessages((prev) =>
                 prev.map((msg) =>
-                  msg.id === aiMsgId ? { ...msg, content: fullResponse } : msg,
-                ),
+                  msg.id === aiMsgId ? { ...msg, content: fullResponse } : msg
+                )
               );
             }
             if (chunk.usage) {
@@ -1151,7 +1151,7 @@ export default function App() {
       selectedModel,
       setTokenUsage,
       setIsAgentModalOpen,
-    ],
+    ]
   );
 
   // ==================== FILE OPERATIONS ====================
@@ -1369,7 +1369,7 @@ export default function App() {
 
       showSuccess(`Deleted ${fileName}`);
     },
-    [files, activeFile, setFiles, setOpenFiles, setActiveFile],
+    [files, activeFile, setFiles, setOpenFiles, setActiveFile]
   );
 
   /**
@@ -1400,7 +1400,7 @@ export default function App() {
 
       showSuccess(`Renamed to ${newName}`);
     },
-    [files, activeFile, setFiles, setOpenFiles, setActiveFile],
+    [files, activeFile, setFiles, setOpenFiles, setActiveFile]
   );
 
   /** Rename item (oldPath, newName) for v2 Sidebar */
@@ -1422,7 +1422,7 @@ export default function App() {
       if (activeFile === oldPath) setActiveFile(trimmed);
       showSuccess(`Renamed to ${trimmed}`);
     },
-    [files, activeFile, setFiles, setOpenFiles, setActiveFile],
+    [files, activeFile, setFiles, setOpenFiles, setActiveFile]
   );
 
   // ==================== KEYBOARD SHORTCUTS ====================
@@ -1533,7 +1533,7 @@ export default function App() {
         [modalName]: !prev[modalName],
       }));
     },
-    [],
+    []
   );
 
   // ==================== RENDER ====================
@@ -1541,7 +1541,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div
-        className={`app-container ${theme} h-screen flex flex-col`}
+        className={`app-container ${theme} flex flex-col min-h-full`}
         data-theme={theme}
       >
         {/* Notification Toast */}

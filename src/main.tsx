@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import '@/styles/chat-enhancements.css';
+import '@/styles/home-ui-enhancements.css';
 
 // Initialize error handlers
 import { errorHandler } from './utils/errorHandler';

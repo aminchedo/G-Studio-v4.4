@@ -74,6 +74,38 @@
   --z-modal: 1100;
   --z-tooltip: 1200;
   --z-notification: 1300;
+
+  /* === GLOBAL LAYOUT SCALE (20% zoom-out, reversible) === */
+  --app-scale: 0.8;
+}
+
+/* Prevent browser scroll */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Root container locks viewport */
+.__scale_root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Scaled container with viewport compensation */
+.__scale_inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  transform: scale(var(--app-scale));
+  transform-origin: top left;
+
+  width: calc(100vw / var(--app-scale));
+  height: calc(100vh / var(--app-scale));
 }
 
 /* Vazir Font for Persian text */

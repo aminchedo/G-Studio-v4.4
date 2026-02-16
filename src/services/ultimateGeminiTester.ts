@@ -245,7 +245,7 @@ class Logger {
 
   constructor(
     verbose: boolean = false,
-    addLogCallback?: (level: string, message: string, data?: any) => void,
+    addLogCallback?: (level: string, message: string, data?: any) => void
   ) {
     this.verbose = verbose;
     this.startTime = Date.now();
@@ -370,7 +370,7 @@ class DNSManager {
   recordRequest(
     endpoint: string,
     success: boolean,
-    responseTime?: number,
+    responseTime?: number
   ): void {
     const health = this.endpointHealth.get(endpoint);
     if (!health) return;
@@ -396,7 +396,7 @@ class DNSManager {
         health.consecutiveFailures >= CONFIG.GEMINI_API.dnsFailoverThreshold
       ) {
         this.logger.warning(
-          `DNS endpoint ${endpoint} exceeded failure threshold, rotating...`,
+          `DNS endpoint ${endpoint} exceeded failure threshold, rotating...`
         );
         this.rotateEndpoint();
       }
@@ -480,7 +480,7 @@ class DNSManager {
         if (bestIndex !== this.currentEndpointIndex) {
           this.currentEndpointIndex = bestIndex;
           this.logger.info(
-            `Health check: Switched to better endpoint ${bestEndpoint}`,
+            `Health check: Switched to better endpoint ${bestEndpoint}`
           );
         }
       }
@@ -618,7 +618,7 @@ class BypassManager {
 
     // 6. Direct connection (browser will use system proxy if configured)
     this.logger.debug(
-      "Browser environment: Using direct connection (system proxy will be used automatically if configured)",
+      "Browser environment: Using direct connection (system proxy will be used automatically if configured)"
     );
     this.activeBypass = {
       method: "direct-connection",
@@ -691,7 +691,7 @@ class BypassManager {
         const port = parseInt(portMatch[1]);
         if (this.V2RAY_PORTS.includes(port)) {
           this.logger.debug(
-            `v2ray detected via environment variable on port ${port}`,
+            `v2ray detected via environment variable on port ${port}`
           );
           return { success: true, port, proxy: envProxy };
         }
@@ -774,7 +774,7 @@ ${domains}
 
       // Browser environment: assume direct connection (browser handles proxy automatically)
       this.logger.debug(
-        "Browser environment: Using direct connection (system proxy will be used automatically if configured)",
+        "Browser environment: Using direct connection (system proxy will be used automatically if configured)"
       );
       this.activeBypass = { method: "direct-connection" };
       return { success: true, method: "direct-connection" };
@@ -787,16 +787,12 @@ ${domains}
 
   async testProxy(
     proxyUrl: string,
-    method: string,
+    method: string
   ): Promise<{ success: boolean; method: string; proxy?: string }> {
     // In browser, we can't directly use proxy URLs
     // This is a placeholder for future implementation
     this.logger.debug(`Proxy test for ${method}: ${proxyUrl}`);
     return { success: false, method: "none" };
-  }
-
-  getActiveBypass() {
-    return this.activeBypass;
   }
 
   /**
@@ -816,7 +812,7 @@ ${domains}
 
     if (!active || method === "none" || method === "direct-connection") {
       recommendations.push(
-        "Consider using smartSNI for better bypass capabilities",
+        "Consider using smartSNI for better bypass capabilities"
       );
       recommendations.push("Add Gemini domains to smartSNI config.json");
       recommendations.push("Ensure v2ray is running if you have it configured");
@@ -824,7 +820,7 @@ ${domains}
 
     if (detected.length === 0) {
       recommendations.push(
-        "No bypass tools detected - check if smartSNI or v2ray are running",
+        "No bypass tools detected - check if smartSNI or v2ray are running"
       );
     }
 
@@ -890,7 +886,7 @@ class SmartHTTPClient {
       timeout?: number;
       maxRetries?: number;
       useCDN?: boolean;
-    } = {},
+    } = {}
   ): Promise<{
     success: boolean;
     data?: any;
@@ -913,7 +909,7 @@ class SmartHTTPClient {
         this.dnsManager.recordRequest(
           currentEndpoint,
           true,
-          result.responseTime,
+          result.responseTime
         );
 
         // Track performance
@@ -928,7 +924,7 @@ class SmartHTTPClient {
         return result;
       } catch (error: any) {
         this.logger.debug(
-          `Attempt ${attempt}/${maxRetries} failed: ${error.message}`,
+          `Attempt ${attempt}/${maxRetries} failed: ${error.message}`
         );
 
         // Record failed request for DNS health tracking
@@ -950,7 +946,7 @@ class SmartHTTPClient {
               ? Math.min(
                   1000 *
                     Math.pow(CONFIG.GEMINI_API.backoffMultiplier, attempt - 1),
-                  CONFIG.GEMINI_API.maxBackoffDelay,
+                  CONFIG.GEMINI_API.maxBackoffDelay
                 )
               : 1000 * attempt;
 
@@ -959,7 +955,7 @@ class SmartHTTPClient {
           const delay = Math.max(100, baseDelay + jitter);
 
           this.logger.debug(
-            `Retrying in ${Math.round(delay)}ms...${is429 ? " (429 rate limit)" : ""}`,
+            `Retrying in ${Math.round(delay)}ms...${is429 ? " (429 rate limit)" : ""}`
           );
           await this.sleep(delay);
 
@@ -993,7 +989,7 @@ class SmartHTTPClient {
     url: string,
     method: string,
     options: any,
-    timeout: number,
+    timeout: number
   ): Promise<{
     success: boolean;
     data?: any;
@@ -1063,14 +1059,14 @@ class SmartHTTPClient {
         error.message.includes("Failed to fetch")
       ) {
         throw new Error(
-          "Network error: Unable to reach API. This may be due to CORS restrictions, network issues, or firewall settings.",
+          "Network error: Unable to reach API. This may be due to CORS restrictions, network issues, or firewall settings."
         );
       }
 
       // Handle abort errors
       if (error.name === "AbortError") {
         throw new Error(
-          "Request timeout: The API did not respond within the expected time.",
+          "Request timeout: The API did not respond within the expected time."
         );
       }
 
@@ -1283,19 +1279,18 @@ export class UltimateGeminiTester {
         // Check if we have access to models
         if (response.data?.models && response.data.models.length > 0) {
           this.logger.success(
-            `✅ Access to ${response.data.models.length} models confirmed`,
+            `✅ Access to ${response.data.models.length} models confirmed`
           );
         } else {
           this.logger.warning(
-            "⚠️ API key valid but no models accessible (check billing/quotas)",
+            "⚠️ API key valid but no models accessible (check billing/quotas)"
           );
         }
 
         return true;
       } else {
         this.logger.error(
-          "❌ API key validation failed: " +
-            (response.error || "Unknown error"),
+          "❌ API key validation failed: " + (response.error || "Unknown error")
         );
         throw new Error("Invalid API key or insufficient permissions");
       }
@@ -1305,15 +1300,15 @@ export class UltimateGeminiTester {
       // Provide specific error messages
       if (error.message.includes("403")) {
         throw new Error(
-          "API key rejected (403). Check your API key and billing status.",
+          "API key rejected (403). Check your API key and billing status."
         );
       } else if (error.message.includes("401")) {
         throw new Error(
-          "API key unauthorized (401). The key may be invalid or expired.",
+          "API key unauthorized (401). The key may be invalid or expired."
         );
       } else if (error.message.includes("Network")) {
         throw new Error(
-          "Network error during validation. Check your internet connection.",
+          "Network error during validation. Check your internet connection."
         );
       }
 
@@ -1330,7 +1325,7 @@ export class UltimateGeminiTester {
       Date.now() - this.modelCacheTimestamp < this.MODEL_CACHE_TTL
     ) {
       this.logger.info(
-        `Using cached models (${this.cachedModels.length} models)`,
+        `Using cached models (${this.cachedModels.length} models)`
       );
       this.results.models.discovered = this.cachedModels;
       this.results.models.total = this.cachedModels.length;
@@ -1351,7 +1346,7 @@ export class UltimateGeminiTester {
 
       const models = response.data.models
         .filter((m: any) =>
-          m.supportedGenerationMethods?.includes("generateContent"),
+          m.supportedGenerationMethods?.includes("generateContent")
         )
         .map((m: any) => {
           const modelName = m.name.replace("models/", "");
@@ -1378,7 +1373,7 @@ export class UltimateGeminiTester {
           JSON.stringify({
             models,
             timestamp: Date.now(),
-          }),
+          })
         );
       } catch (e) {
         this.logger.debug("Failed to cache models in localStorage");
@@ -1402,7 +1397,7 @@ export class UltimateGeminiTester {
           if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
             // 24 hours
             this.logger.warning(
-              "⚠️ Using cached models from localStorage (API unavailable)",
+              "⚠️ Using cached models from localStorage (API unavailable)"
             );
             this.cachedModels = models;
             this.results.models.discovered = models;
@@ -1426,7 +1421,7 @@ export class UltimateGeminiTester {
         console.log(`   Family: ${model.family} | Tier: ${model.tier}`);
         console.log(`   Capabilities: ${model.capabilities.join(", ")}`);
         console.log(
-          `   Context: ${model.contextWindow.toLocaleString()} tokens`,
+          `   Context: ${model.contextWindow.toLocaleString()} tokens`
         );
       }
     });
@@ -1459,17 +1454,17 @@ export class UltimateGeminiTester {
       }
       if (preferences.minContextWindow) {
         candidates = candidates.filter(
-          (m) => m.contextWindow >= preferences.minContextWindow,
+          (m) => m.contextWindow >= preferences.minContextWindow
         );
       }
       if (preferences.requiresStreaming) {
         candidates = candidates.filter((m) =>
-          m.capabilities.includes("streaming"),
+          m.capabilities.includes("streaming")
         );
       }
       if (preferences.requiresFunctionCalling) {
         candidates = candidates.filter((m) =>
-          m.capabilities.includes("function_calling"),
+          m.capabilities.includes("function_calling")
         );
       }
     }
@@ -1483,10 +1478,10 @@ export class UltimateGeminiTester {
     if (this.results.performance.modelStats.length > 0) {
       candidates.sort((a, b) => {
         const aStat = this.results.performance.modelStats.find(
-          (s) => s.name === a.name,
+          (s) => s.name === a.name
         );
         const bStat = this.results.performance.modelStats.find(
-          (s) => s.name === b.name,
+          (s) => s.name === b.name
         );
 
         if (aStat && bStat) {
@@ -1498,7 +1493,7 @@ export class UltimateGeminiTester {
 
     const selected = candidates[0];
     this.logger.success(
-      `Selected model: ${selected.name} (${selected.family} ${selected.tier})`,
+      `Selected model: ${selected.name} (${selected.family} ${selected.tier})`
     );
     return selected;
   }
@@ -1526,7 +1521,7 @@ export class UltimateGeminiTester {
 
   async testAllModels(
     models: any[],
-    onProgress?: (current: number, total: number) => void,
+    onProgress?: (current: number, total: number) => void
   ): Promise<{
     usableModels: string[];
     rejectedModels: Array<{
@@ -1557,7 +1552,7 @@ export class UltimateGeminiTester {
       }
 
       this.logger.test(
-        `[${currentIndex}/${models.length}] Testing: ${model.name}`,
+        `[${currentIndex}/${models.length}] Testing: ${model.name}`
       );
 
       const result = await this.testModel(model);
@@ -1586,7 +1581,7 @@ export class UltimateGeminiTester {
         }
 
         this.logger.success(
-          `  ✓ ${model.name} is accessible (${result.responseTime || "N/A"}ms)`,
+          `  ✓ ${model.name} is accessible (${result.responseTime || "N/A"}ms)`
         );
       } else if (result.error?.includes("403")) {
         this.results.models.restricted.push(result);
@@ -1610,7 +1605,7 @@ export class UltimateGeminiTester {
           isModelScoped: true,
         });
         this.logger.error(
-          `  ✗ ${model.name} failed: ${result.error || "Unknown error"}`,
+          `  ✗ ${model.name} failed: ${result.error || "Unknown error"}`
         );
       }
 
@@ -1646,7 +1641,7 @@ export class UltimateGeminiTester {
   async runPerformanceBenchmark(
     modelName: string,
     iterations: number = 3,
-    onProgress?: (current: number, total: number) => void,
+    onProgress?: (current: number, total: number) => void
   ): Promise<{
     modelName: string;
     avgResponseTime: number;
@@ -1692,7 +1687,7 @@ export class UltimateGeminiTester {
               },
             },
             timeout: 30000,
-          },
+          }
         );
 
         const responseTime = Date.now() - startTime;
@@ -1712,7 +1707,7 @@ export class UltimateGeminiTester {
           this.logger.success(`  Iteration ${i + 1}: ${responseTime}ms`);
         } else {
           this.logger.warning(
-            `  Iteration ${i + 1}: Failed - ${response.error}`,
+            `  Iteration ${i + 1}: Failed - ${response.error}`
           );
         }
 
@@ -1728,7 +1723,7 @@ export class UltimateGeminiTester {
     const avgResponseTime =
       responseTimes.length > 0
         ? Math.round(
-            responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+            responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
           )
         : 0;
 
@@ -1757,7 +1752,7 @@ export class UltimateGeminiTester {
     this.logger.info(`Min/Max: ${minResponseTime}ms / ${maxResponseTime}ms`);
     this.logger.info(`Success Rate: ${successRate.toFixed(1)}%`);
     this.logger.info(
-      `Avg Token Usage: ${benchmark.tokenUsage.prompt} prompt / ${benchmark.tokenUsage.response} response`,
+      `Avg Token Usage: ${benchmark.tokenUsage.prompt} prompt / ${benchmark.tokenUsage.response} response`
     );
 
     return benchmark;
@@ -1855,7 +1850,7 @@ export class UltimateGeminiTester {
             },
           },
           timeout: 15000, // 15 seconds for model test
-        },
+        }
       );
 
       return {
@@ -1902,7 +1897,7 @@ export class UltimateGeminiTester {
   }
 
   private parseErrorReason(
-    error: string | null,
+    error: string | null
   ):
     | "quota_exhausted"
     | "permission_denied"
@@ -1951,10 +1946,10 @@ export class UltimateGeminiTester {
     const times = stats.map((s) => s.responseTime);
     const avg = times.reduce((a, b) => a + b, 0) / times.length;
     const fastest = stats.reduce((min, s) =>
-      s.responseTime < min.responseTime ? s : min,
+      s.responseTime < min.responseTime ? s : min
     );
     const slowest = stats.reduce((max, s) =>
-      s.responseTime > max.responseTime ? s : max,
+      s.responseTime > max.responseTime ? s : max
     );
 
     this.results.performance.avgResponseTime = Math.round(avg);
@@ -2044,7 +2039,7 @@ export class UltimateGeminiTester {
       maxRetries?: number;
       timeout?: number;
       onRetry?: (attempt: number, error: string) => void;
-    },
+    }
   ): Promise<{
     success: boolean;
     response?: string;
@@ -2082,7 +2077,7 @@ export class UltimateGeminiTester {
             },
             timeout,
             maxRetries: 1, // Handle retries at this level
-          },
+          }
         );
 
         const responseTime = Date.now() - startTime;
@@ -2119,7 +2114,7 @@ export class UltimateGeminiTester {
           if (attempt < maxRetries) {
             const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
             this.logger.warning(
-              `Attempt ${attempt} failed: ${lastError}. Retrying in ${delay}ms...`,
+              `Attempt ${attempt} failed: ${lastError}. Retrying in ${delay}ms...`
             );
 
             if (options?.onRetry) {
@@ -2136,7 +2131,7 @@ export class UltimateGeminiTester {
         if (attempt < maxRetries) {
           const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
           this.logger.warning(
-            `Attempt ${attempt} failed: ${lastError}. Retrying in ${delay}ms...`,
+            `Attempt ${attempt} failed: ${lastError}. Retrying in ${delay}ms...`
           );
 
           if (options?.onRetry) {
@@ -2177,25 +2172,25 @@ export class UltimateGeminiTester {
       console.log("\n⚡ Performance:");
       console.log(`   Average: ${this.results.performance.avgResponseTime}ms`);
       console.log(
-        `   Fastest: ${this.results.performance.fastest.name} (${this.results.performance.fastest.responseTime}ms)`,
+        `   Fastest: ${this.results.performance.fastest.name} (${this.results.performance.fastest.responseTime}ms)`
       );
       console.log(
-        `   Slowest: ${this.results.performance.slowest?.name} (${this.results.performance.slowest?.responseTime}ms)`,
+        `   Slowest: ${this.results.performance.slowest?.name} (${this.results.performance.slowest?.responseTime}ms)`
       );
     }
 
     console.log("\n🎯 Capabilities:");
     console.log(
-      `   Streaming: ${this.results.capabilities.streaming.length} models`,
+      `   Streaming: ${this.results.capabilities.streaming.length} models`
     );
     console.log(
-      `   Function Calling: ${this.results.capabilities.function_calling.length} models`,
+      `   Function Calling: ${this.results.capabilities.function_calling.length} models`
     );
     console.log(
-      `   Multimodal: ${this.results.capabilities.multimodal.length} models`,
+      `   Multimodal: ${this.results.capabilities.multimodal.length} models`
     );
     console.log(
-      `   Live API: ${this.results.capabilities.live_api.length} models`,
+      `   Live API: ${this.results.capabilities.live_api.length} models`
     );
 
     console.log(`\n🔧 Bypass Method: ${this.results.bypassMethod}`);

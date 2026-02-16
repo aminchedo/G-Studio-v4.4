@@ -103,7 +103,7 @@ interface ConnectionTabEnhancedProps {
 type ConnectionState = "idle" | "testing" | "connected" | "error";
 type DiscoveryState = "idle" | "discovering" | "completed" | "error";
 
-export const ConnectionTab: React.FC<ConnectionTabEnhancedProps> = ({ config, updateConfig }) => {
+export const ConnectionTabEnhanced: React.FC<ConnectionTabEnhancedProps> = ({ config, updateConfig }) => {
   const [showKey, setShowKey] = useState(false);
   const [connectionState, setConnectionState] = useState<ConnectionState>("idle");
   const [discoveryState, setDiscoveryState] = useState<DiscoveryState>("idle");

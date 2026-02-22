@@ -41,7 +41,7 @@ jobs:
         continue-on-error: true   # Do not fail workflow if script has minor issues
 
       - name: Upload intelligence reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: gstudio-intelligence-reports
           path: gstudio-reports/
